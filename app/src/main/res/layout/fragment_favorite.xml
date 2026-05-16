@@ -5,401 +5,299 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_cream"
+    android:clipToPadding="false"
+    android:fillViewport="true"
     tools:context=".FavoriteFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="80dp">
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="26dp">
 
-        <!-- Header -->
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="16dp">
+            android:layout_height="88dp"
+            android:layout_marginTop="18dp">
 
             <ImageView
-                android:layout_width="120dp"
-                android:layout_height="50dp"
+                android:layout_width="164dp"
+                android:layout_height="78dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/app_name"
                 android:scaleType="fitStart"
                 android:src="@drawable/logo" />
 
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true">
+                android:layout_centerVertical="true"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="3dp"
+                app:strokeColor="@color/search_bar_stroke"
+                app:strokeWidth="1dp">
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp"
-                    app:strokeWidth="1dp"
-                    app:strokeColor="#F0F0F0">
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
                     <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
                         android:layout_gravity="center"
-                        android:src="@android:drawable/ic_menu_sort_by_size"
-                        android:rotation="90"
-                        app:tint="@color/text_dark" />
-                </com.google.android.material.card.MaterialCardView>
+                        android:contentDescription="@string/favorite_title_accent"
+                        android:src="@drawable/ic_filter" />
 
-                <View
-                    android:layout_width="8dp"
-                    android:layout_height="8dp"
-                    android:layout_gravity="top|end"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginEnd="2dp"
-                    android:background="@drawable/bg_button_orange" />
-            </FrameLayout>
+                    <View
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:layout_gravity="top|end"
+                        android:layout_marginTop="11dp"
+                        android:layout_marginEnd="9dp"
+                        android:background="@drawable/bg_notification_dot" />
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
         </RelativeLayout>
 
-        <!-- Title Section -->
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="20dp">
+            android:layout_height="92dp"
+            android:layout_marginTop="14dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Resep "
-                        android:textColor="@color/text_dark"
-                        android:textSize="28sp"
+                        android:includeFontPadding="false"
+                        android:text="@string/favorite_title_prefix"
+                        android:textColor="#2B1309"
+                        android:textSize="34sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Favorit"
-                        android:textColor="@color/primary_orange"
-                        android:textSize="28sp"
+                        android:includeFontPadding="false"
+                        android:text="@string/favorite_title_accent"
+                        android:textColor="#E96B12"
+                        android:textSize="34sp"
                         android:textStyle="bold" />
 
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginStart="4dp"
-                        android:src="@android:drawable/ic_menu_send"
-                        app:tint="@color/primary_green"
-                        android:rotation="-15"/>
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginStart="6dp"
+                        android:layout_marginTop="-18dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_spark"
+                        app:tint="@color/primary_green" />
                 </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Kumpulan resep yang kamu simpan"
-                    android:textColor="@color/text_grey"
-                    android:textSize="14sp" />
+                    android:layout_marginTop="10dp"
+                    android:text="@string/favorite_subtitle"
+                    android:textColor="#756C68"
+                    android:textSize="16sp" />
             </LinearLayout>
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <LinearLayout
+                android:layout_width="152dp"
+                android:layout_height="50dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="0dp"
-                app:strokeWidth="1dp"
-                app:strokeColor="#FFE0B2">
+                android:background="@drawable/bg_favorite_stat"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp">
 
-                <LinearLayout
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/ic_bookmark" />
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="6dp"
-                    android:gravity="center_vertical"
-                    android:background="#FFF8E1">
+                    android:layout_marginStart="12dp"
+                    android:includeFontPadding="false"
+                    android:text="@string/favorite_saved_count"
+                    android:textColor="#2B1309"
+                    android:textSize="19sp"
+                    android:textStyle="bold" />
 
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@android:drawable/btn_star_big_on"
-                        app:tint="@color/primary_orange" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:text="4"
-                        android:textColor="@color/text_dark"
-                        android:textStyle="bold"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:text="resep tersimpan"
-                        android:textColor="@color/text_dark"
-                        android:textSize="12sp" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="7dp"
+                    android:includeFontPadding="false"
+                    android:text="@string/favorite_saved_label"
+                    android:textColor="#2B1309"
+                    android:textSize="14sp" />
+            </LinearLayout>
         </RelativeLayout>
 
-        <!-- Search Bar -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="20dp"
+            android:layout_height="58dp"
+            android:layout_marginTop="18dp"
             android:background="@drawable/bg_search_bar"
             android:gravity="center_vertical"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="14dp">
+            android:orientation="horizontal"
+            android:paddingStart="24dp"
+            android:paddingEnd="18dp">
 
             <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:src="@android:drawable/ic_menu_search"
-                app:tint="@color/text_grey" />
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_search" />
 
             <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="18dp"
+                android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:hint="Cari di favorit..."
+                android:hint="@string/favorite_search_hint"
                 android:inputType="text"
-                android:textColorHint="@color/text_grey"
-                android:textSize="15sp" />
+                android:padding="0dp"
+                android:singleLine="true"
+                android:textColor="@color/text_dark"
+                android:textColorHint="#9A918C"
+                android:textSize="17sp" />
         </LinearLayout>
 
-        <!-- Categories -->
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginStart="-4dp"
+            android:layout_marginEnd="-4dp"
+            android:layout_marginTop="22dp"
             android:scrollbars="none">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingHorizontal="12dp">
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp">
 
-                <!-- Semua -->
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="4dp"
-                    android:backgroundTint="@android:color/transparent"
-                    android:gravity="center_vertical"
-                    android:paddingHorizontal="14dp"
-                    android:paddingVertical="10dp"
-                    android:strokeWidth="1dp"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:background="@drawable/bg_category_pill">
-                    <!-- Note: In image "Semua" is selected with orange border -->
-
-                    <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:src="@android:drawable/ic_menu_agenda"
-                        app:tint="@color/primary_orange" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="Semua"
-                        android:textColor="@color/primary_orange"
-                        android:textStyle="bold"
-                        android:textSize="13sp" />
+                    style="@style/HomeCategoryPill"
+                    android:background="@drawable/bg_category_selected">
+                    <ImageView style="@style/HomeCategoryIcon" android:src="@drawable/ic_grid" />
+                    <TextView style="@style/HomeCategoryText" android:text="@string/favorite_category_all" android:textColor="#2B1309" android:textStyle="bold" />
                 </LinearLayout>
 
-                <!-- Sarapan -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="4dp"
-                    android:background="@drawable/bg_category_pill"
-                    android:gravity="center_vertical"
-                    android:paddingHorizontal="14dp"
-                    android:paddingVertical="10dp">
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@android:drawable/ic_menu_today"
-                        app:tint="#FBC02D" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="Sarapan"
-                        android:textColor="@color/text_dark"
-                        android:textSize="13sp" />
+                <LinearLayout style="@style/HomeCategoryPill">
+                    <ImageView style="@style/HomeCategoryIcon" android:src="@drawable/ic_sun" />
+                    <TextView style="@style/HomeCategoryText" android:text="@string/home_category_breakfast" />
                 </LinearLayout>
 
-                <!-- Ayam -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="4dp"
-                    android:background="@drawable/bg_category_pill"
-                    android:gravity="center_vertical"
-                    android:paddingHorizontal="14dp"
-                    android:paddingVertical="10dp">
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@android:drawable/ic_menu_send"
-                        app:tint="#E64A19" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="Ayam"
-                        android:textColor="@color/text_dark"
-                        android:textSize="13sp" />
+                <LinearLayout style="@style/HomeCategoryPill">
+                    <ImageView style="@style/HomeCategoryIcon" android:src="@drawable/ic_chicken" />
+                    <TextView style="@style/HomeCategoryText" android:text="@string/home_category_chicken" />
                 </LinearLayout>
 
-                <!-- Dessert -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="4dp"
-                    android:background="@drawable/bg_category_pill"
-                    android:gravity="center_vertical"
-                    android:paddingHorizontal="14dp"
-                    android:paddingVertical="10dp">
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@android:drawable/ic_menu_compass"
-                        app:tint="#EC407A" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="Dessert"
-                        android:textColor="@color/text_dark"
-                        android:textSize="13sp" />
+                <LinearLayout style="@style/HomeCategoryPill">
+                    <ImageView style="@style/HomeCategoryIcon" android:src="@drawable/ic_cake" />
+                    <TextView style="@style/HomeCategoryText" android:text="@string/home_category_dessert" />
                 </LinearLayout>
 
-                <!-- Sehat -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="4dp"
-                    android:background="@drawable/bg_category_pill"
-                    android:gravity="center_vertical"
-                    android:paddingHorizontal="14dp"
-                    android:paddingVertical="10dp">
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@android:drawable/ic_menu_share"
-                        app:tint="#388E3C" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="Sehat"
-                        android:textColor="@color/text_dark"
-                        android:textSize="13sp" />
+                <LinearLayout style="@style/HomeCategoryPill">
+                    <ImageView style="@style/HomeCategoryIcon" android:src="@drawable/ic_leaf" />
+                    <TextView style="@style/HomeCategoryText" android:text="@string/home_category_healthy" />
                 </LinearLayout>
-
             </LinearLayout>
         </HorizontalScrollView>
 
-        <!-- Favorite List -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="24dp"
             android:orientation="vertical">
 
-            <include layout="@layout/item_recipe_favorite" />
-            <include layout="@layout/item_recipe_favorite" />
-            <include layout="@layout/item_recipe_favorite" />
-            <include layout="@layout/item_recipe_favorite" />
-
+            <include layout="@layout/item_favorite_soup" />
+            <include layout="@layout/item_favorite_nasi" />
+            <include layout="@layout/item_favorite_pancake" />
+            <include layout="@layout/item_favorite_salad" />
         </LinearLayout>
 
-        <!-- Tip Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="20dp"
-            app:cardCornerRadius="16dp"
+            android:layout_height="82dp"
+            android:layout_marginTop="8dp"
+            app:cardBackgroundColor="#FFF9EF"
+            app:cardCornerRadius="14dp"
             app:cardElevation="0dp"
-            app:strokeWidth="1dp"
-            app:strokeColor="#FFE0B2">
+            app:strokeColor="#FFE2BC"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="16dp"
+                android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:background="#FFFBF0">
+                android:orientation="horizontal"
+                android:paddingStart="18dp"
+                android:paddingEnd="16dp">
 
                 <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@android:drawable/btn_star_big_on"
-                    app:tint="@color/primary_orange" />
+                    android:layout_width="54dp"
+                    android:layout_height="54dp"
+                    android:contentDescription="@string/favorite_tip_title"
+                    android:src="@drawable/ic_tip_heart" />
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
+                    android:layout_marginStart="14dp"
                     android:layout_weight="1"
                     android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tip"
-                        android:textColor="@color/text_dark"
-                        android:textSize="14sp"
+                        android:includeFontPadding="false"
+                        android:text="@string/favorite_tip_title"
+                        android:textColor="#2B1309"
+                        android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Akses resep favoritmu dengan cepat di sini!"
-                        android:textColor="@color/text_grey"
-                        android:textSize="12sp" />
+                        android:layout_marginTop="6dp"
+                        android:text="@string/favorite_tip_body"
+                        android:textColor="#68615E"
+                        android:textSize="14sp" />
                 </LinearLayout>
 
                 <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@android:drawable/ic_menu_send"
-                    app:tint="@color/primary_green"
-                    android:alpha="0.4"
-                    android:rotation="15"/>
+                    android:layout_width="86dp"
+                    android:layout_height="60dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_leaf_hearts" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
-
     </LinearLayout>
-
 </androidx.core.widget.NestedScrollView>

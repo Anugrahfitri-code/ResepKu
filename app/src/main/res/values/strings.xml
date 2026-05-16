@@ -49,4 +49,14 @@
     <string name="recipe_time_15">15 menit</string>
     <string name="recipe_time_10">10 menit</string>
     <string name="recipe_level_easy">Mudah</string>
+    <string name="favorite_title_prefix">Resep </string>
+    <string name="favorite_title_accent">Favorit</string>
+    <string name="favorite_subtitle">Kumpulan resep yang kamu simpan</string>
+    <string name="favorite_saved_count">4</string>
+    <string name="favorite_saved_label">resep tersimpan</string>
+    <string name="favorite_search_hint">Cari di favorit...</string>
+    <string name="favorite_category_all">Semua</string>
+    <string name="favorite_saved">Disimpan</string>
+    <string name="favorite_tip_title">Tip</string>
+    <string name="favorite_tip_body">Akses resep favoritmu dengan cepat di sini!</string>
 </resources>
