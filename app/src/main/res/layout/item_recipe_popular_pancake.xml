@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="106dp"
+    android:layout_marginBottom="8dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/search_bar_stroke"
+    app:strokeWidth="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent" android:layout_height="match_parent">
+        <com.google.android.material.imageview.ShapeableImageView android:id="@+id/ivRecipe" android:layout_width="136dp" android:layout_height="match_parent" android:scaleType="centerCrop" android:src="@drawable/img_pancake_pisang" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" app:shapeAppearanceOverlay="@style/ShapeAppearance.App.MediumComponent" />
+        <TextView android:id="@+id/tvRecipeName" style="@style/RecipeCardTitle" android:text="@string/recipe_pancake_pisang" />
+        <TextView android:id="@+id/tvCategory" style="@style/RecipeCardTagPink" android:text="@string/home_category_dessert" />
+        <LinearLayout style="@style/RecipeMetaRow">
+            <ImageView style="@style/RecipeMetaIconClock" />
+            <TextView style="@style/RecipeMetaText" android:text="@string/recipe_time_15" />
+            <ImageView style="@style/RecipeMetaIconLevel" />
+            <TextView style="@style/RecipeMetaText" android:text="@string/recipe_level_easy" />
+        </LinearLayout>
+        <ImageView android:id="@+id/ivFavorite" style="@style/RecipeCardHeart" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

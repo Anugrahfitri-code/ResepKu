@@ -26,4 +26,27 @@
     <string name="setting_privacy_policy">Kebijakan Privasi</string>
     <string name="setting_save">Simpan Pengaturan</string>
     <string name="setting_reset">Reset</string>
+    <string name="home_greeting_prefix">Mau masak </string>
+    <string name="home_greeting_accent">apa hari ini?</string>
+    <string name="home_search_hint">Cari resep favoritmu...</string>
+    <string name="home_category_breakfast">Sarapan</string>
+    <string name="home_category_chicken">Ayam</string>
+    <string name="home_category_dessert">Dessert</string>
+    <string name="home_category_seafood">Seafood</string>
+    <string name="home_category_healthy">Sehat</string>
+    <string name="home_recommendation_badge">REKOMENDASI HARI INI</string>
+    <string name="home_recommendation_title">Sup Ayam\nJahe Hangat</string>
+    <string name="home_recommendation_desc">Hangat, gurih, dan menyehatkan badan. Cocok untuk keluarga.</string>
+    <string name="home_view_recipe">Lihat Resep</string>
+    <string name="home_popular_title">Resep Populer</string>
+    <string name="home_view_all">Lihat semua</string>
+    <string name="recipe_nasi_goreng">Nasi Goreng Spesial</string>
+    <string name="recipe_ayam_teriyaki">Ayam Teriyaki</string>
+    <string name="recipe_pancake_pisang">Pancake Pisang</string>
+    <string name="recipe_salad_segar">Salad Segar</string>
+    <string name="recipe_time_20">20 menit</string>
+    <string name="recipe_time_30">30 menit</string>
+    <string name="recipe_time_15">15 menit</string>
+    <string name="recipe_time_10">10 menit</string>
+    <string name="recipe_level_easy">Mudah</string>
 </resources>
