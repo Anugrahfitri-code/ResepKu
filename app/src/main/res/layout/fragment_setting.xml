@@ -1,14 +1,351 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_cream"
+    android:clipToPadding="false"
+    android:fillViewport="true"
     tools:context=".SettingFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="28dp">
 
-</FrameLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="88dp"
+            android:layout_marginTop="18dp">
+
+            <ImageView
+                android:id="@+id/imgLogo"
+                android:layout_width="164dp"
+                android:layout_height="78dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/app_name"
+                android:scaleType="fitStart"
+                android:src="@drawable/logo" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="3dp"
+                app:strokeColor="@color/search_bar_stroke"
+                app:strokeWidth="1dp">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/setting_notification"
+                        android:src="@drawable/ic_bell"
+                        app:tint="#3C2418" />
+
+                    <View
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:layout_gravity="top|end"
+                        android:layout_marginTop="11dp"
+                        android:layout_marginEnd="9dp"
+                        android:background="@drawable/bg_notification_dot" />
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:includeFontPadding="false"
+                    android:text="@string/setting_title"
+                    android:textColor="#2B1309"
+                    android:textSize="32sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="-12dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_spark"
+                    app:tint="@color/primary_orange" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/setting_subtitle"
+                android:textColor="#756C68"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.ResepKu.SettingsCard"
+            android:layout_marginTop="26dp">
+
+            <LinearLayout style="@style/SettingsSectionContainer">
+
+                <LinearLayout
+                    style="@style/SettingsHeaderRow">
+                    <ImageView style="@style/SettingsHeaderIcon" android:src="@drawable/ic_palette" />
+                    <TextView style="@style/SettingsHeaderTitle" android:text="@string/setting_section_display" />
+                </LinearLayout>
+
+                <View style="@style/SettingsDivider" />
+
+                <RelativeLayout style="@style/SettingsItemRow">
+                    <ImageView android:id="@+id/iconDarkMode" style="@style/SettingsItemIcon" android:src="@drawable/ic_moon" />
+                    <TextView style="@style/SettingsItemTitle" android:layout_toEndOf="@id/iconDarkMode" android:text="@string/setting_dark_mode" />
+                    <com.google.android.material.switchmaterial.SwitchMaterial style="@style/SettingsSwitch" />
+                </RelativeLayout>
+
+                <View style="@style/SettingsDivider" />
+
+                <RelativeLayout style="@style/SettingsItemRow">
+                    <ImageView android:id="@+id/iconTheme" style="@style/SettingsItemIcon" android:src="@drawable/ic_brush" />
+                    <TextView style="@style/SettingsItemTitle" android:layout_toEndOf="@id/iconTheme" android:text="@string/setting_theme" />
+                    <ImageView android:id="@+id/iconThemeArrow" style="@style/SettingsChevron" />
+                    <TextView style="@style/SettingsItemValue" android:layout_toStartOf="@id/iconThemeArrow" android:text="@string/setting_theme_value" />
+                </RelativeLayout>
+
+                <View style="@style/SettingsDivider" />
+
+                <RelativeLayout style="@style/SettingsItemRow">
+                    <ImageView android:id="@+id/iconTextSize" style="@style/SettingsItemIcon" android:src="@drawable/ic_text_size" />
+                    <TextView style="@style/SettingsItemTitle" android:layout_toEndOf="@id/iconTextSize" android:text="@string/setting_text_size" />
+                    <ImageView android:id="@+id/iconTextSizeArrow" style="@style/SettingsChevron" />
+                    <TextView style="@style/SettingsItemValue" android:layout_toStartOf="@id/iconTextSizeArrow" android:text="@string/setting_text_size_value" />
+                </RelativeLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.ResepKu.SettingsCard"
+            android:layout_marginTop="16dp">
+
+            <LinearLayout style="@style/SettingsSectionContainer">
+
+                <LinearLayout style="@style/SettingsHeaderRow">
+                    <ImageView style="@style/SettingsHeaderIcon" android:src="@drawable/ic_bell_filled" />
+                    <TextView style="@style/SettingsHeaderTitle" android:text="@string/setting_section_notification" />
+                </LinearLayout>
+
+                <View style="@style/SettingsDivider" />
+
+                <RelativeLayout style="@style/SettingsItemRow">
+                    <ImageView android:id="@+id/iconDailyNotification" style="@style/SettingsItemIcon" android:src="@drawable/ic_bell" />
+                    <TextView style="@style/SettingsItemTitle" android:layout_toEndOf="@id/iconDailyNotification" android:text="@string/setting_daily_notification" />
+                    <com.google.android.material.switchmaterial.SwitchMaterial style="@style/SettingsSwitch" android:checked="true" />
+                </RelativeLayout>
+
+                <View style="@style/SettingsDivider" />
+
+                <RelativeLayout style="@style/SettingsItemRow">
+                    <ImageView android:id="@+id/iconCookingReminder" style="@style/SettingsItemIcon" android:src="@drawable/ic_clock" />
+                    <TextView style="@style/SettingsItemTitle" android:layout_toEndOf="@id/iconCookingReminder" android:text="@string/setting_cooking_reminder" />
+                    <com.google.android.material.switchmaterial.SwitchMaterial style="@style/SettingsSwitch" />
+                </RelativeLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.ResepKu.SettingsCard"
+            android:layout_marginTop="16dp">
+
+            <LinearLayout style="@style/SettingsSectionContainer">
+
+                <LinearLayout style="@style/SettingsHeaderRow">
+                    <ImageView style="@style/SettingsHeaderIcon" android:src="@drawable/ic_database" />
+                    <TextView style="@style/SettingsHeaderTitle" android:text="@string/setting_section_data" />
+                </LinearLayout>
+
+                <View style="@style/SettingsDivider" />
+
+                <RelativeLayout style="@style/SettingsItemRow">
+                    <ImageView android:id="@+id/iconClearCache" style="@style/SettingsItemIcon" android:src="@drawable/ic_trash" app:tint="@color/primary_orange" />
+                    <TextView style="@style/SettingsItemTitle" android:layout_toEndOf="@id/iconClearCache" android:text="@string/setting_clear_cache" />
+                    <ImageView style="@style/SettingsChevron" />
+                </RelativeLayout>
+
+                <View style="@style/SettingsDivider" />
+
+                <RelativeLayout style="@style/SettingsItemRow">
+                    <ImageView android:id="@+id/iconManageFavorite" style="@style/SettingsItemIcon" android:src="@drawable/ic_heart" app:tint="@color/primary_orange" />
+                    <TextView style="@style/SettingsItemTitle" android:layout_toEndOf="@id/iconManageFavorite" android:text="@string/setting_manage_favorite" />
+                    <ImageView style="@style/SettingsChevron" />
+                </RelativeLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardBackgroundColor="#FFF9EF"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#FFE2BC"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:minHeight="96dp"
+                android:orientation="horizontal"
+                android:paddingStart="18dp"
+                android:paddingTop="14dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="14dp">
+
+                <ImageView
+                    android:layout_width="62dp"
+                    android:layout_height="62dp"
+                    android:contentDescription="@string/setting_tips"
+                    android:src="@drawable/ic_bulb_plant" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="18dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
+                        android:text="@string/setting_tips"
+                        android:textColor="#2B1309"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:lineSpacingExtra="2dp"
+                        android:text="@string/setting_tips_body"
+                        android:textColor="#68615E"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="72dp"
+                    android:layout_height="54dp"
+                    android:layout_marginStart="10dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_leaf_hearts" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.ResepKu.SettingsCard"
+            android:layout_marginTop="16dp">
+
+            <LinearLayout style="@style/SettingsSectionContainer">
+
+                <LinearLayout style="@style/SettingsHeaderRow">
+                    <ImageView style="@style/SettingsHeaderIcon" android:src="@drawable/ic_info_filled" />
+                    <TextView style="@style/SettingsHeaderTitle" android:text="@string/setting_section_about" />
+                </LinearLayout>
+
+                <View style="@style/SettingsDivider" />
+
+                <RelativeLayout style="@style/SettingsItemRowSmall">
+                    <ImageView android:id="@+id/iconVersion" style="@style/SettingsItemIconSmall" android:src="@drawable/ic_info_circle" />
+                    <TextView style="@style/SettingsItemTitleSmall" android:layout_toEndOf="@id/iconVersion" android:text="@string/setting_version" />
+                    <TextView style="@style/SettingsItemValuePlain" android:text="@string/setting_version_value" />
+                </RelativeLayout>
+
+                <View style="@style/SettingsDivider" />
+
+                <RelativeLayout style="@style/SettingsItemRowSmall">
+                    <ImageView android:id="@+id/iconHelp" style="@style/SettingsItemIconSmall" android:src="@drawable/ic_help_circle" />
+                    <TextView style="@style/SettingsItemTitleSmall" android:layout_toEndOf="@id/iconHelp" android:text="@string/setting_help_center" />
+                    <ImageView style="@style/SettingsChevronSmall" />
+                </RelativeLayout>
+
+                <View style="@style/SettingsDivider" />
+
+                <RelativeLayout style="@style/SettingsItemRowSmall">
+                    <ImageView android:id="@+id/iconPrivacy" style="@style/SettingsItemIconSmall" android:src="@drawable/ic_shield" />
+                    <TextView style="@style/SettingsItemTitleSmall" android:layout_toEndOf="@id/iconPrivacy" android:text="@string/setting_privacy_policy" />
+                    <ImageView style="@style/SettingsChevronSmall" />
+                </RelativeLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/primary_orange"
+                android:text="@string/setting_save"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:cornerRadius="14dp"
+                app:icon="@drawable/ic_check_circle"
+                app:iconGravity="textStart"
+                app:iconPadding="10dp"
+                app:iconSize="22dp"
+                app:iconTint="@color/white" />
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:text="@string/setting_reset"
+                android:textAllCaps="false"
+                android:textColor="@color/primary_orange"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:cornerRadius="14dp"
+                app:icon="@drawable/ic_refresh"
+                app:iconGravity="textStart"
+                app:iconPadding="10dp"
+                app:iconSize="22dp"
+                app:iconTint="@color/primary_orange"
+                app:strokeColor="@color/primary_orange"
+                app:strokeWidth="1dp" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

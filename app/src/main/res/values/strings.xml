@@ -2,4 +2,28 @@
     <string name="app_name">ResepKu</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="setting_notification">Notifikasi</string>
+    <string name="setting_title">Pengaturan</string>
+    <string name="setting_subtitle">Atur preferensi aplikasi kamu</string>
+    <string name="setting_section_display">Tampilan</string>
+    <string name="setting_dark_mode">Mode Gelap</string>
+    <string name="setting_theme">Tema Aplikasi</string>
+    <string name="setting_theme_value">Light</string>
+    <string name="setting_text_size">Ukuran Teks</string>
+    <string name="setting_text_size_value">Sedang</string>
+    <string name="setting_section_notification">Notifikasi</string>
+    <string name="setting_daily_notification">Notifikasi Resep Harian</string>
+    <string name="setting_cooking_reminder">Pengingat Memasak</string>
+    <string name="setting_section_data">Data &amp; Penyimpanan</string>
+    <string name="setting_clear_cache">Hapus Cache</string>
+    <string name="setting_manage_favorite">Kelola Resep Favorit</string>
+    <string name="setting_tips">Tips</string>
+    <string name="setting_tips_body">Aktifkan notifikasi untuk mendapatkan inspirasi masakan setiap hari!</string>
+    <string name="setting_section_about">Tentang Aplikasi</string>
+    <string name="setting_version">Versi Aplikasi</string>
+    <string name="setting_version_value">1.0.0</string>
+    <string name="setting_help_center">Pusat Bantuan</string>
+    <string name="setting_privacy_policy">Kebijakan Privasi</string>
+    <string name="setting_save">Simpan Pengaturan</string>
+    <string name="setting_reset">Reset</string>
 </resources>
