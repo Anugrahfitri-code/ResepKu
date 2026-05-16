@@ -1,6 +1,7 @@
 package com.anugrah.resepku;
 
 import android.os.Bundle;
+import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
@@ -23,6 +24,13 @@ public class MainActivity extends AppCompatActivity {
             NavController navController = navHostFragment.getNavController();
 
             NavigationUI.setupWithNavController(navView, navController);
+            navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+                if (destination.getId() == R.id.navigation_recipe_detail) {
+                    navView.setVisibility(View.GONE);
+                } else {
+                    navView.setVisibility(View.VISIBLE);
+                }
+            });
         }
     }
 }

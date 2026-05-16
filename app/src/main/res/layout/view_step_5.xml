@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" style="@style/StepRow">
+    <TextView style="@style/StepNumber" android:text="5" />
+    <TextView style="@style/StepText" android:text="@string/step_5" />
+</LinearLayout>

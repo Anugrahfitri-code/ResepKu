@@ -22,4 +22,10 @@
         android:name="com.anugrah.resepku.SettingFragment"
         android:label="Pengaturan"
         tools:layout="@layout/fragment_setting" />
+
+    <fragment
+        android:id="@+id/navigation_recipe_detail"
+        android:name="com.anugrah.resepku.RecipeDetailFragment"
+        android:label="Detail Resep"
+        tools:layout="@layout/fragment_recipe_detail" />
 </navigation>

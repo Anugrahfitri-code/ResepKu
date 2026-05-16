@@ -269,15 +269,15 @@
     <style name="FavoriteCardTitle">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginStart">16dp</item>
-        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:layout_marginStart">14dp</item>
+        <item name="android:layout_marginTop">18dp</item>
         <item name="android:layout_marginEnd">10dp</item>
         <item name="android:ellipsize">end</item>
         <item name="android:includeFontPadding">false</item>
         <item name="android:lineSpacingExtra">1dp</item>
         <item name="android:maxLines">2</item>
         <item name="android:textColor">#2B1309</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">17sp</item>
         <item name="android:textStyle">bold</item>
         <item name="layout_constraintEnd_toStartOf">@id/ivFavorite</item>
         <item name="layout_constraintStart_toEndOf">@id/ivRecipe</item>
@@ -287,34 +287,37 @@
     <style name="FavoriteTagRow">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">12dp</item>
+        <item name="android:layout_marginTop">8dp</item>
         <item name="android:orientation">horizontal</item>
         <item name="layout_constraintStart_toStartOf">@id/tvRecipeName</item>
         <item name="layout_constraintTop_toBottomOf">@id/tvRecipeName</item>
     </style>
 
     <style name="FavoriteTagOrange" parent="RecipeCardTagOrange">
-        <item name="android:layout_height">26dp</item>
-        <item name="android:textSize">13sp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
     <style name="FavoriteTagPink" parent="RecipeCardTagPink">
-        <item name="android:layout_height">26dp</item>
-        <item name="android:textSize">13sp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
     <style name="FavoriteTagGreen" parent="RecipeCardTagGreen">
-        <item name="android:layout_height">26dp</item>
-        <item name="android:textSize">13sp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
     <style name="FavoriteMetaRow">
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:layout_marginTop">8dp</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:orientation">horizontal</item>
-        <item name="android:layout_marginBottom">14dp</item>
+        <item name="android:layout_marginBottom">12dp</item>
         <item name="layout_constraintBottom_toBottomOf">parent</item>
+        <item name="layout_constraintEnd_toStartOf">@id/savedPill</item>
         <item name="layout_constraintStart_toStartOf">@id/tvRecipeName</item>
         <item name="layout_constraintTop_toBottomOf">@id/tags</item>
     </style>
@@ -327,10 +330,10 @@
     </style>
 
     <style name="FavoriteHeart">
-        <item name="android:layout_width">40dp</item>
-        <item name="android:layout_height">40dp</item>
-        <item name="android:layout_marginEnd">22dp</item>
-        <item name="android:layout_marginTop">28dp</item>
+        <item name="android:layout_width">34dp</item>
+        <item name="android:layout_height">34dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:layout_marginTop">22dp</item>
         <item name="android:src">@drawable/ic_heart_filled</item>
         <item name="layout_constraintEnd_toEndOf">parent</item>
         <item name="layout_constraintTop_toTopOf">parent</item>
@@ -338,19 +341,19 @@
 
     <style name="FavoriteSavedPill">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">36dp</item>
+        <item name="android:layout_height">34dp</item>
         <item name="android:background">@drawable/bg_saved_pill</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:orientation">horizontal</item>
-        <item name="android:paddingStart">12dp</item>
-        <item name="android:paddingEnd">14dp</item>
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:paddingEnd">12dp</item>
         <item name="layout_constraintBottom_toBottomOf">parent</item>
         <item name="layout_constraintEnd_toEndOf">parent</item>
     </style>
 
     <style name="FavoriteSavedIcon">
-        <item name="android:layout_width">18dp</item>
-        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_width">16dp</item>
+        <item name="android:layout_height">16dp</item>
         <item name="android:src">@drawable/ic_bookmark_outline</item>
     </style>
 
@@ -360,6 +363,86 @@
         <item name="android:layout_marginStart">6dp</item>
         <item name="android:includeFontPadding">false</item>
         <item name="android:textColor">@color/primary_green</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="DetailStatDivider">
+        <item name="android:layout_width">1dp</item>
+        <item name="android:layout_height">46dp</item>
+        <item name="android:background">@color/divider_warm</item>
+    </style>
+
+    <style name="DetailSectionHeader">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="DetailSectionIcon">
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+    </style>
+
+    <style name="DetailSectionTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:textColor">#2B1309</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="DetailCard" parent="Widget.Material3.CardView.Elevated">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">12dp</item>
+        <item name="cardBackgroundColor">@color/white</item>
+        <item name="cardCornerRadius">12dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="strokeColor">@color/search_bar_stroke</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
+    <style name="IngredientCheck">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">38dp</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:buttonTint">@color/primary_orange</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:textColor">#413B37</item>
         <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="StepRow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">top</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+    </style>
+
+    <style name="StepNumber">
+        <item name="android:layout_width">28dp</item>
+        <item name="android:layout_height">28dp</item>
+        <item name="android:background">@drawable/bg_recipe_tag_orange</item>
+        <item name="android:gravity">center</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:textColor">@color/primary_orange</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="StepText">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">14dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+        <item name="android:textColor">#4E4743</item>
+        <item name="android:textSize">15sp</item>
     </style>
 </resources>

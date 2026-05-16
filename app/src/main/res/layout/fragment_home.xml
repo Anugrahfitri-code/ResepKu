@@ -379,8 +379,11 @@
             android:orientation="vertical">
 
             <include layout="@layout/item_recipe_popular_nasi" />
+
             <include layout="@layout/item_recipe_popular_ayam" />
+
             <include layout="@layout/item_recipe_popular_pancake" />
+
             <include layout="@layout/item_recipe_popular_salad" />
         </LinearLayout>
     </LinearLayout>
