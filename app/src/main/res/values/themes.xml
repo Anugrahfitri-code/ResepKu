@@ -269,8 +269,8 @@
     <style name="FavoriteCardTitle">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginStart">18dp</item>
-        <item name="android:layout_marginTop">26dp</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginTop">24dp</item>
         <item name="android:layout_marginEnd">10dp</item>
         <item name="android:ellipsize">end</item>
         <item name="android:includeFontPadding">false</item>
@@ -287,7 +287,7 @@
     <style name="FavoriteTagRow">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">14dp</item>
+        <item name="android:layout_marginTop">12dp</item>
         <item name="android:orientation">horizontal</item>
         <item name="layout_constraintStart_toStartOf">@id/tvRecipeName</item>
         <item name="layout_constraintTop_toBottomOf">@id/tvRecipeName</item>
@@ -313,6 +313,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:orientation">horizontal</item>
+        <item name="android:layout_marginBottom">14dp</item>
         <item name="layout_constraintBottom_toBottomOf">parent</item>
         <item name="layout_constraintStart_toStartOf">@id/tvRecipeName</item>
         <item name="layout_constraintTop_toBottomOf">@id/tags</item>
@@ -326,10 +327,10 @@
     </style>
 
     <style name="FavoriteHeart">
-        <item name="android:layout_width">38dp</item>
-        <item name="android:layout_height">38dp</item>
-        <item name="android:layout_marginEnd">20dp</item>
-        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_marginEnd">22dp</item>
+        <item name="android:layout_marginTop">28dp</item>
         <item name="android:src">@drawable/ic_heart_filled</item>
         <item name="layout_constraintEnd_toEndOf">parent</item>
         <item name="layout_constraintTop_toTopOf">parent</item>
@@ -356,7 +357,7 @@
     <style name="FavoriteSavedText">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginStart">6dp</item>
         <item name="android:includeFontPadding">false</item>
         <item name="android:textColor">@color/primary_green</item>
         <item name="android:textSize">14sp</item>

@@ -19,18 +19,64 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="88dp"
-            android:layout_marginTop="18dp">
+            android:layout_height="92dp"
+            android:layout_marginTop="14dp">
 
-            <ImageView
-                android:layout_width="164dp"
+            <LinearLayout
+                android:layout_width="230dp"
                 android:layout_height="78dp"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/app_name"
-                android:scaleType="fitStart"
-                android:src="@drawable/logo" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="58dp"
+                    android:layout_height="58dp"
+                    android:contentDescription="@string/app_name"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/logo_mark" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:includeFontPadding="false"
+                            android:text="Resep"
+                            android:textColor="#F26B00"
+                            android:textSize="28sp"
+                            android:textStyle="bold|italic" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:includeFontPadding="false"
+                            android:text="Ku"
+                            android:textColor="@color/primary_green"
+                            android:textSize="28sp"
+                            android:textStyle="bold|italic" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:includeFontPadding="false"
+                        android:text="Masak Lezat, Hidup Sehat"
+                        android:textColor="@color/primary_green"
+                        android:textSize="9sp" />
+                </LinearLayout>
+            </LinearLayout>
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="48dp"
@@ -65,16 +111,19 @@
             </com.google.android.material.card.MaterialCardView>
         </RelativeLayout>
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="92dp"
-            android:layout_marginTop="14dp">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentStart="true"
-                android:orientation="vertical">
+                android:id="@+id/favoriteTitleBlock"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toStartOf="@+id/favoriteSavedCount"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -88,7 +137,7 @@
                         android:includeFontPadding="false"
                         android:text="@string/favorite_title_prefix"
                         android:textColor="#2B1309"
-                        android:textSize="34sp"
+                        android:textSize="30sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -97,7 +146,7 @@
                         android:includeFontPadding="false"
                         android:text="@string/favorite_title_accent"
                         android:textColor="#E96B12"
-                        android:textSize="34sp"
+                        android:textSize="30sp"
                         android:textStyle="bold" />
 
                     <ImageView
@@ -120,15 +169,17 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="152dp"
-                android:layout_height="50dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
+                android:id="@+id/favoriteSavedCount"
+                android:layout_width="142dp"
+                android:layout_height="52dp"
+                android:layout_marginTop="2dp"
                 android:background="@drawable/bg_favorite_stat"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:paddingStart="14dp"
-                android:paddingEnd="14dp">
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
                     android:layout_width="25dp"
@@ -152,14 +203,14 @@
                     android:includeFontPadding="false"
                     android:text="@string/favorite_saved_label"
                     android:textColor="#2B1309"
-                    android:textSize="14sp" />
+                    android:textSize="13sp" />
             </LinearLayout>
-        </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="58dp"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="22dp"
             android:background="@drawable/bg_search_bar"
             android:gravity="center_vertical"
             android:orientation="horizontal"
@@ -192,7 +243,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="-4dp"
             android:layout_marginEnd="-4dp"
-            android:layout_marginTop="22dp"
+            android:layout_marginTop="20dp"
             android:scrollbars="none">
 
             <LinearLayout
@@ -234,7 +285,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="22dp"
             android:orientation="vertical">
 
             <include layout="@layout/item_favorite_soup" />
