@@ -224,7 +224,7 @@
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="230dp"
+            android:layout_height="250dp"
             android:layout_marginTop="24dp"
             app:cardBackgroundColor="#FFF8E9"
             app:cardCornerRadius="18dp"
@@ -238,18 +238,19 @@
                 android:background="@drawable/bg_recommendation"
                 android:paddingStart="20dp"
                 android:paddingTop="20dp"
-                android:paddingEnd="0dp"
+                android:paddingEnd="14dp"
                 android:paddingBottom="20dp">
 
                 <LinearLayout
                     android:id="@+id/recommendationBadge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="32dp"
+                    android:layout_width="0dp"
+                    android:layout_height="31dp"
                     android:background="@drawable/bg_badge_orange"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:paddingStart="10dp"
-                    android:paddingEnd="12dp"
+                    android:paddingEnd="10dp"
+                    app:layout_constraintEnd_toStartOf="@+id/ivRecoImage"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
@@ -262,10 +263,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
+                        android:ellipsize="end"
                         android:includeFontPadding="false"
+                        android:maxLines="1"
                         android:text="@string/home_recommendation_badge"
                         android:textColor="@color/white"
-                        android:textSize="12sp"
+                        android:textSize="11sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -273,12 +276,14 @@
                     android:id="@+id/tvRecoTitle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginEnd="10dp"
                     android:includeFontPadding="false"
                     android:lineSpacingExtra="1dp"
+                    android:maxLines="3"
                     android:text="@string/home_recommendation_title"
                     android:textColor="#2B1309"
-                    android:textSize="25sp"
+                    android:textSize="23sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toStartOf="@+id/ivRecoImage"
                     app:layout_constraintStart_toStartOf="parent"
@@ -288,11 +293,14 @@
                     android:id="@+id/tvRecoDesc"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:ellipsize="end"
                     android:lineSpacingExtra="2dp"
+                    android:maxLines="3"
                     android:text="@string/home_recommendation_desc"
                     android:textColor="#655B56"
-                    android:textSize="14sp"
+                    android:textSize="13sp"
                     app:layout_constraintEnd_toStartOf="@+id/ivRecoImage"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tvRecoTitle" />
@@ -300,15 +308,17 @@
                 <LinearLayout
                     android:id="@+id/btnViewRecipe"
                     android:layout_width="wrap_content"
-                    android:layout_height="44dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="12dp"
                     android:background="@drawable/bg_button_orange"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:paddingStart="18dp"
-                    android:paddingEnd="12dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="10dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvRecoDesc">
+                    app:layout_constraintTop_toBottomOf="@+id/tvRecoDesc"
+                    app:layout_constraintVertical_bias="1">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -316,13 +326,13 @@
                         android:includeFontPadding="false"
                         android:text="@string/home_view_recipe"
                         android:textColor="@color/white"
-                        android:textSize="15sp"
+                        android:textSize="13sp"
                         android:textStyle="bold" />
 
                     <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginStart="10dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginStart="8dp"
                         android:src="@drawable/ic_chevron_right"
                         app:tint="@color/white" />
                 </LinearLayout>
@@ -339,13 +349,15 @@
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/ivRecoImage"
-                    android:layout_width="178dp"
-                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/img_soup_chicken_ginger"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHeight_percent="0.88"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent="0.50"
                     app:shapeAppearanceOverlay="@style/ShapeAppearance.App.MediumComponent" />
 
                 <LinearLayout
