@@ -36,6 +36,7 @@ public class SettingFragment extends Fragment {
     private TextView tvTextSizeValue;
     private String selectedTheme = DEFAULT_THEME;
     private String selectedTextSize = DEFAULT_TEXT_SIZE;
+    private boolean initialDarkMode;
 
     public SettingFragment() {
     }
@@ -74,16 +75,12 @@ public class SettingFragment extends Fragment {
         switchCookingReminder.setChecked(cookingReminder);
         tvThemeValue.setText(selectedTheme);
         tvTextSizeValue.setText(selectedTextSize);
-
-        applyDarkMode(darkMode);
+        initialDarkMode = darkMode;
     }
 
     private void setupListeners(View view) {
         view.findViewById(R.id.rowDarkMode).setOnClickListener(v ->
                 switchDarkMode.setChecked(!switchDarkMode.isChecked()));
-
-        switchDarkMode.setOnCheckedChangeListener((buttonView, isChecked) ->
-                applyDarkMode(isChecked));
 
         view.findViewById(R.id.rowDailyNotification).setOnClickListener(v ->
                 switchDailyNotification.setChecked(!switchDailyNotification.isChecked()));
@@ -129,6 +126,7 @@ public class SettingFragment extends Fragment {
                 .apply();
 
         showToast("Pengaturan berhasil disimpan");
+        applyDarkModeAfterSave();
     }
 
     private void resetSettings() {
@@ -150,12 +148,20 @@ public class SettingFragment extends Fragment {
                 .apply();
 
         showToast("Pengaturan berhasil direset");
+        applyDarkModeAfterSave();
     }
 
-    private void applyDarkMode(boolean enabled) {
-        AppCompatDelegate.setDefaultNightMode(enabled
-                ? AppCompatDelegate.MODE_NIGHT_YES
-                : AppCompatDelegate.MODE_NIGHT_NO);
+    private void applyDarkModeAfterSave() {
+        boolean enabled = switchDarkMode.isChecked();
+        if (enabled == initialDarkMode) {
+            return;
+        }
+
+        initialDarkMode = enabled;
+        requireActivity().getWindow().getDecorView().post(() ->
+                AppCompatDelegate.setDefaultNightMode(enabled
+                        ? AppCompatDelegate.MODE_NIGHT_YES
+                        : AppCompatDelegate.MODE_NIGHT_NO));
     }
 
     private void showOptionMenu(View anchor, String[] options, OptionSelectedListener listener) {

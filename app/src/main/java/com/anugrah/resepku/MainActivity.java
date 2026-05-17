@@ -1,8 +1,11 @@
 package com.anugrah.resepku;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
@@ -10,8 +13,12 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String SETTINGS_PREF_NAME = "resepku_settings";
+    private static final String KEY_DARK_MODE = "dark_mode";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        applySavedNightMode();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -32,5 +39,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    private void applySavedNightMode() {
+        SharedPreferences preferences = getSharedPreferences(SETTINGS_PREF_NAME, Context.MODE_PRIVATE);
+        boolean darkMode = preferences.getBoolean(KEY_DARK_MODE, false);
+        AppCompatDelegate.setDefaultNightMode(darkMode
+                ? AppCompatDelegate.MODE_NIGHT_YES
+                : AppCompatDelegate.MODE_NIGHT_NO);
     }
 }
