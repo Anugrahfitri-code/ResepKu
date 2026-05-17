@@ -166,6 +166,7 @@
                 android:src="@drawable/ic_search" />
 
             <EditText
+                android:id="@+id/etSearchRecipe"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="18dp"
@@ -195,27 +196,37 @@
                 android:paddingStart="4dp"
                 android:paddingEnd="4dp">
 
-                <LinearLayout style="@style/HomeCategoryPill">
+                <LinearLayout
+                    android:id="@+id/categoryBreakfast"
+                    style="@style/HomeCategoryPill">
                     <ImageView style="@style/HomeCategoryIcon" android:src="@drawable/ic_sun" />
                     <TextView style="@style/HomeCategoryText" android:text="@string/home_category_breakfast" />
                 </LinearLayout>
 
-                <LinearLayout style="@style/HomeCategoryPill">
+                <LinearLayout
+                    android:id="@+id/categoryChicken"
+                    style="@style/HomeCategoryPill">
                     <ImageView style="@style/HomeCategoryIcon" android:src="@drawable/ic_chicken" />
                     <TextView style="@style/HomeCategoryText" android:text="@string/home_category_chicken" />
                 </LinearLayout>
 
-                <LinearLayout style="@style/HomeCategoryPill">
+                <LinearLayout
+                    android:id="@+id/categoryDessert"
+                    style="@style/HomeCategoryPill">
                     <ImageView style="@style/HomeCategoryIcon" android:src="@drawable/ic_cake" />
                     <TextView style="@style/HomeCategoryText" android:text="@string/home_category_dessert" />
                 </LinearLayout>
 
-                <LinearLayout style="@style/HomeCategoryPill">
+                <LinearLayout
+                    android:id="@+id/categorySeafood"
+                    style="@style/HomeCategoryPill">
                     <ImageView style="@style/HomeCategoryIcon" android:src="@drawable/ic_fish" />
                     <TextView style="@style/HomeCategoryText" android:text="@string/home_category_seafood" />
                 </LinearLayout>
 
-                <LinearLayout style="@style/HomeCategoryPill">
+                <LinearLayout
+                    android:id="@+id/categoryHealthy"
+                    style="@style/HomeCategoryPill">
                     <ImageView style="@style/HomeCategoryIcon" android:src="@drawable/ic_leaf" />
                     <TextView style="@style/HomeCategoryText" android:text="@string/home_category_healthy" />
                 </LinearLayout>
@@ -436,13 +447,21 @@
             android:layout_marginTop="8dp"
             android:orientation="vertical">
 
-            <include layout="@layout/item_recipe_popular_nasi" />
+            <include
+                android:id="@+id/cardNasiGoreng"
+                layout="@layout/item_recipe_popular_nasi" />
 
-            <include layout="@layout/item_recipe_popular_ayam" />
+            <include
+                android:id="@+id/cardAyamTeriyaki"
+                layout="@layout/item_recipe_popular_ayam" />
 
-            <include layout="@layout/item_recipe_popular_pancake" />
+            <include
+                android:id="@+id/cardPancakePisang"
+                layout="@layout/item_recipe_popular_pancake" />
 
-            <include layout="@layout/item_recipe_popular_salad" />
+            <include
+                android:id="@+id/cardSaladSegar"
+                layout="@layout/item_recipe_popular_salad" />
         </LinearLayout>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
