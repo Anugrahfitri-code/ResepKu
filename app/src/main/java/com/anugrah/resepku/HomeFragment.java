@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
@@ -168,8 +169,12 @@ public class HomeFragment extends Fragment {
         searchQuery = "";
         EditText searchRecipe = root.findViewById(R.id.etSearchRecipe);
         searchRecipe.setText("");
+        ((TextView) root.findViewById(R.id.tvPopularTitle)).setText("Semua Resep");
         applyCategoryState();
         applyRecipeFilter();
+        View recipeList = root.findViewById(R.id.llPopularRecipes);
+        NestedScrollView homeScroll = root.findViewById(R.id.homeScroll);
+        recipeList.post(() -> homeScroll.smoothScrollTo(0, recipeList.getTop()));
         Toast.makeText(requireContext(), "Menampilkan semua resep", Toast.LENGTH_SHORT).show();
     }
 
