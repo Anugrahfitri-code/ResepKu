@@ -9,10 +9,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.button.MaterialButton;
 
+import java.util.List;
+
 public class CookingModeActivity extends AppCompatActivity {
     public static final String EXTRA_RECIPE_TITLE = "com.anugrah.resepku.EXTRA_RECIPE_TITLE";
 
     private String[] cookingSteps;
+    private Recipe currentRecipe;
     private int currentStep = 0;
     private TextView tvStepCounter;
     private TextView tvStepNumber;
@@ -25,13 +28,8 @@ public class CookingModeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cooking_mode);
 
-        cookingSteps = new String[]{
-                getString(R.string.step_1),
-                getString(R.string.step_2),
-                getString(R.string.step_3),
-                getString(R.string.step_4),
-                getString(R.string.step_5)
-        };
+        currentRecipe = SelectedRecipeStore.getSelectedRecipe();
+        cookingSteps = getCookingSteps();
 
         bindViews();
         setupHeader();
@@ -59,10 +57,27 @@ public class CookingModeActivity extends AppCompatActivity {
     private void setupHeader() {
         String recipeTitle = getIntent().getStringExtra(EXTRA_RECIPE_TITLE);
         if (recipeTitle == null || recipeTitle.trim().isEmpty()) {
-            recipeTitle = getString(R.string.detail_recipe_title);
+            recipeTitle = currentRecipe == null ? getString(R.string.detail_recipe_title) : currentRecipe.title;
         }
         ((TextView) findViewById(R.id.tvCookingRecipeTitle)).setText(recipeTitle);
         findViewById(R.id.btnCookingBack).setOnClickListener(v -> finish());
+    }
+
+    private String[] getCookingSteps() {
+        if (currentRecipe != null) {
+            List<String> selectedSteps = currentRecipe.steps;
+            if (selectedSteps != null && !selectedSteps.isEmpty()) {
+                return selectedSteps.toArray(new String[0]);
+            }
+        }
+
+        return new String[]{
+                getString(R.string.step_1),
+                getString(R.string.step_2),
+                getString(R.string.step_3),
+                getString(R.string.step_4),
+                getString(R.string.step_5)
+        };
     }
 
     private void setupActions() {

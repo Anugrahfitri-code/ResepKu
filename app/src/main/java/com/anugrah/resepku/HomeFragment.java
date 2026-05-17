@@ -258,18 +258,46 @@ public class HomeFragment extends Fragment {
             return steps;
         }
 
-        String[] sentences = instructions.trim().split("\\.\\s+");
-        for (String sentence : sentences) {
-            String value = sentence.trim();
-            if (value.length() < 8) {
-                continue;
-            }
-            steps.add(value.endsWith(".") ? value : value + ".");
-            if (steps.size() >= 5) {
-                break;
-            }
+        String normalized = instructions
+                .replace("\r", "\n")
+                .replaceAll("(?i)\\bSTEP\\s*\\d+\\b[:\\-.]?", "\n")
+                .replaceAll("\\n+", "\n")
+                .trim();
+
+        String[] blocks = normalized.split("\\n");
+        for (String block : blocks) {
+            addInstructionParts(steps, block);
+        }
+
+        if (steps.isEmpty()) {
+            addInstructionParts(steps, normalized);
         }
         return steps;
+    }
+
+    private void addInstructionParts(List<String> steps, String instructionBlock) {
+        if (instructionBlock == null) {
+            return;
+        }
+
+        String cleanedBlock = instructionBlock
+                .replaceAll("^\\s*\\d+[\\).:-]\\s*", "")
+                .replaceAll("\\s+", " ")
+                .trim();
+        if (cleanedBlock.length() < 8) {
+            return;
+        }
+
+        String[] parts = cleanedBlock.split("(?<=[.!?])\\s+(?=[A-Z0-9])");
+        for (String part : parts) {
+            String value = part
+                    .replaceAll("^\\s*\\d+[\\).:-]\\s*", "")
+                    .trim();
+            if (value.length() < 8 || value.matches("(?i)^step\\s*\\d+$")) {
+                continue;
+            }
+            steps.add(value.matches(".*[.!?]$") ? value : value + ".");
+        }
     }
 
     private int localImageForIndex(int index) {
