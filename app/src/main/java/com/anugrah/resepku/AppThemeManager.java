@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
@@ -21,7 +22,6 @@ public final class AppThemeManager {
     private static final String PREF_NAME = "resepku_settings";
     private static final String KEY_THEME = "theme";
     private static final String KEY_DARK_MODE = "dark_mode";
-    private static final String THEME_LIGHT = "Light";
     private static final String THEME_ORANGE = "Orange";
     private static final String THEME_GREEN = "Green";
 
@@ -29,7 +29,8 @@ public final class AppThemeManager {
     }
 
     public static String getTheme(Context context) {
-        return prefs(context).getString(KEY_THEME, THEME_LIGHT);
+        String theme = prefs(context).getString(KEY_THEME, THEME_ORANGE);
+        return THEME_GREEN.equals(theme) ? THEME_GREEN : THEME_ORANGE;
     }
 
     public static void saveTheme(Context context, String theme) {
@@ -89,6 +90,7 @@ public final class AppThemeManager {
         }
 
         int accent = getAccentColor(root.getContext());
+        root.setBackgroundColor(getPageBackgroundColor(root.getContext()));
         applyRecursive(root, accent);
     }
 
@@ -126,6 +128,10 @@ public final class AppThemeManager {
         Context context = view.getContext();
         int viewId = view.getId();
 
+        if (view instanceof NestedScrollView) {
+            view.setBackgroundColor(getPageBackgroundColor(context));
+        }
+
         if (view instanceof SwitchMaterial) {
             SwitchMaterial switchView = (SwitchMaterial) view;
             switchView.setThumbTintList(switchThumbTint(context, accent));
@@ -150,6 +156,11 @@ public final class AppThemeManager {
 
         if (viewId == R.id.savedPill) {
             view.setBackground(rounded(context, withAlpha(accent, 28), 14, 0, Color.TRANSPARENT));
+        }
+
+        if (viewId == R.id.favoriteSavedCount) {
+            view.setBackground(rounded(context, isGreenTheme(context) ? Color.rgb(249, 253, 245) : Color.WHITE,
+                    16, 1, ContextCompat.getColor(context, R.color.search_bar_stroke)));
         }
 
         if (view instanceof ViewGroup) {
@@ -191,8 +202,19 @@ public final class AppThemeManager {
 
     private static void applyImageTheme(ImageView imageView, int accent) {
         int id = imageView.getId();
-        if (id == R.id.ivFavorite || id == R.id.ivRecommendationFavorite) {
+        if (id == R.id.ivFavorite || id == R.id.ivRecommendationFavorite
+                || id == R.id.iconClearCache || id == R.id.iconManageFavorite) {
             imageView.setColorFilter(getAccentStrongColor(imageView.getContext()));
+            return;
+        }
+
+        if (imageView.getParent() instanceof View && ((View) imageView.getParent()).getId() == R.id.favoriteSavedCount) {
+            imageView.setColorFilter(accent);
+            return;
+        }
+
+        if (isSettingsHeaderIcon(imageView)) {
+            imageView.setColorFilter(accent);
             return;
         }
 
@@ -227,6 +249,34 @@ public final class AppThemeManager {
             }
         }
         return false;
+    }
+
+    private static int getPageBackgroundColor(Context context) {
+        return isGreenTheme(context)
+                ? Color.rgb(249, 252, 244)
+                : ContextCompat.getColor(context, R.color.background_cream);
+    }
+
+    private static boolean isGreenTheme(Context context) {
+        return THEME_GREEN.equals(getTheme(context));
+    }
+
+    private static boolean isSettingsHeaderIcon(ImageView imageView) {
+        if (!(imageView.getParent() instanceof ViewGroup)) {
+            return false;
+        }
+
+        ViewGroup parent = (ViewGroup) imageView.getParent();
+        int index = parent.indexOfChild(imageView);
+        if (index != 0 || parent.getChildCount() < 2 || !(parent.getChildAt(1) instanceof TextView)) {
+            return false;
+        }
+
+        CharSequence text = ((TextView) parent.getChildAt(1)).getText();
+        return text != null && ("Tampilan".contentEquals(text)
+                || "Notifikasi".contentEquals(text)
+                || "Data & Penyimpanan".contentEquals(text)
+                || "Tentang Aplikasi".contentEquals(text));
     }
 
     private static ColorStateList switchThumbTint(Context context, int accent) {

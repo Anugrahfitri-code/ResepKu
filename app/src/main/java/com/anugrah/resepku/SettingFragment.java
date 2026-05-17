@@ -25,7 +25,7 @@ public class SettingFragment extends Fragment {
     private static final String KEY_DAILY_NOTIFICATION = "daily_notification";
     private static final String KEY_COOKING_REMINDER = "cooking_reminder";
 
-    private static final String DEFAULT_THEME = "Light";
+    private static final String DEFAULT_THEME = "Orange";
     private static final String DEFAULT_TEXT_SIZE = "Sedang";
 
     private SharedPreferences preferences;
@@ -78,7 +78,7 @@ public class SettingFragment extends Fragment {
         boolean dailyNotification = preferences.getBoolean(KEY_DAILY_NOTIFICATION, true);
         boolean cookingReminder = preferences.getBoolean(KEY_COOKING_REMINDER, false);
 
-        selectedTheme = preferences.getString(KEY_THEME, DEFAULT_THEME);
+        selectedTheme = AppThemeManager.getTheme(requireContext());
         selectedTextSize = preferences.getString(KEY_TEXT_SIZE, DEFAULT_TEXT_SIZE);
 
         switchDarkMode.setChecked(darkMode);
@@ -107,7 +107,7 @@ public class SettingFragment extends Fragment {
                 switchCookingReminder.setChecked(!switchCookingReminder.isChecked()));
 
         view.findViewById(R.id.rowTheme).setOnClickListener(v ->
-                showOptionMenu(v, new String[]{"Light", "Orange", "Green"}, value -> {
+                showOptionMenu(v, new String[]{"Orange", "Green"}, value -> {
                     selectedTheme = value;
                     tvThemeValue.setText(value);
                     AppThemeManager.saveTheme(requireContext(), value);
