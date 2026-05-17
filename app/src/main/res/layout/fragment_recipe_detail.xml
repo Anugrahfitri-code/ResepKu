@@ -171,7 +171,7 @@
                             android:layout_marginStart="8dp"
                             android:includeFontPadding="false"
                             android:text="@string/detail_rating"
-                            android:textColor="#2B1309"
+                            android:textColor="@color/text_dark"
                             android:textSize="16sp"
                             android:textStyle="bold" />
                     </LinearLayout>
@@ -184,7 +184,7 @@
                 android:layout_marginTop="18dp"
                 android:includeFontPadding="false"
                 android:text="@string/detail_recipe_title"
-                android:textColor="#2B1309"
+                android:textColor="@color/text_dark"
                 android:textSize="30sp"
                 android:textStyle="bold" />
 
@@ -210,7 +210,7 @@
                 android:layout_marginTop="16dp"
                 android:lineSpacingExtra="2dp"
                 android:text="@string/detail_recipe_desc"
-                android:textColor="#4E4743"
+                android:textColor="@color/text_grey"
                 android:textSize="16sp" />
 
             <com.google.android.material.card.MaterialCardView
@@ -322,7 +322,7 @@
                             android:layout_height="wrap_content"
                             android:includeFontPadding="false"
                             android:text="@string/setting_tips"
-                            android:textColor="#2B1309"
+                            android:textColor="@color/text_dark"
                             android:textSize="17sp"
                             android:textStyle="bold" />
 
@@ -331,7 +331,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="@string/detail_tip_body"
-                            android:textColor="#68615E"
+                            android:textColor="@color/text_grey"
                             android:textSize="13sp" />
                     </LinearLayout>
 

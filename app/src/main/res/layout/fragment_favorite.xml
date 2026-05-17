@@ -137,7 +137,7 @@
                         android:layout_height="wrap_content"
                         android:includeFontPadding="false"
                         android:text="@string/favorite_title_prefix"
-                        android:textColor="#2B1309"
+                        android:textColor="@color/text_dark"
                         android:textSize="30sp"
                         android:textStyle="bold" />
 
@@ -166,7 +166,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:text="@string/favorite_subtitle"
-                    android:textColor="#756C68"
+                    android:textColor="@color/text_grey"
                     android:textSize="16sp" />
             </LinearLayout>
 
@@ -194,7 +194,7 @@
                     android:layout_marginStart="12dp"
                     android:includeFontPadding="false"
                     android:text="@string/favorite_saved_count"
-                    android:textColor="#2B1309"
+                    android:textColor="@color/text_dark"
                     android:textSize="19sp"
                     android:textStyle="bold" />
 
@@ -204,7 +204,7 @@
                     android:layout_marginStart="7dp"
                     android:includeFontPadding="false"
                     android:text="@string/favorite_saved_label"
-                    android:textColor="#2B1309"
+                    android:textColor="@color/text_dark"
                     android:textSize="13sp" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -261,7 +261,7 @@
                     style="@style/HomeCategoryPill"
                     android:background="@drawable/bg_category_selected">
                     <ImageView style="@style/HomeCategoryIcon" android:src="@drawable/ic_grid" />
-                    <TextView style="@style/HomeCategoryText" android:text="@string/favorite_category_all" android:textColor="#2B1309" android:textStyle="bold" />
+                    <TextView style="@style/HomeCategoryText" android:text="@string/favorite_category_all" android:textColor="@color/text_dark" android:textStyle="bold" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -353,7 +353,7 @@
                         android:layout_height="wrap_content"
                         android:includeFontPadding="false"
                         android:text="@string/favorite_tip_title"
-                        android:textColor="#2B1309"
+                        android:textColor="@color/text_dark"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -362,7 +362,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:text="@string/favorite_tip_body"
-                        android:textColor="#68615E"
+                        android:textColor="@color/text_grey"
                         android:textSize="14sp" />
                 </LinearLayout>
 

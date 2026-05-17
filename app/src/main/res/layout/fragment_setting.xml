@@ -54,7 +54,7 @@
                         android:layout_gravity="center"
                         android:contentDescription="@string/setting_notification"
                         android:src="@drawable/ic_bell"
-                        app:tint="#3C2418" />
+                        app:tint="@color/text_dark" />
 
                     <View
                         android:layout_width="8dp"
@@ -84,7 +84,7 @@
                     android:layout_height="wrap_content"
                     android:includeFontPadding="false"
                     android:text="@string/setting_title"
-                    android:textColor="#2B1309"
+                    android:textColor="@color/text_dark"
                     android:textSize="32sp"
                     android:textStyle="bold" />
 
@@ -103,7 +103,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="@string/setting_subtitle"
-                android:textColor="#756C68"
+                android:textColor="@color/text_grey"
                 android:textSize="16sp" />
         </LinearLayout>
 
@@ -273,7 +273,7 @@
                         android:layout_height="wrap_content"
                         android:includeFontPadding="false"
                         android:text="@string/setting_tips"
-                        android:textColor="#2B1309"
+                        android:textColor="@color/text_dark"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -283,7 +283,7 @@
                         android:layout_marginTop="6dp"
                         android:lineSpacingExtra="2dp"
                         android:text="@string/setting_tips_body"
-                        android:textColor="#68615E"
+                        android:textColor="@color/text_grey"
                         android:textSize="14sp" />
                 </LinearLayout>
 
