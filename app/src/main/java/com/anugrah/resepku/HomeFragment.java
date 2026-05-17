@@ -19,8 +19,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,8 +32,12 @@ public class HomeFragment extends Fragment {
 
     private final List<Recipe> recipes = new ArrayList<>();
     private final List<RecommendationItem> recommendations = new ArrayList<>();
+    private final List<Call<MealResponse>> recipeApiCalls = new ArrayList<>();
+    private final List<Recipe> apiRecipes = new ArrayList<>();
+    private final Set<String> apiRecipeTitles = new HashSet<>();
     private RecipeAdapter recipeAdapter;
-    private Call<MealResponse> recipeApiCall;
+    private int pendingApiCalls = 0;
+    private boolean hasApiResult = false;
     private String selectedCategory = "";
     private String searchQuery = "";
     private int currentRecommendationIndex = 0;
@@ -61,7 +67,7 @@ public class HomeFragment extends Fragment {
         setupSearch(view);
         setupCategories(view);
 
-        view.findViewById(R.id.btnViewRecipe).setOnClickListener(v -> openRecipeDetail(v));
+        view.findViewById(R.id.btnViewRecipe).setOnClickListener(v -> openCurrentRecommendationDetail(v));
         view.findViewById(R.id.btnViewAllRecipes).setOnClickListener(v -> showAllRecipes(view));
         AppThemeManager.applyToViewTree(view);
         applyRecipeFilter();
@@ -84,9 +90,10 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        if (recipeApiCall != null) {
-            recipeApiCall.cancel();
+        for (Call<MealResponse> call : recipeApiCalls) {
+            call.cancel();
         }
+        recipeApiCalls.clear();
         super.onDestroyView();
     }
 
@@ -99,8 +106,30 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadRecipesFromApi() {
-        recipeApiCall = RecipeApiClient.getService().searchMeals("chicken");
-        recipeApiCall.enqueue(new Callback<MealResponse>() {
+        recipeApiCalls.clear();
+        apiRecipes.clear();
+        apiRecipeTitles.clear();
+        hasApiResult = false;
+
+        ApiRecipeQuery[] queries = new ApiRecipeQuery[]{
+                new ApiRecipeQuery("chicken", "Ayam", R.drawable.img_ayam_teriyaki),
+                new ApiRecipeQuery("beef", "Daging", R.drawable.img_nasi_goreng),
+                new ApiRecipeQuery("pasta", "Sarapan", R.drawable.img_nasi_goreng),
+                new ApiRecipeQuery("cake", "Dessert", R.drawable.img_pancake_pisang),
+                new ApiRecipeQuery("salad", "Sehat", R.drawable.img_salad_segar),
+                new ApiRecipeQuery("fish", "Seafood", R.drawable.img_soup_chicken_ginger)
+        };
+
+        pendingApiCalls = queries.length;
+        for (ApiRecipeQuery query : queries) {
+            enqueueApiRecipeQuery(query);
+        }
+    }
+
+    private void enqueueApiRecipeQuery(ApiRecipeQuery query) {
+        Call<MealResponse> call = RecipeApiClient.getService().searchMeals(query.keyword);
+        recipeApiCalls.add(call);
+        call.enqueue(new Callback<MealResponse>() {
             @Override
             public void onResponse(Call<MealResponse> call, Response<MealResponse> response) {
                 if (!isAdded() || call.isCanceled()) {
@@ -108,31 +137,10 @@ public class HomeFragment extends Fragment {
                 }
 
                 MealResponse body = response.body();
-                if (!response.isSuccessful() || body == null || body.meals == null || body.meals.isEmpty()) {
-                    Toast.makeText(requireContext(), "Data API belum tersedia, memakai resep lokal", Toast.LENGTH_SHORT).show();
-                    return;
+                if (response.isSuccessful() && body != null && body.meals != null) {
+                    addApiRecipes(body.meals, query);
                 }
-
-                recipes.clear();
-                int itemCount = Math.min(body.meals.size(), 8);
-                for (int i = 0; i < itemCount; i++) {
-                    Meal meal = body.meals.get(i);
-                    if (meal.name == null || meal.name.trim().isEmpty()) {
-                        continue;
-                    }
-
-                    recipes.add(new Recipe(
-                            meal.name,
-                            mapApiCategory(meal.category),
-                            estimateTime(i),
-                            "Mudah",
-                            localImageForIndex(i)
-                    ));
-                }
-
-                TextView popularTitle = requireView().findViewById(R.id.tvPopularTitle);
-                popularTitle.setText("Resep dari API");
-                applyRecipeFilter();
+                finishApiCall();
             }
 
             @Override
@@ -141,36 +149,127 @@ public class HomeFragment extends Fragment {
                     return;
                 }
 
-                Toast.makeText(requireContext(), "Gagal mengambil API, memakai resep lokal", Toast.LENGTH_SHORT).show();
-                applyRecipeFilter();
+                finishApiCall();
             }
         });
     }
 
-    private String mapApiCategory(String apiCategory) {
-        if (apiCategory == null) {
-            return "Ayam";
+    private void addApiRecipes(List<Meal> meals, ApiRecipeQuery query) {
+        int addedForQuery = 0;
+        for (Meal meal : meals) {
+            if (meal.name == null || meal.name.trim().isEmpty()) {
+                continue;
+            }
+
+            String title = meal.name.trim();
+            if (!apiRecipeTitles.add(title.toLowerCase(Locale.ROOT))) {
+                continue;
+            }
+
+            int image = query.imageRes != 0 ? query.imageRes : localImageForIndex(apiRecipes.size());
+            apiRecipes.add(new Recipe(
+                    title,
+                    query.category,
+                    estimateTime(apiRecipes.size()),
+                    "Mudah",
+                    image,
+                    meal.thumbnailUrl,
+                    descriptionFromInstructions(meal.instructions, title),
+                    ingredientsFromMeal(meal),
+                    stepsFromInstructions(meal.instructions)
+            ));
+            addedForQuery++;
+
+            if (addedForQuery >= 3 || apiRecipes.size() >= 14) {
+                break;
+            }
+        }
+    }
+
+    private void finishApiCall() {
+        pendingApiCalls--;
+        if (pendingApiCalls > 0) {
+            return;
         }
 
-        String value = apiCategory.toLowerCase(Locale.ROOT);
-        if (value.contains("breakfast")) {
-            return "Sarapan";
+        if (!apiRecipes.isEmpty()) {
+            hasApiResult = true;
+            recipes.clear();
+            recipes.addAll(apiRecipes);
+            TextView popularTitle = requireView().findViewById(R.id.tvPopularTitle);
+            popularTitle.setText("Resep dari API");
+        } else if (!hasApiResult) {
+            Toast.makeText(requireContext(), "Gagal mengambil API, memakai resep lokal", Toast.LENGTH_SHORT).show();
         }
-        if (value.contains("dessert")) {
-            return "Dessert";
-        }
-        if (value.contains("vegetarian") || value.contains("vegan")) {
-            return "Sehat";
-        }
-        if (value.contains("seafood")) {
-            return "Seafood";
-        }
-        return "Ayam";
+
+        applyRecipeFilter();
     }
 
     private String estimateTime(int index) {
         String[] times = {"20 menit", "30 menit", "15 menit", "25 menit"};
         return times[index % times.length];
+    }
+
+    private String descriptionFromInstructions(String instructions, String title) {
+        if (instructions == null || instructions.trim().isEmpty()) {
+            return title + " adalah resep pilihan dari API makanan yang bisa kamu coba di rumah.";
+        }
+
+        String firstSentence = instructions.trim().split("\\.")[0].trim();
+        if (firstSentence.length() > 130) {
+            firstSentence = firstSentence.substring(0, 127).trim() + "...";
+        }
+        return firstSentence + ".";
+    }
+
+    private List<String> ingredientsFromMeal(Meal meal) {
+        List<String> ingredients = new ArrayList<>();
+        addIngredient(ingredients, meal.measure1, meal.ingredient1);
+        addIngredient(ingredients, meal.measure2, meal.ingredient2);
+        addIngredient(ingredients, meal.measure3, meal.ingredient3);
+        addIngredient(ingredients, meal.measure4, meal.ingredient4);
+        addIngredient(ingredients, meal.measure5, meal.ingredient5);
+        addIngredient(ingredients, meal.measure6, meal.ingredient6);
+        addIngredient(ingredients, meal.measure7, meal.ingredient7);
+        addIngredient(ingredients, meal.measure8, meal.ingredient8);
+        addIngredient(ingredients, meal.measure9, meal.ingredient9);
+        addIngredient(ingredients, meal.measure10, meal.ingredient10);
+        return ingredients;
+    }
+
+    private void addIngredient(List<String> ingredients, String measure, String ingredient) {
+        if (ingredient == null || ingredient.trim().isEmpty()) {
+            return;
+        }
+
+        String value = ingredient.trim();
+        if (measure != null && !measure.trim().isEmpty()) {
+            value = measure.trim() + " " + value;
+        }
+        ingredients.add(value);
+    }
+
+    private List<String> stepsFromInstructions(String instructions) {
+        List<String> steps = new ArrayList<>();
+        if (instructions == null || instructions.trim().isEmpty()) {
+            steps.add("Siapkan bahan sesuai daftar.");
+            steps.add("Masak bahan utama hingga matang.");
+            steps.add("Bumbui, koreksi rasa, lalu sajikan selagi hangat.");
+            return steps;
+        }
+
+        String[] sentences = instructions.trim().split("\\.\\s+");
+        for (String sentence : sentences) {
+            String value = sentence.trim();
+            if (value.length() < 8) {
+                continue;
+            }
+            steps.add(value.endsWith(".") ? value : value + ".");
+            if (steps.size() >= 5) {
+                break;
+            }
+        }
+        return steps;
     }
 
     private int localImageForIndex(int index) {
@@ -189,6 +288,7 @@ public class HomeFragment extends Fragment {
         recipeAdapter = new RecipeAdapter(new RecipeAdapter.RecipeActionListener() {
             @Override
             public void onRecipeClick(View itemView, Recipe recipe) {
+                SelectedRecipeStore.setSelectedRecipe(recipe);
                 openRecipeDetail(itemView);
             }
 
@@ -251,7 +351,7 @@ public class HomeFragment extends Fragment {
                             showRecommendation(currentRecommendationIndex - 1);
                         }
                     } else {
-                        openRecipeDetail(v);
+                        openCurrentRecommendationDetail(v);
                     }
                     return true;
                 default:
@@ -361,6 +461,17 @@ public class HomeFragment extends Fragment {
         }
 
         RecommendationItem item = recommendations.get(currentRecommendationIndex);
+        SelectedRecipeStore.setSelectedRecipe(new Recipe(
+                item.favoriteTitle,
+                "Ayam",
+                "30 menit",
+                "Mudah",
+                item.imageRes,
+                "",
+                item.description,
+                new ArrayList<>(),
+                new ArrayList<>()
+        ));
         boolean newFavoriteState = !FavoriteStore.isFavorite(requireContext(), item.favoriteTitle);
         FavoriteStore.setFavorite(requireContext(), item.favoriteTitle, newFavoriteState);
 
@@ -395,6 +506,24 @@ public class HomeFragment extends Fragment {
 
     private void openRecipeDetail(View view) {
         Navigation.findNavController(view).navigate(R.id.navigation_recipe_detail);
+    }
+
+    private void openCurrentRecommendationDetail(View view) {
+        if (!recommendations.isEmpty()) {
+            RecommendationItem item = recommendations.get(currentRecommendationIndex);
+            SelectedRecipeStore.setSelectedRecipe(new Recipe(
+                    item.favoriteTitle,
+                    "Ayam",
+                    "30 menit",
+                    "Mudah",
+                    item.imageRes,
+                    "",
+                    item.description,
+                    new ArrayList<>(),
+                    new ArrayList<>()
+            ));
+        }
+        openRecipeDetail(view);
     }
 
     private void applyCategoryState() {
@@ -445,6 +574,18 @@ public class HomeFragment extends Fragment {
             this.title = title;
             this.favoriteTitle = favoriteTitle;
             this.description = description;
+            this.imageRes = imageRes;
+        }
+    }
+
+    private static class ApiRecipeQuery {
+        final String keyword;
+        final String category;
+        final int imageRes;
+
+        ApiRecipeQuery(String keyword, String category, int imageRes) {
+            this.keyword = keyword;
+            this.category = category;
             this.imageRes = imageRes;
         }
     }

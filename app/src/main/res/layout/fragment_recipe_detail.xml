@@ -146,6 +146,7 @@
                     android:layout_height="match_parent">
 
                     <ImageView
+                        android:id="@+id/ivDetailRecipeImage"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
@@ -184,6 +185,7 @@
             </com.google.android.material.card.MaterialCardView>
 
             <TextView
+                android:id="@+id/tvDetailRecipeTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
@@ -194,22 +196,26 @@
                 android:textStyle="bold" />
 
             <LinearLayout
+                android:id="@+id/detailCategoryRow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/tvDetailPrimaryCategory"
                     style="@style/FavoriteTagOrange"
                     android:text="@string/home_category_chicken" />
 
                 <TextView
+                    android:id="@+id/tvDetailSecondaryCategory"
                     style="@style/FavoriteTagGreen"
                     android:layout_marginStart="8dp"
                     android:text="@string/home_category_healthy" />
             </LinearLayout>
 
             <TextView
+                android:id="@+id/tvDetailRecipeDesc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -251,6 +257,7 @@
 
             <com.google.android.material.card.MaterialCardView style="@style/DetailCard">
                 <GridLayout
+                    android:id="@+id/detailIngredientGrid"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:columnCount="2"
@@ -279,6 +286,7 @@
 
             <com.google.android.material.card.MaterialCardView style="@style/DetailCard">
                 <LinearLayout
+                    android:id="@+id/detailStepsContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"

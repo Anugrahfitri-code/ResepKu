@@ -50,7 +50,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         Recipe recipe = recipes.get(position);
         Context context = holder.itemView.getContext();
 
-        holder.ivRecipe.setImageResource(recipe.imageRes);
+        ImageLoader.load(recipe.imageUrl, holder.ivRecipe, recipe.imageRes);
         holder.tvRecipeName.setText(recipe.title);
         holder.tvCategory.setText(recipe.category);
         holder.tvRecipeTime.setText(recipe.time);
