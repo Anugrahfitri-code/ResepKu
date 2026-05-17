@@ -59,6 +59,13 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshFavoriteIcons();
+        showRecommendation(currentRecommendationIndex);
+    }
+
     private void setupRecipes(View view) {
         recipes.clear();
         recipes.add(new RecipeItem(view.findViewById(R.id.cardNasiGoreng), "Nasi Goreng Spesial", "Sarapan"));
@@ -71,21 +78,25 @@ public class HomeFragment extends Fragment {
         recommendations.clear();
         recommendations.add(new RecommendationItem(
                 "Sup Ayam\nJahe Hangat",
+                "Sup Ayam Jahe Hangat",
                 "Hangat, gurih, dan menyehatkan badan. Cocok untuk keluarga.",
                 R.drawable.img_soup_chicken_ginger
         ));
         recommendations.add(new RecommendationItem(
                 "Nasi Goreng\nSpesial",
+                "Nasi Goreng Spesial",
                 "Gurih, praktis, dan cocok untuk sarapan keluarga.",
                 R.drawable.img_nasi_goreng
         ));
         recommendations.add(new RecommendationItem(
                 "Pancake\nPisang",
+                "Pancake Pisang",
                 "Manis lembut dengan pisang segar dan sirup hangat.",
                 R.drawable.img_pancake_pisang
         ));
         recommendations.add(new RecommendationItem(
                 "Salad\nSegar",
+                "Salad Segar",
                 "Ringan, sehat, dan penuh warna untuk menu harian.",
                 R.drawable.img_salad_segar
         ));
@@ -114,6 +125,8 @@ public class HomeFragment extends Fragment {
         });
 
         showRecommendation(0);
+        ImageView recommendationFavorite = view.findViewById(R.id.ivRecommendationFavorite);
+        recommendationFavorite.setOnClickListener(v -> toggleRecommendationFavorite());
     }
 
     private void setupSearch(View view) {
@@ -157,11 +170,17 @@ public class HomeFragment extends Fragment {
 
             ImageView favoriteIcon = recipe.card.findViewById(R.id.ivFavorite);
             favoriteIcon.setOnClickListener(v -> {
-                v.setSelected(!v.isSelected());
-                v.setAlpha(v.isSelected() ? 1f : 0.55f);
-                Toast.makeText(requireContext(), recipe.title + " disimpan ke favorit", Toast.LENGTH_SHORT).show();
+                boolean newFavoriteState = !FavoriteStore.isFavorite(requireContext(), recipe.title);
+                FavoriteStore.setFavorite(requireContext(), recipe.title, newFavoriteState);
+                updateFavoriteIcon(favoriteIcon, newFavoriteState);
+                Toast.makeText(
+                        requireContext(),
+                        recipe.title + (newFavoriteState ? " disimpan ke favorit" : " dihapus dari favorit"),
+                        Toast.LENGTH_SHORT
+                ).show();
             });
         }
+        refreshFavoriteIcons();
     }
 
     private void showAllRecipes(View root) {
@@ -196,6 +215,10 @@ public class HomeFragment extends Fragment {
         ((TextView) root.findViewById(R.id.tvRecoTitle)).setText(item.title);
         ((TextView) root.findViewById(R.id.tvRecoDesc)).setText(item.description);
         ((ImageView) root.findViewById(R.id.ivRecoImage)).setImageResource(item.imageRes);
+        updateFavoriteIcon(
+                root.findViewById(R.id.ivRecommendationFavorite),
+                FavoriteStore.isFavorite(requireContext(), item.favoriteTitle)
+        );
 
         updateDot(root.findViewById(R.id.dotRecommendation1), index == 0);
         updateDot(root.findViewById(R.id.dotRecommendation2), index == 1);
@@ -214,6 +237,45 @@ public class HomeFragment extends Fragment {
 
     private int dpToPx(int dp) {
         return Math.round(dp * getResources().getDisplayMetrics().density);
+    }
+
+    private void toggleRecommendationFavorite() {
+        if (recommendations.isEmpty()) {
+            return;
+        }
+
+        RecommendationItem item = recommendations.get(currentRecommendationIndex);
+        boolean newFavoriteState = !FavoriteStore.isFavorite(requireContext(), item.favoriteTitle);
+        FavoriteStore.setFavorite(requireContext(), item.favoriteTitle, newFavoriteState);
+
+        View root = getView();
+        if (root != null) {
+            updateFavoriteIcon(root.findViewById(R.id.ivRecommendationFavorite), newFavoriteState);
+            refreshFavoriteIcons();
+        }
+
+        Toast.makeText(
+                requireContext(),
+                item.favoriteTitle + (newFavoriteState ? " disimpan ke favorit" : " dihapus dari favorit"),
+                Toast.LENGTH_SHORT
+        ).show();
+    }
+
+    private void refreshFavoriteIcons() {
+        if (!isAdded()) {
+            return;
+        }
+
+        for (RecipeItem recipe : recipes) {
+            ImageView favoriteIcon = recipe.card.findViewById(R.id.ivFavorite);
+            updateFavoriteIcon(favoriteIcon, FavoriteStore.isFavorite(requireContext(), recipe.title));
+        }
+    }
+
+    private void updateFavoriteIcon(ImageView favoriteIcon, boolean favorite) {
+        favoriteIcon.setSelected(favorite);
+        favoriteIcon.setAlpha(favorite ? 1f : 0.55f);
+        favoriteIcon.setImageResource(favorite ? R.drawable.ic_heart_filled : R.drawable.ic_heart);
     }
 
     private void openRecipeDetail(View view) {
@@ -266,11 +328,13 @@ public class HomeFragment extends Fragment {
 
     private static class RecommendationItem {
         final String title;
+        final String favoriteTitle;
         final String description;
         final int imageRes;
 
-        RecommendationItem(String title, String description, int imageRes) {
+        RecommendationItem(String title, String favoriteTitle, String description, int imageRes) {
             this.title = title;
+            this.favoriteTitle = favoriteTitle;
             this.description = description;
             this.imageRes = imageRes;
         }

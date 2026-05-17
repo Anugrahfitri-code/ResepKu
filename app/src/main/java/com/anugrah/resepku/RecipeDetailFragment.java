@@ -4,11 +4,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 public class RecipeDetailFragment extends Fragment {
+    private static final String DETAIL_RECIPE_TITLE = "Sup Ayam Jahe Hangat";
 
     public RecipeDetailFragment() {
         // Required empty public constructor
@@ -21,6 +23,13 @@ public class RecipeDetailFragment extends Fragment {
         view.findViewById(R.id.btnBack).setOnClickListener(v ->
                 Navigation.findNavController(v).navigateUp()
         );
+        view.findViewById(R.id.btnDetailFavorite).setOnClickListener(v -> saveCurrentRecipe());
+        view.findViewById(R.id.btnSaveFavorite).setOnClickListener(v -> saveCurrentRecipe());
         return view;
+    }
+
+    private void saveCurrentRecipe() {
+        FavoriteStore.setFavorite(requireContext(), DETAIL_RECIPE_TITLE, true);
+        Toast.makeText(requireContext(), "Sup Ayam Jahe Hangat disimpan ke favorit", Toast.LENGTH_SHORT).show();
     }
 }

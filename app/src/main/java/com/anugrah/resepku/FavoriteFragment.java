@@ -46,21 +46,30 @@ public class FavoriteFragment extends Fragment {
         setupSearch(view);
         setupCategories(view);
         setupClicks(view);
-        updateFavoriteCount();
+        applyCategoryState();
+        applyFavoriteFilter();
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        syncFavoritesFromStore();
+        applyFavoriteFilter();
     }
 
     private void setupFavoriteRecipes(View view) {
         favoriteRecipes.clear();
         favoriteRecipes.add(new FavoriteRecipeItem(view.findViewById(R.id.cardFavoriteSoup),
-                "Sup Ayam Jahe Hangat", "Ayam", true));
+                "Sup Ayam Jahe Hangat", "Ayam"));
         favoriteRecipes.add(new FavoriteRecipeItem(view.findViewById(R.id.cardFavoriteNasi),
-                "Nasi Goreng Spesial", "Sarapan", true));
+                "Nasi Goreng Spesial", "Sarapan"));
         favoriteRecipes.add(new FavoriteRecipeItem(view.findViewById(R.id.cardFavoritePancake),
-                "Pancake Pisang", "Dessert", true));
+                "Pancake Pisang", "Dessert"));
         favoriteRecipes.add(new FavoriteRecipeItem(view.findViewById(R.id.cardFavoriteSalad),
-                "Salad Segar", "Sehat", true));
+                "Salad Segar", "Sehat"));
+        syncFavoritesFromStore();
     }
 
     private void setupSearch(View view) {
@@ -117,14 +126,14 @@ public class FavoriteFragment extends Fragment {
 
             ImageView favoriteIcon = item.card.findViewById(R.id.ivFavorite);
             favoriteIcon.setOnClickListener(v -> {
-                item.favorite = !item.favorite;
-                item.card.setVisibility(item.favorite ? View.VISIBLE : View.GONE);
+                FavoriteStore.setFavorite(requireContext(), item.title, false);
+                item.favorite = false;
+                updateFavoriteIcon(favoriteIcon, false);
                 Toast.makeText(
                         requireContext(),
-                        item.title + (item.favorite ? " ditambahkan lagi" : " dihapus dari favorit"),
+                        item.title + " dihapus dari favorit",
                         Toast.LENGTH_SHORT
                 ).show();
-                updateFavoriteCount();
                 applyFavoriteFilter();
             });
         }
@@ -135,6 +144,7 @@ public class FavoriteFragment extends Fragment {
     }
 
     private void applyFavoriteFilter() {
+        syncFavoritesFromStore();
         String normalizedQuery = searchQuery.toLowerCase(Locale.ROOT).trim();
 
         for (FavoriteRecipeItem item : favoriteRecipes) {
@@ -188,17 +198,34 @@ public class FavoriteFragment extends Fragment {
         countView.setText(String.valueOf(count));
     }
 
+    private void syncFavoritesFromStore() {
+        if (!isAdded()) {
+            return;
+        }
+
+        for (FavoriteRecipeItem item : favoriteRecipes) {
+            item.favorite = FavoriteStore.isFavorite(requireContext(), item.title);
+            ImageView favoriteIcon = item.card.findViewById(R.id.ivFavorite);
+            updateFavoriteIcon(favoriteIcon, item.favorite);
+        }
+    }
+
+    private void updateFavoriteIcon(ImageView favoriteIcon, boolean favorite) {
+        favoriteIcon.setSelected(favorite);
+        favoriteIcon.setAlpha(favorite ? 1f : 0.55f);
+        favoriteIcon.setImageResource(favorite ? R.drawable.ic_heart_filled : R.drawable.ic_heart);
+    }
+
     private static class FavoriteRecipeItem {
         final View card;
         final String title;
         final String category;
-        boolean favorite;
+        boolean favorite = false;
 
-        FavoriteRecipeItem(View card, String title, String category, boolean favorite) {
+        FavoriteRecipeItem(View card, String title, String category) {
             this.card = card;
             this.title = title;
             this.category = category;
-            this.favorite = favorite;
         }
     }
 }

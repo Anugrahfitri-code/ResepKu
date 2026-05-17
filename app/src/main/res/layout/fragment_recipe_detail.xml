@@ -115,6 +115,7 @@
                 </FrameLayout>
 
                 <FrameLayout
+                    android:id="@+id/btnDetailFavorite"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_centerVertical="true"
@@ -355,6 +356,7 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSaveFavorite"
             android:layout_width="0dp"
             android:layout_height="56dp"
             android:layout_weight="1"
