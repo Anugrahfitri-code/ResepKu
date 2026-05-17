@@ -4,10 +4,12 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -20,8 +22,11 @@ import java.util.Locale;
 public class HomeFragment extends Fragment {
 
     private final List<RecipeItem> recipes = new ArrayList<>();
+    private final List<RecommendationItem> recommendations = new ArrayList<>();
     private String selectedCategory = "";
     private String searchQuery = "";
+    private int currentRecommendationIndex = 0;
+    private float recommendationTouchStartX = 0f;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -42,11 +47,13 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         setupRecipes(view);
+        setupRecommendations(view);
         setupSearch(view);
         setupCategories(view);
         setupClicks(view);
 
         view.findViewById(R.id.btnViewRecipe).setOnClickListener(v -> openRecipeDetail(v));
+        view.findViewById(R.id.btnViewAllRecipes).setOnClickListener(v -> showAllRecipes(view));
 
         return view;
     }
@@ -57,6 +64,55 @@ public class HomeFragment extends Fragment {
         recipes.add(new RecipeItem(view.findViewById(R.id.cardAyamTeriyaki), "Ayam Teriyaki", "Ayam"));
         recipes.add(new RecipeItem(view.findViewById(R.id.cardPancakePisang), "Pancake Pisang", "Dessert"));
         recipes.add(new RecipeItem(view.findViewById(R.id.cardSaladSegar), "Salad Segar", "Sehat"));
+    }
+
+    private void setupRecommendations(View view) {
+        recommendations.clear();
+        recommendations.add(new RecommendationItem(
+                "Sup Ayam\nJahe Hangat",
+                "Hangat, gurih, dan menyehatkan badan. Cocok untuk keluarga.",
+                R.drawable.img_soup_chicken_ginger
+        ));
+        recommendations.add(new RecommendationItem(
+                "Nasi Goreng\nSpesial",
+                "Gurih, praktis, dan cocok untuk sarapan keluarga.",
+                R.drawable.img_nasi_goreng
+        ));
+        recommendations.add(new RecommendationItem(
+                "Pancake\nPisang",
+                "Manis lembut dengan pisang segar dan sirup hangat.",
+                R.drawable.img_pancake_pisang
+        ));
+        recommendations.add(new RecommendationItem(
+                "Salad\nSegar",
+                "Ringan, sehat, dan penuh warna untuk menu harian.",
+                R.drawable.img_salad_segar
+        ));
+
+        View recommendationCard = view.findViewById(R.id.recommendationCard);
+        recommendationCard.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    recommendationTouchStartX = event.getX();
+                    return true;
+                case MotionEvent.ACTION_UP:
+                    float deltaX = event.getX() - recommendationTouchStartX;
+                    if (Math.abs(deltaX) > 60f) {
+                        if (deltaX < 0) {
+                            showRecommendation(currentRecommendationIndex + 1);
+                        } else {
+                            showRecommendation(currentRecommendationIndex - 1);
+                        }
+                    } else {
+                        openRecipeDetail(v);
+                    }
+                    return true;
+                default:
+                    return true;
+            }
+        });
+
+        showRecommendation(0);
     }
 
     private void setupSearch(View view) {
@@ -107,6 +163,54 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    private void showAllRecipes(View root) {
+        selectedCategory = "";
+        searchQuery = "";
+        EditText searchRecipe = root.findViewById(R.id.etSearchRecipe);
+        searchRecipe.setText("");
+        applyCategoryState();
+        applyRecipeFilter();
+        Toast.makeText(requireContext(), "Menampilkan semua resep", Toast.LENGTH_SHORT).show();
+    }
+
+    private void showRecommendation(int index) {
+        View root = getView();
+        if (root == null || recommendations.isEmpty()) {
+            return;
+        }
+
+        if (index < 0) {
+            index = recommendations.size() - 1;
+        } else if (index >= recommendations.size()) {
+            index = 0;
+        }
+
+        currentRecommendationIndex = index;
+        RecommendationItem item = recommendations.get(index);
+
+        ((TextView) root.findViewById(R.id.tvRecoTitle)).setText(item.title);
+        ((TextView) root.findViewById(R.id.tvRecoDesc)).setText(item.description);
+        ((ImageView) root.findViewById(R.id.ivRecoImage)).setImageResource(item.imageRes);
+
+        updateDot(root.findViewById(R.id.dotRecommendation1), index == 0);
+        updateDot(root.findViewById(R.id.dotRecommendation2), index == 1);
+        updateDot(root.findViewById(R.id.dotRecommendation3), index == 2);
+        updateDot(root.findViewById(R.id.dotRecommendation4), index == 3);
+    }
+
+    private void updateDot(View dot, boolean active) {
+        dot.setBackgroundResource(active ? R.drawable.bg_dot_orange : R.drawable.bg_dot_white);
+        ViewGroup.LayoutParams params = dot.getLayoutParams();
+        int size = dpToPx(active ? 9 : 8);
+        params.width = size;
+        params.height = size;
+        dot.setLayoutParams(params);
+    }
+
+    private int dpToPx(int dp) {
+        return Math.round(dp * getResources().getDisplayMetrics().density);
+    }
+
     private void openRecipeDetail(View view) {
         Navigation.findNavController(view).navigate(R.id.navigation_recipe_detail);
     }
@@ -152,6 +256,18 @@ public class HomeFragment extends Fragment {
             this.card = card;
             this.title = title;
             this.category = category;
+        }
+    }
+
+    private static class RecommendationItem {
+        final String title;
+        final String description;
+        final int imageRes;
+
+        RecommendationItem(String title, String description, int imageRes) {
+            this.title = title;
+            this.description = description;
+            this.imageRes = imageRes;
         }
     }
 }

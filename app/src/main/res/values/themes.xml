@@ -408,10 +408,15 @@
 
     <style name="IngredientCheck">
         <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">38dp</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_columnWeight">1</item>
         <item name="android:buttonTint">@color/primary_orange</item>
-        <item name="android:includeFontPadding">false</item>
+        <item name="android:includeFontPadding">true</item>
+        <item name="android:lineSpacingExtra">3dp</item>
+        <item name="android:minHeight">50dp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:paddingEnd">8dp</item>
         <item name="android:textColor">#413B37</item>
         <item name="android:textSize">14sp</item>
     </style>
@@ -421,8 +426,8 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">top</item>
         <item name="android:orientation">horizontal</item>
-        <item name="android:paddingTop">5dp</item>
-        <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
     </style>
 
     <style name="StepNumber">
@@ -441,8 +446,9 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">14dp</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:lineSpacingExtra">2dp</item>
+        <item name="android:includeFontPadding">true</item>
+        <item name="android:lineSpacingExtra">5dp</item>
         <item name="android:textColor">#4E4743</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">14sp</item>
     </style>
 </resources>

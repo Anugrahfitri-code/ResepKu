@@ -234,6 +234,7 @@
         </HorizontalScrollView>
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/recommendationCard"
             android:layout_width="match_parent"
             android:layout_height="250dp"
             android:layout_marginTop="24dp"
@@ -381,10 +382,10 @@
                     app:layout_constraintEnd_toEndOf="@+id/ivRecoImage"
                     app:layout_constraintStart_toStartOf="@+id/ivRecoImage">
 
-                    <View style="@style/HomeCarouselDotActive" />
-                    <View style="@style/HomeCarouselDotInactive" />
-                    <View style="@style/HomeCarouselDotInactive" />
-                    <View style="@style/HomeCarouselDotInactive" />
+                    <View android:id="@+id/dotRecommendation1" style="@style/HomeCarouselDotActive" />
+                    <View android:id="@+id/dotRecommendation2" style="@style/HomeCarouselDotInactive" />
+                    <View android:id="@+id/dotRecommendation3" style="@style/HomeCarouselDotInactive" />
+                    <View android:id="@+id/dotRecommendation4" style="@style/HomeCarouselDotInactive" />
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -395,6 +396,7 @@
             android:layout_marginTop="24dp">
 
             <LinearLayout
+                android:id="@+id/btnViewAllRecipes"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
