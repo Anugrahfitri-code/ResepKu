@@ -39,6 +39,7 @@
     <string name="home_recommendation_desc">Hangat, gurih, dan menyehatkan badan. Cocok untuk keluarga.</string>
     <string name="home_view_recipe">Lihat Resep</string>
     <string name="home_popular_title">Resep Populer</string>
+    <string name="home_api_recipes_title">Resep dari API</string>
     <string name="home_view_all">Lihat semua</string>
     <string name="recipe_nasi_goreng">Nasi Goreng Spesial</string>
     <string name="recipe_ayam_teriyaki">Ayam Teriyaki</string>

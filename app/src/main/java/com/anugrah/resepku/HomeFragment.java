@@ -36,6 +36,7 @@ public class HomeFragment extends Fragment {
     private final List<Recipe> apiRecipes = new ArrayList<>();
     private final Set<String> apiRecipeTitles = new HashSet<>();
     private RecipeAdapter recipeAdapter;
+    private RecipeAdapter apiRecipeAdapter;
     private int pendingApiCalls = 0;
     private boolean hasApiResult = false;
     private String selectedCategory = "";
@@ -194,15 +195,11 @@ public class HomeFragment extends Fragment {
 
         if (!apiRecipes.isEmpty()) {
             hasApiResult = true;
-            recipes.clear();
-            recipes.addAll(apiRecipes);
-            TextView popularTitle = requireView().findViewById(R.id.tvPopularTitle);
-            popularTitle.setText("Resep dari API");
         } else if (!hasApiResult) {
             Toast.makeText(requireContext(), "Gagal mengambil API, memakai resep lokal", Toast.LENGTH_SHORT).show();
         }
 
-        applyRecipeFilter();
+        applyApiRecipeFilter();
     }
 
     private String estimateTime(int index) {
@@ -312,8 +309,23 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupRecyclerView(View view) {
-        RecyclerView recyclerView = view.findViewById(R.id.rvPopularRecipes);
-        recipeAdapter = new RecipeAdapter(new RecipeAdapter.RecipeActionListener() {
+        RecyclerView popularRecyclerView = view.findViewById(R.id.rvPopularRecipes);
+        RecyclerView apiRecyclerView = view.findViewById(R.id.rvApiRecipes);
+
+        recipeAdapter = createRecipeAdapter();
+        apiRecipeAdapter = createRecipeAdapter();
+
+        popularRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        popularRecyclerView.setAdapter(recipeAdapter);
+        popularRecyclerView.setNestedScrollingEnabled(false);
+
+        apiRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        apiRecyclerView.setAdapter(apiRecipeAdapter);
+        apiRecyclerView.setNestedScrollingEnabled(false);
+    }
+
+    private RecipeAdapter createRecipeAdapter() {
+        return new RecipeAdapter(new RecipeAdapter.RecipeActionListener() {
             @Override
             public void onRecipeClick(View itemView, Recipe recipe) {
                 SelectedRecipeStore.setSelectedRecipe(recipe);
@@ -337,9 +349,6 @@ public class HomeFragment extends Fragment {
                 ).show();
             }
         });
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        recyclerView.setAdapter(recipeAdapter);
-        recyclerView.setNestedScrollingEnabled(false);
     }
 
     private void setupRecommendations(View view) {
@@ -408,6 +417,7 @@ public class HomeFragment extends Fragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 searchQuery = s.toString();
                 applyRecipeFilter();
+                applyApiRecipeFilter();
             }
 
             @Override
@@ -429,6 +439,7 @@ public class HomeFragment extends Fragment {
             selectedCategory = selectedCategory.equals(category) ? "" : category;
             applyCategoryState();
             applyRecipeFilter();
+            applyApiRecipeFilter();
         });
     }
 
@@ -437,9 +448,10 @@ public class HomeFragment extends Fragment {
         searchQuery = "";
         EditText searchRecipe = root.findViewById(R.id.etSearchRecipe);
         searchRecipe.setText("");
-        ((TextView) root.findViewById(R.id.tvPopularTitle)).setText("Semua Resep");
+        ((TextView) root.findViewById(R.id.tvPopularTitle)).setText(R.string.home_popular_title);
         applyCategoryState();
         applyRecipeFilter();
+        applyApiRecipeFilter();
         View recipeList = root.findViewById(R.id.rvPopularRecipes);
         NestedScrollView homeScroll = root.findViewById(R.id.homeScroll);
         recipeList.post(() -> homeScroll.smoothScrollTo(0, recipeList.getTop()));
@@ -534,6 +546,9 @@ public class HomeFragment extends Fragment {
         if (recipeAdapter != null) {
             recipeAdapter.refreshFavorites();
         }
+        if (apiRecipeAdapter != null) {
+            apiRecipeAdapter.refreshFavorites();
+        }
     }
 
     private void updateFavoriteIcon(ImageView favoriteIcon, boolean favorite) {
@@ -599,6 +614,27 @@ public class HomeFragment extends Fragment {
 
         if (recipeAdapter != null) {
             recipeAdapter.submitList(filteredRecipes);
+        }
+    }
+
+    private void applyApiRecipeFilter() {
+        String normalizedQuery = searchQuery.toLowerCase(Locale.ROOT).trim();
+
+        List<Recipe> filteredRecipes = new ArrayList<>();
+        for (Recipe recipe : apiRecipes) {
+            boolean matchesCategory = selectedCategory.isEmpty()
+                    || recipe.category.equalsIgnoreCase(selectedCategory);
+            boolean matchesQuery = normalizedQuery.isEmpty()
+                    || recipe.title.toLowerCase(Locale.ROOT).contains(normalizedQuery)
+                    || recipe.category.toLowerCase(Locale.ROOT).contains(normalizedQuery);
+
+            if (matchesCategory && matchesQuery) {
+                filteredRecipes.add(recipe);
+            }
+        }
+
+        if (apiRecipeAdapter != null) {
+            apiRecipeAdapter.submitList(filteredRecipes);
         }
     }
 
