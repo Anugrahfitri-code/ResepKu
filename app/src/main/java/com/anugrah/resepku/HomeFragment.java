@@ -22,11 +22,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class HomeFragment extends Fragment {
 
     private final List<Recipe> recipes = new ArrayList<>();
     private final List<RecommendationItem> recommendations = new ArrayList<>();
     private RecipeAdapter recipeAdapter;
+    private Call<MealResponse> recipeApiCall;
     private String selectedCategory = "";
     private String searchQuery = "";
     private int currentRecommendationIndex = 0;
@@ -60,6 +65,7 @@ public class HomeFragment extends Fragment {
         view.findViewById(R.id.btnViewAllRecipes).setOnClickListener(v -> showAllRecipes(view));
         AppThemeManager.applyToViewTree(view);
         applyRecipeFilter();
+        loadRecipesFromApi();
 
         return view;
     }
@@ -76,12 +82,106 @@ public class HomeFragment extends Fragment {
         showRecommendation(currentRecommendationIndex);
     }
 
+    @Override
+    public void onDestroyView() {
+        if (recipeApiCall != null) {
+            recipeApiCall.cancel();
+        }
+        super.onDestroyView();
+    }
+
     private void setupRecipes() {
         recipes.clear();
         recipes.add(new Recipe("Nasi Goreng Spesial", "Sarapan", "20 menit", "Mudah", R.drawable.img_nasi_goreng));
         recipes.add(new Recipe("Ayam Teriyaki", "Ayam", "30 menit", "Mudah", R.drawable.img_ayam_teriyaki));
         recipes.add(new Recipe("Pancake Pisang", "Dessert", "15 menit", "Mudah", R.drawable.img_pancake_pisang));
         recipes.add(new Recipe("Salad Segar", "Sehat", "10 menit", "Mudah", R.drawable.img_salad_segar));
+    }
+
+    private void loadRecipesFromApi() {
+        recipeApiCall = RecipeApiClient.getService().searchMeals("chicken");
+        recipeApiCall.enqueue(new Callback<MealResponse>() {
+            @Override
+            public void onResponse(Call<MealResponse> call, Response<MealResponse> response) {
+                if (!isAdded() || call.isCanceled()) {
+                    return;
+                }
+
+                MealResponse body = response.body();
+                if (!response.isSuccessful() || body == null || body.meals == null || body.meals.isEmpty()) {
+                    Toast.makeText(requireContext(), "Data API belum tersedia, memakai resep lokal", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                recipes.clear();
+                int itemCount = Math.min(body.meals.size(), 8);
+                for (int i = 0; i < itemCount; i++) {
+                    Meal meal = body.meals.get(i);
+                    if (meal.name == null || meal.name.trim().isEmpty()) {
+                        continue;
+                    }
+
+                    recipes.add(new Recipe(
+                            meal.name,
+                            mapApiCategory(meal.category),
+                            estimateTime(i),
+                            "Mudah",
+                            localImageForIndex(i)
+                    ));
+                }
+
+                TextView popularTitle = requireView().findViewById(R.id.tvPopularTitle);
+                popularTitle.setText("Resep dari API");
+                applyRecipeFilter();
+            }
+
+            @Override
+            public void onFailure(Call<MealResponse> call, Throwable throwable) {
+                if (!isAdded() || call.isCanceled()) {
+                    return;
+                }
+
+                Toast.makeText(requireContext(), "Gagal mengambil API, memakai resep lokal", Toast.LENGTH_SHORT).show();
+                applyRecipeFilter();
+            }
+        });
+    }
+
+    private String mapApiCategory(String apiCategory) {
+        if (apiCategory == null) {
+            return "Ayam";
+        }
+
+        String value = apiCategory.toLowerCase(Locale.ROOT);
+        if (value.contains("breakfast")) {
+            return "Sarapan";
+        }
+        if (value.contains("dessert")) {
+            return "Dessert";
+        }
+        if (value.contains("vegetarian") || value.contains("vegan")) {
+            return "Sehat";
+        }
+        if (value.contains("seafood")) {
+            return "Seafood";
+        }
+        return "Ayam";
+    }
+
+    private String estimateTime(int index) {
+        String[] times = {"20 menit", "30 menit", "15 menit", "25 menit"};
+        return times[index % times.length];
+    }
+
+    private int localImageForIndex(int index) {
+        int[] images = {
+                R.drawable.img_soup_chicken_ginger,
+                R.drawable.img_ayam_teriyaki,
+                R.drawable.img_nasi_goreng,
+                R.drawable.img_pancake_pisang,
+                R.drawable.img_salad_segar
+        };
+        return images[index % images.length];
     }
 
     private void setupRecyclerView(View view) {
