@@ -79,7 +79,7 @@ public class SettingFragment extends Fragment {
         boolean cookingReminder = preferences.getBoolean(KEY_COOKING_REMINDER, false);
 
         selectedTheme = AppThemeManager.getTheme(requireContext());
-        selectedTextSize = preferences.getString(KEY_TEXT_SIZE, DEFAULT_TEXT_SIZE);
+        selectedTextSize = AppThemeManager.getTextSize(requireContext());
 
         switchDarkMode.setChecked(darkMode);
         switchDailyNotification.setChecked(dailyNotification);
@@ -120,6 +120,9 @@ public class SettingFragment extends Fragment {
                 showOptionMenu(v, new String[]{"Kecil", "Sedang", "Besar"}, value -> {
                     selectedTextSize = value;
                     tvTextSizeValue.setText(value);
+                    AppThemeManager.saveTextSize(requireContext(), value);
+                    AppThemeManager.applyToViewTree(requireView());
+                    showToast("Ukuran teks " + value + " diterapkan");
                 }));
 
         view.findViewById(R.id.rowClearCache).setOnClickListener(v ->
@@ -174,6 +177,7 @@ public class SettingFragment extends Fragment {
         showToast("Pengaturan berhasil direset");
         applyDarkModeIfChanged(false);
         AppThemeManager.applyToActivity(requireActivity());
+        AppThemeManager.saveTextSize(requireContext(), DEFAULT_TEXT_SIZE);
         AppThemeManager.applyToViewTree(requireView());
     }
 

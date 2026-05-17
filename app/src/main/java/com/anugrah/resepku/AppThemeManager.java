@@ -7,6 +7,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -23,8 +24,12 @@ public final class AppThemeManager {
     private static final String PREF_NAME = "resepku_settings";
     private static final String KEY_THEME = "theme";
     private static final String KEY_DARK_MODE = "dark_mode";
+    private static final String KEY_TEXT_SIZE = "text_size";
     private static final String THEME_ORANGE = "Orange";
     private static final String THEME_GREEN = "Green";
+    private static final String TEXT_SMALL = "Kecil";
+    private static final String TEXT_MEDIUM = "Sedang";
+    private static final String TEXT_LARGE = "Besar";
 
     private AppThemeManager() {
     }
@@ -36,6 +41,18 @@ public final class AppThemeManager {
 
     public static void saveTheme(Context context, String theme) {
         prefs(context).edit().putString(KEY_THEME, theme).apply();
+    }
+
+    public static String getTextSize(Context context) {
+        String textSize = prefs(context).getString(KEY_TEXT_SIZE, TEXT_MEDIUM);
+        if (TEXT_SMALL.equals(textSize) || TEXT_LARGE.equals(textSize)) {
+            return textSize;
+        }
+        return TEXT_MEDIUM;
+    }
+
+    public static void saveTextSize(Context context, String textSize) {
+        prefs(context).edit().putString(KEY_TEXT_SIZE, textSize).apply();
     }
 
     public static int getAccentColor(Context context) {
@@ -148,7 +165,9 @@ public final class AppThemeManager {
         }
 
         if (view instanceof TextView) {
-            applyTextTheme((TextView) view, accent);
+            TextView textView = (TextView) view;
+            applyTextTheme(textView, accent);
+            applyTextSize(textView);
         }
 
         if (view instanceof ImageView) {
@@ -217,6 +236,28 @@ public final class AppThemeManager {
         } else if ("resep tersimpan".equals(value)) {
             textView.setTextColor(ContextCompat.getColor(textView.getContext(), R.color.text_dark));
         }
+    }
+
+    private static void applyTextSize(TextView textView) {
+        Object originalSize = textView.getTag(R.id.tag_original_text_size_px);
+        if (!(originalSize instanceof Float)) {
+            originalSize = textView.getTextSize();
+            textView.setTag(R.id.tag_original_text_size_px, originalSize);
+        }
+
+        float scale = getTextScale(textView.getContext());
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, ((Float) originalSize) * scale);
+    }
+
+    private static float getTextScale(Context context) {
+        String textSize = getTextSize(context);
+        if (TEXT_SMALL.equals(textSize)) {
+            return 0.9f;
+        }
+        if (TEXT_LARGE.equals(textSize)) {
+            return 1.12f;
+        }
+        return 1f;
     }
 
     private static void applyImageTheme(ImageView imageView, int accent) {
