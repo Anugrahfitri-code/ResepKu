@@ -171,7 +171,7 @@
                             android:layout_marginStart="8dp"
                             android:includeFontPadding="false"
                             android:text="@string/detail_rating"
-                            android:textColor="@color/text_dark"
+                            android:textColor="@color/text_on_light_surface"
                             android:textSize="16sp"
                             android:textStyle="bold" />
                     </LinearLayout>
@@ -322,7 +322,7 @@
                             android:layout_height="wrap_content"
                             android:includeFontPadding="false"
                             android:text="@string/setting_tips"
-                            android:textColor="@color/text_dark"
+                            android:textColor="@color/text_on_light_surface"
                             android:textSize="17sp"
                             android:textStyle="bold" />
 
@@ -331,7 +331,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="@string/detail_tip_body"
-                            android:textColor="@color/text_grey"
+                            android:textColor="@color/text_muted_on_light_surface"
                             android:textSize="13sp" />
                     </LinearLayout>
 

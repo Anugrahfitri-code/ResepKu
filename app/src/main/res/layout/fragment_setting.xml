@@ -273,7 +273,7 @@
                         android:layout_height="wrap_content"
                         android:includeFontPadding="false"
                         android:text="@string/setting_tips"
-                        android:textColor="@color/text_dark"
+                        android:textColor="@color/text_on_light_surface"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -283,7 +283,7 @@
                         android:layout_marginTop="6dp"
                         android:lineSpacingExtra="2dp"
                         android:text="@string/setting_tips_body"
-                        android:textColor="@color/text_grey"
+                        android:textColor="@color/text_muted_on_light_surface"
                         android:textSize="14sp" />
                 </LinearLayout>
 

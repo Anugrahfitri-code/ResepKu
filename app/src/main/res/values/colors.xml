@@ -7,6 +7,8 @@
     <color name="background_cream">#FEFBF3</color>
     <color name="text_dark">#2D2D2D</color>
     <color name="text_grey">#828282</color>
+    <color name="text_on_light_surface">#2B1309</color>
+    <color name="text_muted_on_light_surface">#655B56</color>
     <color name="light_orange">#FFF3E0</color>
     <color name="light_red">#FFEBEE</color>
     <color name="light_pink">#FCE4EC</color>

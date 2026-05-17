@@ -137,7 +137,7 @@
                         android:layout_height="wrap_content"
                         android:includeFontPadding="false"
                         android:text="@string/favorite_title_prefix"
-                        android:textColor="@color/text_dark"
+                        android:textColor="@color/text_on_light_surface"
                         android:textSize="30sp"
                         android:textStyle="bold" />
 
@@ -353,7 +353,7 @@
                         android:layout_height="wrap_content"
                         android:includeFontPadding="false"
                         android:text="@string/favorite_tip_title"
-                        android:textColor="@color/text_dark"
+                        android:textColor="@color/text_on_light_surface"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -362,7 +362,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:text="@string/favorite_tip_body"
-                        android:textColor="@color/text_grey"
+                        android:textColor="@color/text_muted_on_light_surface"
                         android:textSize="14sp" />
                 </LinearLayout>
 
