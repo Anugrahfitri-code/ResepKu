@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -100,10 +101,14 @@ public final class AppThemeManager {
         }
 
         Context context = categoryView.getContext();
-        int fill = ContextCompat.getColor(context, R.color.white);
+        boolean darkMode = isDarkMode(context);
+        int fill = selected || !darkMode
+                ? ContextCompat.getColor(context, R.color.white)
+                : Color.TRANSPARENT;
         int stroke = selected ? getAccentStrongColor(context) : ContextCompat.getColor(context, R.color.search_bar_stroke);
         categoryView.setBackground(rounded(context, fill, 18, selected ? 2 : 1, stroke));
         categoryView.setAlpha(selected ? 1f : 0.92f);
+        applyCategoryTextColors(categoryView, selected, darkMode);
     }
 
     public static void applyDot(View dot, boolean active) {
@@ -158,8 +163,18 @@ public final class AppThemeManager {
             view.setBackground(rounded(context, withAlpha(accent, 28), 14, 0, Color.TRANSPARENT));
         }
 
+        if (viewId == R.id.ratingPill) {
+            view.setBackground(rounded(context, isDarkMode(context)
+                    ? Color.rgb(33, 26, 22)
+                    : ContextCompat.getColor(context, R.color.white), 20, 1,
+                    ContextCompat.getColor(context, R.color.search_bar_stroke)));
+        }
+
         if (viewId == R.id.favoriteSavedCount) {
-            view.setBackground(rounded(context, isGreenTheme(context) ? Color.rgb(249, 253, 245) : Color.WHITE,
+            int fill = isDarkMode(context)
+                    ? ContextCompat.getColor(context, R.color.white)
+                    : (isGreenTheme(context) ? Color.rgb(249, 253, 245) : Color.WHITE);
+            view.setBackground(rounded(context, fill,
                     16, 1, ContextCompat.getColor(context, R.color.search_bar_stroke)));
         }
 
@@ -197,6 +212,10 @@ public final class AppThemeManager {
                 || "Disimpan".equals(value)
                 || "Reset".equals(value)) {
             textView.setTextColor(accent);
+        } else if ("4,8 (128)".equals(value)) {
+            textView.setTextColor(ContextCompat.getColor(textView.getContext(), R.color.text_dark));
+        } else if ("resep tersimpan".equals(value)) {
+            textView.setTextColor(ContextCompat.getColor(textView.getContext(), R.color.text_dark));
         }
     }
 
@@ -205,6 +224,16 @@ public final class AppThemeManager {
         if (id == R.id.ivFavorite || id == R.id.ivRecommendationFavorite
                 || id == R.id.iconClearCache || id == R.id.iconManageFavorite) {
             imageView.setColorFilter(getAccentStrongColor(imageView.getContext()));
+            return;
+        }
+
+        if (id == R.id.iconBack || id == R.id.iconShare) {
+            imageView.setColorFilter(ContextCompat.getColor(imageView.getContext(), R.color.text_dark));
+            return;
+        }
+
+        if (id == R.id.iconDetailFavorite) {
+            imageView.setColorFilter(accent);
             return;
         }
 
@@ -252,6 +281,10 @@ public final class AppThemeManager {
     }
 
     private static int getPageBackgroundColor(Context context) {
+        if (isDarkMode(context)) {
+            return ContextCompat.getColor(context, R.color.background_cream);
+        }
+
         return isGreenTheme(context)
                 ? Color.rgb(249, 252, 244)
                 : ContextCompat.getColor(context, R.color.background_cream);
@@ -259,6 +292,32 @@ public final class AppThemeManager {
 
     private static boolean isGreenTheme(Context context) {
         return THEME_GREEN.equals(getTheme(context));
+    }
+
+    private static boolean isDarkMode(Context context) {
+        return prefs(context).getBoolean(KEY_DARK_MODE, false);
+    }
+
+    private static void applyCategoryTextColors(View categoryView, boolean selected, boolean darkMode) {
+        if (!(categoryView instanceof ViewGroup)) {
+            return;
+        }
+
+        int textColor = selected || !darkMode
+                ? ContextCompat.getColor(categoryView.getContext(), R.color.text_on_light_surface)
+                : ContextCompat.getColor(categoryView.getContext(), R.color.text_dark);
+        applyTextColorRecursive((ViewGroup) categoryView, textColor);
+    }
+
+    private static void applyTextColorRecursive(ViewGroup group, int color) {
+        for (int i = 0; i < group.getChildCount(); i++) {
+            View child = group.getChildAt(i);
+            if (child instanceof TextView && !TextUtils.isEmpty(((TextView) child).getText())) {
+                ((TextView) child).setTextColor(color);
+            } else if (child instanceof ViewGroup) {
+                applyTextColorRecursive((ViewGroup) child, color);
+            }
+        }
     }
 
     private static boolean isSettingsHeaderIcon(ImageView imageView) {
