@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         BottomNavigationView navView = findViewById(R.id.bottom_navigation);
+        AppThemeManager.applyToActivity(this);
 
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment);
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
             NavigationUI.setupWithNavController(navView, navController);
             navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+                AppThemeManager.applyToActivity(this);
                 if (destination.getId() == R.id.navigation_recipe_detail) {
                     navView.setVisibility(View.GONE);
                 } else {

@@ -51,8 +51,18 @@ public class SettingFragment extends Fragment {
         bindViews(view);
         loadSettings();
         setupListeners(view);
+        AppThemeManager.applyToViewTree(view);
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getActivity() != null) {
+            AppThemeManager.applyToActivity(requireActivity());
+        }
+        AppThemeManager.applyToViewTree(getView());
     }
 
     private void bindViews(View view) {
@@ -100,6 +110,10 @@ public class SettingFragment extends Fragment {
                 showOptionMenu(v, new String[]{"Light", "Orange", "Green"}, value -> {
                     selectedTheme = value;
                     tvThemeValue.setText(value);
+                    AppThemeManager.saveTheme(requireContext(), value);
+                    AppThemeManager.applyToActivity(requireActivity());
+                    AppThemeManager.applyToViewTree(requireView());
+                    showToast("Tema " + value + " diterapkan");
                 }));
 
         view.findViewById(R.id.rowTextSize).setOnClickListener(v ->
@@ -135,6 +149,8 @@ public class SettingFragment extends Fragment {
 
         showToast("Pengaturan berhasil disimpan");
         applyDarkModeIfChanged(switchDarkMode.isChecked());
+        AppThemeManager.applyToActivity(requireActivity());
+        AppThemeManager.applyToViewTree(requireView());
     }
 
     private void resetSettings() {
@@ -157,6 +173,8 @@ public class SettingFragment extends Fragment {
 
         showToast("Pengaturan berhasil direset");
         applyDarkModeIfChanged(false);
+        AppThemeManager.applyToActivity(requireActivity());
+        AppThemeManager.applyToViewTree(requireView());
     }
 
     private void applyDarkModeIfChanged(boolean enabled) {

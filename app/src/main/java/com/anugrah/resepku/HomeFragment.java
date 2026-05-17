@@ -55,6 +55,7 @@ public class HomeFragment extends Fragment {
 
         view.findViewById(R.id.btnViewRecipe).setOnClickListener(v -> openRecipeDetail(v));
         view.findViewById(R.id.btnViewAllRecipes).setOnClickListener(v -> showAllRecipes(view));
+        AppThemeManager.applyToViewTree(view);
 
         return view;
     }
@@ -62,6 +63,11 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if (getActivity() != null) {
+            AppThemeManager.applyToActivity(requireActivity());
+        }
+        AppThemeManager.applyToViewTree(getView());
+        applyCategoryState();
         refreshFavoriteIcons();
         showRecommendation(currentRecommendationIndex);
     }
@@ -227,7 +233,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void updateDot(View dot, boolean active) {
-        dot.setBackgroundResource(active ? R.drawable.bg_dot_orange : R.drawable.bg_dot_white);
+        AppThemeManager.applyDot(dot, active);
         ViewGroup.LayoutParams params = dot.getLayoutParams();
         int size = dpToPx(active ? 9 : 8);
         params.width = size;
@@ -274,8 +280,8 @@ public class HomeFragment extends Fragment {
 
     private void updateFavoriteIcon(ImageView favoriteIcon, boolean favorite) {
         favoriteIcon.setSelected(favorite);
-        favoriteIcon.setAlpha(favorite ? 1f : 0.55f);
         favoriteIcon.setImageResource(favorite ? R.drawable.ic_heart_filled : R.drawable.ic_heart);
+        AppThemeManager.tintFavoriteIcon(favoriteIcon, favorite);
     }
 
     private void openRecipeDetail(View view) {
@@ -296,8 +302,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void setCategorySelected(View view, boolean selected) {
-        view.setBackgroundResource(selected ? R.drawable.bg_category_selected : R.drawable.bg_category_pill);
-        view.setAlpha(selected ? 1f : 0.92f);
+        AppThemeManager.applyCategoryBackground(view, selected);
     }
 
     private void applyRecipeFilter() {

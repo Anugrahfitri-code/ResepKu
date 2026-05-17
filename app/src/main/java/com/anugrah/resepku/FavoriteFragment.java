@@ -48,6 +48,7 @@ public class FavoriteFragment extends Fragment {
         setupClicks(view);
         applyCategoryState();
         applyFavoriteFilter();
+        AppThemeManager.applyToViewTree(view);
 
         return view;
     }
@@ -55,6 +56,11 @@ public class FavoriteFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if (getActivity() != null) {
+            AppThemeManager.applyToActivity(requireActivity());
+        }
+        AppThemeManager.applyToViewTree(getView());
+        applyCategoryState();
         syncFavoritesFromStore();
         applyFavoriteFilter();
     }
@@ -177,8 +183,7 @@ public class FavoriteFragment extends Fragment {
     }
 
     private void setCategorySelected(View view, boolean selected) {
-        view.setBackgroundResource(selected ? R.drawable.bg_category_selected : R.drawable.bg_category_pill);
-        view.setAlpha(selected ? 1f : 0.92f);
+        AppThemeManager.applyCategoryBackground(view, selected);
     }
 
     private void updateFavoriteCount() {
@@ -212,8 +217,8 @@ public class FavoriteFragment extends Fragment {
 
     private void updateFavoriteIcon(ImageView favoriteIcon, boolean favorite) {
         favoriteIcon.setSelected(favorite);
-        favoriteIcon.setAlpha(favorite ? 1f : 0.55f);
         favoriteIcon.setImageResource(favorite ? R.drawable.ic_heart_filled : R.drawable.ic_heart);
+        AppThemeManager.tintFavoriteIcon(favoriteIcon, favorite);
     }
 
     private static class FavoriteRecipeItem {

@@ -25,7 +25,17 @@ public class RecipeDetailFragment extends Fragment {
         );
         view.findViewById(R.id.btnDetailFavorite).setOnClickListener(v -> saveCurrentRecipe());
         view.findViewById(R.id.btnSaveFavorite).setOnClickListener(v -> saveCurrentRecipe());
+        AppThemeManager.applyToViewTree(view);
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getActivity() != null) {
+            AppThemeManager.applyToActivity(requireActivity());
+        }
+        AppThemeManager.applyToViewTree(getView());
     }
 
     private void saveCurrentRecipe() {
