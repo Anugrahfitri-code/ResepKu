@@ -377,6 +377,7 @@
             app:iconTint="@color/white" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnStartCooking"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="0dp"
             android:layout_height="56dp"

@@ -1,5 +1,6 @@
 package com.anugrah.resepku;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,7 @@ public class RecipeDetailFragment extends Fragment {
         );
         view.findViewById(R.id.btnDetailFavorite).setOnClickListener(v -> saveCurrentRecipe());
         view.findViewById(R.id.btnSaveFavorite).setOnClickListener(v -> saveCurrentRecipe());
+        view.findViewById(R.id.btnStartCooking).setOnClickListener(v -> openCookingMode());
         AppThemeManager.applyToViewTree(view);
         return view;
     }
@@ -41,5 +43,11 @@ public class RecipeDetailFragment extends Fragment {
     private void saveCurrentRecipe() {
         FavoriteStore.setFavorite(requireContext(), DETAIL_RECIPE_TITLE, true);
         Toast.makeText(requireContext(), "Sup Ayam Jahe Hangat disimpan ke favorit", Toast.LENGTH_SHORT).show();
+    }
+
+    private void openCookingMode() {
+        Intent intent = new Intent(requireContext(), CookingModeActivity.class);
+        intent.putExtra(CookingModeActivity.EXTRA_RECIPE_TITLE, DETAIL_RECIPE_TITLE);
+        startActivity(intent);
     }
 }

@@ -71,6 +71,13 @@
     <string name="detail_tip_body">Tambahkan perasan jeruk nipis agar rasa lebih segar.</string>
     <string name="detail_save_favorite">Simpan ke Favorit</string>
     <string name="detail_start_cooking">Mulai Memasak</string>
+    <string name="cooking_mode_title">Mode Memasak</string>
+    <string name="cooking_mode_subtitle">Ikuti langkah memasak satu per satu</string>
+    <string name="cooking_step_counter">Langkah %1$d dari %2$d</string>
+    <string name="cooking_previous">Sebelumnya</string>
+    <string name="cooking_next">Selanjutnya</string>
+    <string name="cooking_finish">Selesai</string>
+    <string name="cooking_tip">Siapkan semua bahan sebelum mulai agar proses memasak lebih lancar.</string>
     <string name="ingredient_chicken">300 g ayam (suwir)</string>
     <string name="ingredient_ginger">2 cm jahe (memarkan)</string>
     <string name="ingredient_carrot">1 buah wortel (iris tipis)</string>

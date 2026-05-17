@@ -12,6 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ResepKu">
         <activity
+            android:name=".CookingModeActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
