@@ -324,6 +324,11 @@ public class HomeFragment extends Fragment {
             public void onFavoriteClick(Recipe recipe, ImageView favoriteIcon) {
                 boolean newFavoriteState = !FavoriteStore.isFavorite(requireContext(), recipe.title);
                 FavoriteStore.setFavorite(requireContext(), recipe.title, newFavoriteState);
+                if (newFavoriteState) {
+                    RecipeCacheStore.saveRecipe(requireContext(), recipe);
+                } else {
+                    RecipeCacheStore.removeRecipe(requireContext(), recipe.title);
+                }
                 updateFavoriteIcon(favoriteIcon, newFavoriteState);
                 Toast.makeText(
                         requireContext(),
@@ -502,6 +507,11 @@ public class HomeFragment extends Fragment {
         ));
         boolean newFavoriteState = !FavoriteStore.isFavorite(requireContext(), item.favoriteTitle);
         FavoriteStore.setFavorite(requireContext(), item.favoriteTitle, newFavoriteState);
+        if (newFavoriteState) {
+            RecipeCacheStore.saveRecipe(requireContext(), SelectedRecipeStore.getSelectedRecipe());
+        } else {
+            RecipeCacheStore.removeRecipe(requireContext(), item.favoriteTitle);
+        }
 
         View root = getView();
         if (root != null) {

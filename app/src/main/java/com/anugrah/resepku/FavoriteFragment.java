@@ -13,19 +13,22 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 public class FavoriteFragment extends Fragment {
 
-    private final List<FavoriteRecipeItem> favoriteRecipes = new ArrayList<>();
+    private final List<Recipe> favoriteRecipes = new ArrayList<>();
+    private RecipeAdapter favoriteAdapter;
     private String selectedCategory = "";
     private String searchQuery = "";
 
     public FavoriteFragment() {
-        // Required empty public constructor
     }
 
     public static FavoriteFragment newInstance(String param1, String param2) {
@@ -42,10 +45,10 @@ public class FavoriteFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_favorite, container, false);
 
-        setupFavoriteRecipes(view);
+        setupRecyclerView(view);
         setupSearch(view);
         setupCategories(view);
-        setupClicks(view);
+        loadFavoriteRecipes();
         applyCategoryState();
         applyFavoriteFilter();
         AppThemeManager.applyToViewTree(view);
@@ -59,23 +62,33 @@ public class FavoriteFragment extends Fragment {
         if (getActivity() != null) {
             AppThemeManager.applyToActivity(requireActivity());
         }
+        loadFavoriteRecipes();
         AppThemeManager.applyToViewTree(getView());
         applyCategoryState();
-        syncFavoritesFromStore();
         applyFavoriteFilter();
     }
 
-    private void setupFavoriteRecipes(View view) {
-        favoriteRecipes.clear();
-        favoriteRecipes.add(new FavoriteRecipeItem(view.findViewById(R.id.cardFavoriteSoup),
-                "Sup Ayam Jahe Hangat", "Ayam"));
-        favoriteRecipes.add(new FavoriteRecipeItem(view.findViewById(R.id.cardFavoriteNasi),
-                "Nasi Goreng Spesial", "Sarapan"));
-        favoriteRecipes.add(new FavoriteRecipeItem(view.findViewById(R.id.cardFavoritePancake),
-                "Pancake Pisang", "Dessert"));
-        favoriteRecipes.add(new FavoriteRecipeItem(view.findViewById(R.id.cardFavoriteSalad),
-                "Salad Segar", "Sehat"));
-        syncFavoritesFromStore();
+    private void setupRecyclerView(View view) {
+        RecyclerView recyclerView = view.findViewById(R.id.rvFavoriteRecipes);
+        favoriteAdapter = new RecipeAdapter(new RecipeAdapter.RecipeActionListener() {
+            @Override
+            public void onRecipeClick(View itemView, Recipe recipe) {
+                SelectedRecipeStore.setSelectedRecipe(recipe);
+                Navigation.findNavController(itemView).navigate(R.id.navigation_recipe_detail);
+            }
+
+            @Override
+            public void onFavoriteClick(Recipe recipe, ImageView favoriteIcon) {
+                FavoriteStore.setFavorite(requireContext(), recipe.title, false);
+                RecipeCacheStore.removeRecipe(requireContext(), recipe.title);
+                Toast.makeText(requireContext(), recipe.title + " dihapus dari favorit", Toast.LENGTH_SHORT).show();
+                loadFavoriteRecipes();
+                applyFavoriteFilter();
+            }
+        });
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        recyclerView.setAdapter(favoriteAdapter);
+        recyclerView.setNestedScrollingEnabled(false);
     }
 
     private void setupSearch(View view) {
@@ -126,46 +139,53 @@ public class FavoriteFragment extends Fragment {
         });
     }
 
-    private void setupClicks(View view) {
-        for (FavoriteRecipeItem item : favoriteRecipes) {
-            item.card.setOnClickListener(this::openRecipeDetail);
+    private void loadFavoriteRecipes() {
+        if (!isAdded()) {
+            return;
+        }
 
-            ImageView favoriteIcon = item.card.findViewById(R.id.ivFavorite);
-            favoriteIcon.setOnClickListener(v -> {
-                FavoriteStore.setFavorite(requireContext(), item.title, false);
-                item.favorite = false;
-                updateFavoriteIcon(favoriteIcon, false);
-                Toast.makeText(
-                        requireContext(),
-                        item.title + " dihapus dari favorit",
-                        Toast.LENGTH_SHORT
-                ).show();
-                applyFavoriteFilter();
-            });
+        favoriteRecipes.clear();
+        Set<String> favoriteTitles = FavoriteStore.getFavorites(requireContext());
+        for (String title : favoriteTitles) {
+            Recipe cachedRecipe = RecipeCacheStore.getRecipe(requireContext(), title);
+            favoriteRecipes.add(cachedRecipe == null ? fallbackRecipe(title) : cachedRecipe);
         }
     }
 
-    private void openRecipeDetail(View view) {
-        Navigation.findNavController(view).navigate(R.id.navigation_recipe_detail);
+    private Recipe fallbackRecipe(String title) {
+        if ("Sup Ayam Jahe Hangat".equals(title)) {
+            return new Recipe(title, "Ayam", "30 menit", "Mudah", R.drawable.img_soup_chicken_ginger);
+        }
+        if ("Nasi Goreng Spesial".equals(title)) {
+            return new Recipe(title, "Sarapan", "20 menit", "Mudah", R.drawable.img_nasi_goreng);
+        }
+        if ("Pancake Pisang".equals(title)) {
+            return new Recipe(title, "Dessert", "15 menit", "Mudah", R.drawable.img_pancake_pisang);
+        }
+        if ("Salad Segar".equals(title)) {
+            return new Recipe(title, "Sehat", "10 menit", "Mudah", R.drawable.img_salad_segar);
+        }
+        return new Recipe(title, "Ayam", "30 menit", "Mudah", R.drawable.img_soup_chicken_ginger);
     }
 
     private void applyFavoriteFilter() {
-        syncFavoritesFromStore();
         String normalizedQuery = searchQuery.toLowerCase(Locale.ROOT).trim();
+        List<Recipe> filteredRecipes = new ArrayList<>();
 
-        for (FavoriteRecipeItem item : favoriteRecipes) {
-            boolean matchesFavorite = item.favorite;
+        for (Recipe recipe : favoriteRecipes) {
             boolean matchesCategory = selectedCategory.isEmpty()
-                    || item.category.equalsIgnoreCase(selectedCategory);
+                    || recipe.category.equalsIgnoreCase(selectedCategory);
             boolean matchesSearch = normalizedQuery.isEmpty()
-                    || item.title.toLowerCase(Locale.ROOT).contains(normalizedQuery)
-                    || item.category.toLowerCase(Locale.ROOT).contains(normalizedQuery);
-
-            item.card.setVisibility(matchesFavorite && matchesCategory && matchesSearch
-                    ? View.VISIBLE
-                    : View.GONE);
+                    || recipe.title.toLowerCase(Locale.ROOT).contains(normalizedQuery)
+                    || recipe.category.toLowerCase(Locale.ROOT).contains(normalizedQuery);
+            if (matchesCategory && matchesSearch) {
+                filteredRecipes.add(recipe);
+            }
         }
 
+        if (favoriteAdapter != null) {
+            favoriteAdapter.submitList(filteredRecipes);
+        }
         updateFavoriteCount();
     }
 
@@ -192,45 +212,7 @@ public class FavoriteFragment extends Fragment {
             return;
         }
 
-        int count = 0;
-        for (FavoriteRecipeItem item : favoriteRecipes) {
-            if (item.favorite) {
-                count++;
-            }
-        }
-
         TextView countView = root.findViewById(R.id.tvFavoriteSavedCount);
-        countView.setText(String.valueOf(count));
-    }
-
-    private void syncFavoritesFromStore() {
-        if (!isAdded()) {
-            return;
-        }
-
-        for (FavoriteRecipeItem item : favoriteRecipes) {
-            item.favorite = FavoriteStore.isFavorite(requireContext(), item.title);
-            ImageView favoriteIcon = item.card.findViewById(R.id.ivFavorite);
-            updateFavoriteIcon(favoriteIcon, item.favorite);
-        }
-    }
-
-    private void updateFavoriteIcon(ImageView favoriteIcon, boolean favorite) {
-        favoriteIcon.setSelected(favorite);
-        favoriteIcon.setImageResource(favorite ? R.drawable.ic_heart_filled : R.drawable.ic_heart);
-        AppThemeManager.tintFavoriteIcon(favoriteIcon, favorite);
-    }
-
-    private static class FavoriteRecipeItem {
-        final View card;
-        final String title;
-        final String category;
-        boolean favorite = false;
-
-        FavoriteRecipeItem(View card, String title, String category) {
-            this.card = card;
-            this.title = title;
-            this.category = category;
-        }
+        countView.setText(String.valueOf(favoriteRecipes.size()));
     }
 }

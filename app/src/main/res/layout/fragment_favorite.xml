@@ -161,7 +161,7 @@
                 </LinearLayout>
 
                 <TextView
-                    android:id="@+id/tvFavoriteSavedCount"
+                    android:id="@+id/tvFavoriteSubtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -189,6 +189,7 @@
                     android:src="@drawable/ic_bookmark" />
 
                 <TextView
+                    android:id="@+id/tvFavoriteSavedCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
@@ -294,28 +295,15 @@
             </LinearLayout>
         </HorizontalScrollView>
 
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvFavoriteRecipes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="22dp"
-            android:orientation="vertical">
-
-            <include
-                android:id="@+id/cardFavoriteSoup"
-                layout="@layout/item_favorite_soup" />
-
-            <include
-                android:id="@+id/cardFavoriteNasi"
-                layout="@layout/item_favorite_nasi" />
-
-            <include
-                android:id="@+id/cardFavoritePancake"
-                layout="@layout/item_favorite_pancake" />
-
-            <include
-                android:id="@+id/cardFavoriteSalad"
-                layout="@layout/item_favorite_salad" />
-        </LinearLayout>
+            android:nestedScrollingEnabled="false"
+            android:overScrollMode="never"
+            tools:itemCount="3"
+            tools:listitem="@layout/item_recipe_popular" />
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"

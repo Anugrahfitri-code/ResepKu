@@ -31,7 +31,7 @@ public final class FavoriteStore {
         return getFavorites(context).size();
     }
 
-    private static Set<String> getFavorites(Context context) {
+    public static Set<String> getFavorites(Context context) {
         return new HashSet<>(prefs(context).getStringSet(KEY_RECIPES, new HashSet<>()));
     }
 

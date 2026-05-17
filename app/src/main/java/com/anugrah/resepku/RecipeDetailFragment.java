@@ -54,6 +54,7 @@ public class RecipeDetailFragment extends Fragment {
     private void saveCurrentRecipe() {
         String title = currentRecipe == null ? DETAIL_RECIPE_TITLE : currentRecipe.title;
         FavoriteStore.setFavorite(requireContext(), title, true);
+        RecipeCacheStore.saveRecipe(requireContext(), currentRecipe);
         Toast.makeText(requireContext(), title + " disimpan ke favorit", Toast.LENGTH_SHORT).show();
     }
 
