@@ -37,6 +37,7 @@ public class SettingFragment extends Fragment {
     private String selectedTheme = DEFAULT_THEME;
     private String selectedTextSize = DEFAULT_TEXT_SIZE;
     private boolean initialDarkMode;
+    private boolean changingDarkMode;
 
     public SettingFragment() {
     }
@@ -82,6 +83,13 @@ public class SettingFragment extends Fragment {
         view.findViewById(R.id.rowDarkMode).setOnClickListener(v ->
                 switchDarkMode.setChecked(!switchDarkMode.isChecked()));
 
+        switchDarkMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            preferences.edit()
+                    .putBoolean(KEY_DARK_MODE, isChecked)
+                    .apply();
+            applyDarkModeIfChanged(isChecked);
+        });
+
         view.findViewById(R.id.rowDailyNotification).setOnClickListener(v ->
                 switchDailyNotification.setChecked(!switchDailyNotification.isChecked()));
 
@@ -126,7 +134,7 @@ public class SettingFragment extends Fragment {
                 .apply();
 
         showToast("Pengaturan berhasil disimpan");
-        applyDarkModeAfterSave();
+        applyDarkModeIfChanged(switchDarkMode.isChecked());
     }
 
     private void resetSettings() {
@@ -148,20 +156,23 @@ public class SettingFragment extends Fragment {
                 .apply();
 
         showToast("Pengaturan berhasil direset");
-        applyDarkModeAfterSave();
+        applyDarkModeIfChanged(false);
     }
 
-    private void applyDarkModeAfterSave() {
-        boolean enabled = switchDarkMode.isChecked();
-        if (enabled == initialDarkMode) {
+    private void applyDarkModeIfChanged(boolean enabled) {
+        if (enabled == initialDarkMode || changingDarkMode) {
             return;
         }
 
+        changingDarkMode = true;
         initialDarkMode = enabled;
-        requireActivity().getWindow().getDecorView().post(() ->
+        View decorView = requireActivity().getWindow().getDecorView();
+        decorView.post(() -> {
                 AppCompatDelegate.setDefaultNightMode(enabled
                         ? AppCompatDelegate.MODE_NIGHT_YES
-                        : AppCompatDelegate.MODE_NIGHT_NO));
+                        : AppCompatDelegate.MODE_NIGHT_NO);
+                decorView.postDelayed(() -> changingDarkMode = false, 500);
+        });
     }
 
     private void showOptionMenu(View anchor, String[] options, OptionSelectedListener listener) {
