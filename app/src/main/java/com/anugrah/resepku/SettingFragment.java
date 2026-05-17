@@ -37,6 +37,9 @@ public class SettingFragment extends Fragment {
     private String selectedTheme = DEFAULT_THEME;
     private String selectedTextSize = DEFAULT_TEXT_SIZE;
     private boolean initialDarkMode;
+    private boolean selectedDarkMode;
+    private boolean selectedDailyNotification;
+    private boolean selectedCookingReminder;
     private boolean changingDarkMode;
 
     public SettingFragment() {
@@ -80,10 +83,11 @@ public class SettingFragment extends Fragment {
 
         selectedTheme = AppThemeManager.getTheme(requireContext());
         selectedTextSize = AppThemeManager.getTextSize(requireContext());
+        selectedDarkMode = darkMode;
+        selectedDailyNotification = dailyNotification;
+        selectedCookingReminder = cookingReminder;
 
-        switchDarkMode.setChecked(darkMode);
-        switchDailyNotification.setChecked(dailyNotification);
-        switchCookingReminder.setChecked(cookingReminder);
+        setSwitchesWithoutSaving(darkMode, dailyNotification, cookingReminder);
         tvThemeValue.setText(selectedTheme);
         tvTextSizeValue.setText(selectedTextSize);
         initialDarkMode = darkMode;
@@ -93,36 +97,33 @@ public class SettingFragment extends Fragment {
         view.findViewById(R.id.rowDarkMode).setOnClickListener(v ->
                 switchDarkMode.setChecked(!switchDarkMode.isChecked()));
 
-        switchDarkMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            preferences.edit()
-                    .putBoolean(KEY_DARK_MODE, isChecked)
-                    .apply();
-            applyDarkModeIfChanged(isChecked);
-        });
+        switchDarkMode.setOnCheckedChangeListener((buttonView, isChecked) ->
+                selectedDarkMode = isChecked);
 
         view.findViewById(R.id.rowDailyNotification).setOnClickListener(v ->
                 switchDailyNotification.setChecked(!switchDailyNotification.isChecked()));
 
+        switchDailyNotification.setOnCheckedChangeListener((buttonView, isChecked) ->
+                selectedDailyNotification = isChecked);
+
         view.findViewById(R.id.rowCookingReminder).setOnClickListener(v ->
                 switchCookingReminder.setChecked(!switchCookingReminder.isChecked()));
+
+        switchCookingReminder.setOnCheckedChangeListener((buttonView, isChecked) ->
+                selectedCookingReminder = isChecked);
 
         view.findViewById(R.id.rowTheme).setOnClickListener(v ->
                 showOptionMenu(v, new String[]{"Orange", "Green"}, value -> {
                     selectedTheme = value;
                     tvThemeValue.setText(value);
-                    AppThemeManager.saveTheme(requireContext(), value);
-                    AppThemeManager.applyToActivity(requireActivity());
-                    AppThemeManager.applyToViewTree(requireView());
-                    showToast("Tema " + value + " diterapkan");
+                    showToast("Tekan Simpan Pengaturan untuk menerapkan tema");
                 }));
 
         view.findViewById(R.id.rowTextSize).setOnClickListener(v ->
                 showOptionMenu(v, new String[]{"Kecil", "Sedang", "Besar"}, value -> {
                     selectedTextSize = value;
                     tvTextSizeValue.setText(value);
-                    AppThemeManager.saveTextSize(requireContext(), value);
-                    AppThemeManager.applyToViewTree(requireView());
-                    showToast("Ukuran teks " + value + " diterapkan");
+                    showToast("Tekan Simpan Pengaturan untuk menerapkan ukuran teks");
                 }));
 
         view.findViewById(R.id.rowClearCache).setOnClickListener(v ->
@@ -146,12 +147,12 @@ public class SettingFragment extends Fragment {
                 .putBoolean(KEY_DARK_MODE, switchDarkMode.isChecked())
                 .putString(KEY_THEME, selectedTheme)
                 .putString(KEY_TEXT_SIZE, selectedTextSize)
-                .putBoolean(KEY_DAILY_NOTIFICATION, switchDailyNotification.isChecked())
-                .putBoolean(KEY_COOKING_REMINDER, switchCookingReminder.isChecked())
+                .putBoolean(KEY_DAILY_NOTIFICATION, selectedDailyNotification)
+                .putBoolean(KEY_COOKING_REMINDER, selectedCookingReminder)
                 .apply();
 
         showToast("Pengaturan berhasil disimpan");
-        applyDarkModeIfChanged(switchDarkMode.isChecked());
+        applyDarkModeIfChanged(selectedDarkMode);
         AppThemeManager.applyToActivity(requireActivity());
         AppThemeManager.applyToViewTree(requireView());
     }
@@ -159,10 +160,11 @@ public class SettingFragment extends Fragment {
     private void resetSettings() {
         selectedTheme = DEFAULT_THEME;
         selectedTextSize = DEFAULT_TEXT_SIZE;
+        selectedDarkMode = false;
+        selectedDailyNotification = true;
+        selectedCookingReminder = false;
 
-        switchDarkMode.setChecked(false);
-        switchDailyNotification.setChecked(true);
-        switchCookingReminder.setChecked(false);
+        setSwitchesWithoutSaving(false, true, false);
         tvThemeValue.setText(selectedTheme);
         tvTextSizeValue.setText(selectedTextSize);
 
@@ -177,8 +179,24 @@ public class SettingFragment extends Fragment {
         showToast("Pengaturan berhasil direset");
         applyDarkModeIfChanged(false);
         AppThemeManager.applyToActivity(requireActivity());
-        AppThemeManager.saveTextSize(requireContext(), DEFAULT_TEXT_SIZE);
         AppThemeManager.applyToViewTree(requireView());
+    }
+
+    private void setSwitchesWithoutSaving(boolean darkMode, boolean dailyNotification, boolean cookingReminder) {
+        switchDarkMode.setOnCheckedChangeListener(null);
+        switchDailyNotification.setOnCheckedChangeListener(null);
+        switchCookingReminder.setOnCheckedChangeListener(null);
+
+        switchDarkMode.setChecked(darkMode);
+        switchDailyNotification.setChecked(dailyNotification);
+        switchCookingReminder.setChecked(cookingReminder);
+
+        switchDarkMode.setOnCheckedChangeListener((buttonView, isChecked) ->
+                selectedDarkMode = isChecked);
+        switchDailyNotification.setOnCheckedChangeListener((buttonView, isChecked) ->
+                selectedDailyNotification = isChecked);
+        switchCookingReminder.setOnCheckedChangeListener((buttonView, isChecked) ->
+                selectedCookingReminder = isChecked);
     }
 
     private void applyDarkModeIfChanged(boolean enabled) {

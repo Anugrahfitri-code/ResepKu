@@ -207,7 +207,11 @@ public final class AppThemeManager {
 
     private static void applyButtonTheme(MaterialButton button, int accent) {
         int id = button.getId();
-        if (id == R.id.btnSaveSettings || id == R.id.btnSaveFavorite) {
+        if (id == R.id.btnSaveSettings) {
+            button.setBackgroundTintList(ColorStateList.valueOf(accent));
+            button.setTextColor(Color.WHITE);
+            button.setIconTint(null);
+        } else if (id == R.id.btnSaveFavorite) {
             button.setBackgroundTintList(ColorStateList.valueOf(accent));
             button.setTextColor(Color.WHITE);
             button.setIconTint(ColorStateList.valueOf(Color.WHITE));

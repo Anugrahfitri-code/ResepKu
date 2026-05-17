@@ -5,6 +5,7 @@
     <color name="primary_orange">#F08333</color>
     <color name="primary_green">#60993E</color>
     <color name="background_cream">#FEFBF3</color>
+    <color name="splash_background">#FEFBF3</color>
     <color name="text_dark">#2D2D2D</color>
     <color name="text_grey">#828282</color>
     <color name="text_on_light_surface">#2B1309</color>
