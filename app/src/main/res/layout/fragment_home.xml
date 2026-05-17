@@ -445,28 +445,14 @@
             </LinearLayout>
         </RelativeLayout>
 
-        <LinearLayout
-            android:id="@+id/llPopularRecipes"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvPopularRecipes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:orientation="vertical">
-
-            <include
-                android:id="@+id/cardNasiGoreng"
-                layout="@layout/item_recipe_popular_nasi" />
-
-            <include
-                android:id="@+id/cardAyamTeriyaki"
-                layout="@layout/item_recipe_popular_ayam" />
-
-            <include
-                android:id="@+id/cardPancakePisang"
-                layout="@layout/item_recipe_popular_pancake" />
-
-            <include
-                android:id="@+id/cardSaladSegar"
-                layout="@layout/item_recipe_popular_salad" />
-        </LinearLayout>
+            android:nestedScrollingEnabled="false"
+            android:overScrollMode="never"
+            tools:itemCount="4"
+            tools:listitem="@layout/item_recipe_popular" />
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="106dp"
+    android:layout_marginTop="6dp"
+    android:layout_marginBottom="8dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/search_bar_stroke"
+    app:strokeWidth="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivRecipe"
+            android:layout_width="136dp"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.App.MediumComponent" />
+
+        <TextView
+            android:id="@+id/tvRecipeName"
+            style="@style/RecipeCardTitle" />
+
+        <TextView
+            android:id="@+id/tvCategory"
+            style="@style/RecipeCardTagOrange" />
+
+        <LinearLayout
+            android:id="@+id/metaRow"
+            style="@style/RecipeMetaRow">
+
+            <ImageView style="@style/RecipeMetaIconClock" />
+
+            <TextView
+                android:id="@+id/tvRecipeTime"
+                style="@style/RecipeMetaText" />
+
+            <ImageView style="@style/RecipeMetaIconLevel" />
+
+            <TextView
+                android:id="@+id/tvRecipeLevel"
+                style="@style/RecipeMetaText" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/ivFavorite"
+            style="@style/RecipeCardHeart" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

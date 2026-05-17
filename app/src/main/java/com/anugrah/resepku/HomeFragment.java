@@ -15,6 +15,8 @@ import android.widget.Toast;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +24,9 @@ import java.util.Locale;
 
 public class HomeFragment extends Fragment {
 
-    private final List<RecipeItem> recipes = new ArrayList<>();
+    private final List<Recipe> recipes = new ArrayList<>();
     private final List<RecommendationItem> recommendations = new ArrayList<>();
+    private RecipeAdapter recipeAdapter;
     private String selectedCategory = "";
     private String searchQuery = "";
     private int currentRecommendationIndex = 0;
@@ -47,15 +50,16 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        setupRecipes(view);
+        setupRecipes();
+        setupRecyclerView(view);
         setupRecommendations(view);
         setupSearch(view);
         setupCategories(view);
-        setupClicks(view);
 
         view.findViewById(R.id.btnViewRecipe).setOnClickListener(v -> openRecipeDetail(v));
         view.findViewById(R.id.btnViewAllRecipes).setOnClickListener(v -> showAllRecipes(view));
         AppThemeManager.applyToViewTree(view);
+        applyRecipeFilter();
 
         return view;
     }
@@ -72,12 +76,37 @@ public class HomeFragment extends Fragment {
         showRecommendation(currentRecommendationIndex);
     }
 
-    private void setupRecipes(View view) {
+    private void setupRecipes() {
         recipes.clear();
-        recipes.add(new RecipeItem(view.findViewById(R.id.cardNasiGoreng), "Nasi Goreng Spesial", "Sarapan"));
-        recipes.add(new RecipeItem(view.findViewById(R.id.cardAyamTeriyaki), "Ayam Teriyaki", "Ayam"));
-        recipes.add(new RecipeItem(view.findViewById(R.id.cardPancakePisang), "Pancake Pisang", "Dessert"));
-        recipes.add(new RecipeItem(view.findViewById(R.id.cardSaladSegar), "Salad Segar", "Sehat"));
+        recipes.add(new Recipe("Nasi Goreng Spesial", "Sarapan", "20 menit", "Mudah", R.drawable.img_nasi_goreng));
+        recipes.add(new Recipe("Ayam Teriyaki", "Ayam", "30 menit", "Mudah", R.drawable.img_ayam_teriyaki));
+        recipes.add(new Recipe("Pancake Pisang", "Dessert", "15 menit", "Mudah", R.drawable.img_pancake_pisang));
+        recipes.add(new Recipe("Salad Segar", "Sehat", "10 menit", "Mudah", R.drawable.img_salad_segar));
+    }
+
+    private void setupRecyclerView(View view) {
+        RecyclerView recyclerView = view.findViewById(R.id.rvPopularRecipes);
+        recipeAdapter = new RecipeAdapter(new RecipeAdapter.RecipeActionListener() {
+            @Override
+            public void onRecipeClick(View itemView, Recipe recipe) {
+                openRecipeDetail(itemView);
+            }
+
+            @Override
+            public void onFavoriteClick(Recipe recipe, ImageView favoriteIcon) {
+                boolean newFavoriteState = !FavoriteStore.isFavorite(requireContext(), recipe.title);
+                FavoriteStore.setFavorite(requireContext(), recipe.title, newFavoriteState);
+                updateFavoriteIcon(favoriteIcon, newFavoriteState);
+                Toast.makeText(
+                        requireContext(),
+                        recipe.title + (newFavoriteState ? " disimpan ke favorit" : " dihapus dari favorit"),
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
+        });
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        recyclerView.setAdapter(recipeAdapter);
+        recyclerView.setNestedScrollingEnabled(false);
     }
 
     private void setupRecommendations(View view) {
@@ -170,25 +199,6 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void setupClicks(View view) {
-        for (RecipeItem recipe : recipes) {
-            recipe.card.setOnClickListener(this::openRecipeDetail);
-
-            ImageView favoriteIcon = recipe.card.findViewById(R.id.ivFavorite);
-            favoriteIcon.setOnClickListener(v -> {
-                boolean newFavoriteState = !FavoriteStore.isFavorite(requireContext(), recipe.title);
-                FavoriteStore.setFavorite(requireContext(), recipe.title, newFavoriteState);
-                updateFavoriteIcon(favoriteIcon, newFavoriteState);
-                Toast.makeText(
-                        requireContext(),
-                        recipe.title + (newFavoriteState ? " disimpan ke favorit" : " dihapus dari favorit"),
-                        Toast.LENGTH_SHORT
-                ).show();
-            });
-        }
-        refreshFavoriteIcons();
-    }
-
     private void showAllRecipes(View root) {
         selectedCategory = "";
         searchQuery = "";
@@ -197,7 +207,7 @@ public class HomeFragment extends Fragment {
         ((TextView) root.findViewById(R.id.tvPopularTitle)).setText("Semua Resep");
         applyCategoryState();
         applyRecipeFilter();
-        View recipeList = root.findViewById(R.id.llPopularRecipes);
+        View recipeList = root.findViewById(R.id.rvPopularRecipes);
         NestedScrollView homeScroll = root.findViewById(R.id.homeScroll);
         recipeList.post(() -> homeScroll.smoothScrollTo(0, recipeList.getTop()));
         Toast.makeText(requireContext(), "Menampilkan semua resep", Toast.LENGTH_SHORT).show();
@@ -272,9 +282,8 @@ public class HomeFragment extends Fragment {
             return;
         }
 
-        for (RecipeItem recipe : recipes) {
-            ImageView favoriteIcon = recipe.card.findViewById(R.id.ivFavorite);
-            updateFavoriteIcon(favoriteIcon, FavoriteStore.isFavorite(requireContext(), recipe.title));
+        if (recipeAdapter != null) {
+            recipeAdapter.refreshFavorites();
         }
     }
 
@@ -308,26 +317,21 @@ public class HomeFragment extends Fragment {
     private void applyRecipeFilter() {
         String normalizedQuery = searchQuery.toLowerCase(Locale.ROOT).trim();
 
-        for (RecipeItem recipe : recipes) {
+        List<Recipe> filteredRecipes = new ArrayList<>();
+        for (Recipe recipe : recipes) {
             boolean matchesCategory = selectedCategory.isEmpty()
                     || recipe.category.equalsIgnoreCase(selectedCategory);
             boolean matchesQuery = normalizedQuery.isEmpty()
                     || recipe.title.toLowerCase(Locale.ROOT).contains(normalizedQuery)
                     || recipe.category.toLowerCase(Locale.ROOT).contains(normalizedQuery);
 
-            recipe.card.setVisibility(matchesCategory && matchesQuery ? View.VISIBLE : View.GONE);
+            if (matchesCategory && matchesQuery) {
+                filteredRecipes.add(recipe);
+            }
         }
-    }
 
-    private static class RecipeItem {
-        final View card;
-        final String title;
-        final String category;
-
-        RecipeItem(View card, String title, String category) {
-            this.card = card;
-            this.title = title;
-            this.category = category;
+        if (recipeAdapter != null) {
+            recipeAdapter.submitList(filteredRecipes);
         }
     }
 
