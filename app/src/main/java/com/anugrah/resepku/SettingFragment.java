@@ -1,64 +1,180 @@
 package com.anugrah.resepku;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SettingFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
+
+import com.google.android.material.switchmaterial.SwitchMaterial;
+
 public class SettingFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String PREF_NAME = "resepku_settings";
+    private static final String KEY_DARK_MODE = "dark_mode";
+    private static final String KEY_THEME = "theme";
+    private static final String KEY_TEXT_SIZE = "text_size";
+    private static final String KEY_DAILY_NOTIFICATION = "daily_notification";
+    private static final String KEY_COOKING_REMINDER = "cooking_reminder";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private static final String DEFAULT_THEME = "Light";
+    private static final String DEFAULT_TEXT_SIZE = "Sedang";
+
+    private SharedPreferences preferences;
+    private SwitchMaterial switchDarkMode;
+    private SwitchMaterial switchDailyNotification;
+    private SwitchMaterial switchCookingReminder;
+    private TextView tvThemeValue;
+    private TextView tvTextSizeValue;
+    private String selectedTheme = DEFAULT_THEME;
+    private String selectedTextSize = DEFAULT_TEXT_SIZE;
 
     public SettingFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SettingFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SettingFragment newInstance(String param1, String param2) {
-        SettingFragment fragment = new SettingFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_setting, container, false);
+        View view = inflater.inflate(R.layout.fragment_setting, container, false);
+        preferences = requireContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+
+        bindViews(view);
+        loadSettings();
+        setupListeners(view);
+
+        return view;
+    }
+
+    private void bindViews(View view) {
+        switchDarkMode = view.findViewById(R.id.switchDarkMode);
+        switchDailyNotification = view.findViewById(R.id.switchDailyNotification);
+        switchCookingReminder = view.findViewById(R.id.switchCookingReminder);
+        tvThemeValue = view.findViewById(R.id.tvThemeValue);
+        tvTextSizeValue = view.findViewById(R.id.tvTextSizeValue);
+    }
+
+    private void loadSettings() {
+        boolean darkMode = preferences.getBoolean(KEY_DARK_MODE, false);
+        boolean dailyNotification = preferences.getBoolean(KEY_DAILY_NOTIFICATION, true);
+        boolean cookingReminder = preferences.getBoolean(KEY_COOKING_REMINDER, false);
+
+        selectedTheme = preferences.getString(KEY_THEME, DEFAULT_THEME);
+        selectedTextSize = preferences.getString(KEY_TEXT_SIZE, DEFAULT_TEXT_SIZE);
+
+        switchDarkMode.setChecked(darkMode);
+        switchDailyNotification.setChecked(dailyNotification);
+        switchCookingReminder.setChecked(cookingReminder);
+        tvThemeValue.setText(selectedTheme);
+        tvTextSizeValue.setText(selectedTextSize);
+
+        applyDarkMode(darkMode);
+    }
+
+    private void setupListeners(View view) {
+        view.findViewById(R.id.rowDarkMode).setOnClickListener(v ->
+                switchDarkMode.setChecked(!switchDarkMode.isChecked()));
+
+        switchDarkMode.setOnCheckedChangeListener((buttonView, isChecked) ->
+                applyDarkMode(isChecked));
+
+        view.findViewById(R.id.rowDailyNotification).setOnClickListener(v ->
+                switchDailyNotification.setChecked(!switchDailyNotification.isChecked()));
+
+        view.findViewById(R.id.rowCookingReminder).setOnClickListener(v ->
+                switchCookingReminder.setChecked(!switchCookingReminder.isChecked()));
+
+        view.findViewById(R.id.rowTheme).setOnClickListener(v ->
+                showOptionMenu(v, new String[]{"Light", "Orange", "Green"}, value -> {
+                    selectedTheme = value;
+                    tvThemeValue.setText(value);
+                }));
+
+        view.findViewById(R.id.rowTextSize).setOnClickListener(v ->
+                showOptionMenu(v, new String[]{"Kecil", "Sedang", "Besar"}, value -> {
+                    selectedTextSize = value;
+                    tvTextSizeValue.setText(value);
+                }));
+
+        view.findViewById(R.id.rowClearCache).setOnClickListener(v ->
+                showToast("Cache berhasil dihapus"));
+
+        view.findViewById(R.id.rowManageFavorite).setOnClickListener(v ->
+                Navigation.findNavController(v).navigate(R.id.navigation_favorite));
+
+        view.findViewById(R.id.rowHelpCenter).setOnClickListener(v ->
+                showToast("Pusat bantuan belum tersedia"));
+
+        view.findViewById(R.id.rowPrivacyPolicy).setOnClickListener(v ->
+                showToast("Kebijakan privasi belum tersedia"));
+
+        view.findViewById(R.id.btnSaveSettings).setOnClickListener(v -> saveSettings());
+        view.findViewById(R.id.btnResetSettings).setOnClickListener(v -> resetSettings());
+    }
+
+    private void saveSettings() {
+        preferences.edit()
+                .putBoolean(KEY_DARK_MODE, switchDarkMode.isChecked())
+                .putString(KEY_THEME, selectedTheme)
+                .putString(KEY_TEXT_SIZE, selectedTextSize)
+                .putBoolean(KEY_DAILY_NOTIFICATION, switchDailyNotification.isChecked())
+                .putBoolean(KEY_COOKING_REMINDER, switchCookingReminder.isChecked())
+                .apply();
+
+        showToast("Pengaturan berhasil disimpan");
+    }
+
+    private void resetSettings() {
+        selectedTheme = DEFAULT_THEME;
+        selectedTextSize = DEFAULT_TEXT_SIZE;
+
+        switchDarkMode.setChecked(false);
+        switchDailyNotification.setChecked(true);
+        switchCookingReminder.setChecked(false);
+        tvThemeValue.setText(selectedTheme);
+        tvTextSizeValue.setText(selectedTextSize);
+
+        preferences.edit()
+                .putBoolean(KEY_DARK_MODE, false)
+                .putString(KEY_THEME, DEFAULT_THEME)
+                .putString(KEY_TEXT_SIZE, DEFAULT_TEXT_SIZE)
+                .putBoolean(KEY_DAILY_NOTIFICATION, true)
+                .putBoolean(KEY_COOKING_REMINDER, false)
+                .apply();
+
+        showToast("Pengaturan berhasil direset");
+    }
+
+    private void applyDarkMode(boolean enabled) {
+        AppCompatDelegate.setDefaultNightMode(enabled
+                ? AppCompatDelegate.MODE_NIGHT_YES
+                : AppCompatDelegate.MODE_NIGHT_NO);
+    }
+
+    private void showOptionMenu(View anchor, String[] options, OptionSelectedListener listener) {
+        PopupMenu popupMenu = new PopupMenu(requireContext(), anchor);
+        for (String option : options) {
+            popupMenu.getMenu().add(option);
+        }
+        popupMenu.setOnMenuItemClickListener(item -> {
+            listener.onSelected(item.getTitle().toString());
+            return true;
+        });
+        popupMenu.show();
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    private interface OptionSelectedListener {
+        void onSelected(String value);
     }
 }

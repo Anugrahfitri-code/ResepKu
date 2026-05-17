@@ -121,28 +121,44 @@
 
                 <View style="@style/SettingsDivider" />
 
-                <RelativeLayout style="@style/SettingsItemRow">
+                <RelativeLayout
+                    android:id="@+id/rowDarkMode"
+                    style="@style/SettingsItemRow">
                     <ImageView android:id="@+id/iconDarkMode" style="@style/SettingsItemIcon" android:src="@drawable/ic_moon" />
                     <TextView style="@style/SettingsItemTitle" android:layout_toEndOf="@id/iconDarkMode" android:text="@string/setting_dark_mode" />
-                    <com.google.android.material.switchmaterial.SwitchMaterial style="@style/SettingsSwitch" />
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchDarkMode"
+                        style="@style/SettingsSwitch" />
                 </RelativeLayout>
 
                 <View style="@style/SettingsDivider" />
 
-                <RelativeLayout style="@style/SettingsItemRow">
+                <RelativeLayout
+                    android:id="@+id/rowTheme"
+                    style="@style/SettingsItemRow">
                     <ImageView android:id="@+id/iconTheme" style="@style/SettingsItemIcon" android:src="@drawable/ic_brush" />
                     <TextView style="@style/SettingsItemTitle" android:layout_toEndOf="@id/iconTheme" android:text="@string/setting_theme" />
                     <ImageView android:id="@+id/iconThemeArrow" style="@style/SettingsChevron" />
-                    <TextView style="@style/SettingsItemValue" android:layout_toStartOf="@id/iconThemeArrow" android:text="@string/setting_theme_value" />
+                    <TextView
+                        android:id="@+id/tvThemeValue"
+                        style="@style/SettingsItemValue"
+                        android:layout_toStartOf="@id/iconThemeArrow"
+                        android:text="@string/setting_theme_value" />
                 </RelativeLayout>
 
                 <View style="@style/SettingsDivider" />
 
-                <RelativeLayout style="@style/SettingsItemRow">
+                <RelativeLayout
+                    android:id="@+id/rowTextSize"
+                    style="@style/SettingsItemRow">
                     <ImageView android:id="@+id/iconTextSize" style="@style/SettingsItemIcon" android:src="@drawable/ic_text_size" />
                     <TextView style="@style/SettingsItemTitle" android:layout_toEndOf="@id/iconTextSize" android:text="@string/setting_text_size" />
                     <ImageView android:id="@+id/iconTextSizeArrow" style="@style/SettingsChevron" />
-                    <TextView style="@style/SettingsItemValue" android:layout_toStartOf="@id/iconTextSizeArrow" android:text="@string/setting_text_size_value" />
+                    <TextView
+                        android:id="@+id/tvTextSizeValue"
+                        style="@style/SettingsItemValue"
+                        android:layout_toStartOf="@id/iconTextSizeArrow"
+                        android:text="@string/setting_text_size_value" />
                 </RelativeLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -160,18 +176,27 @@
 
                 <View style="@style/SettingsDivider" />
 
-                <RelativeLayout style="@style/SettingsItemRow">
+                <RelativeLayout
+                    android:id="@+id/rowDailyNotification"
+                    style="@style/SettingsItemRow">
                     <ImageView android:id="@+id/iconDailyNotification" style="@style/SettingsItemIcon" android:src="@drawable/ic_bell" />
                     <TextView style="@style/SettingsItemTitle" android:layout_toEndOf="@id/iconDailyNotification" android:text="@string/setting_daily_notification" />
-                    <com.google.android.material.switchmaterial.SwitchMaterial style="@style/SettingsSwitch" android:checked="true" />
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchDailyNotification"
+                        style="@style/SettingsSwitch"
+                        android:checked="true" />
                 </RelativeLayout>
 
                 <View style="@style/SettingsDivider" />
 
-                <RelativeLayout style="@style/SettingsItemRow">
+                <RelativeLayout
+                    android:id="@+id/rowCookingReminder"
+                    style="@style/SettingsItemRow">
                     <ImageView android:id="@+id/iconCookingReminder" style="@style/SettingsItemIcon" android:src="@drawable/ic_clock" />
                     <TextView style="@style/SettingsItemTitle" android:layout_toEndOf="@id/iconCookingReminder" android:text="@string/setting_cooking_reminder" />
-                    <com.google.android.material.switchmaterial.SwitchMaterial style="@style/SettingsSwitch" />
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchCookingReminder"
+                        style="@style/SettingsSwitch" />
                 </RelativeLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -189,7 +214,9 @@
 
                 <View style="@style/SettingsDivider" />
 
-                <RelativeLayout style="@style/SettingsItemRow">
+                <RelativeLayout
+                    android:id="@+id/rowClearCache"
+                    style="@style/SettingsItemRow">
                     <ImageView android:id="@+id/iconClearCache" style="@style/SettingsItemIcon" android:src="@drawable/ic_trash" app:tint="@color/primary_orange" />
                     <TextView style="@style/SettingsItemTitle" android:layout_toEndOf="@id/iconClearCache" android:text="@string/setting_clear_cache" />
                     <ImageView style="@style/SettingsChevron" />
@@ -197,7 +224,9 @@
 
                 <View style="@style/SettingsDivider" />
 
-                <RelativeLayout style="@style/SettingsItemRow">
+                <RelativeLayout
+                    android:id="@+id/rowManageFavorite"
+                    style="@style/SettingsItemRow">
                     <ImageView android:id="@+id/iconManageFavorite" style="@style/SettingsItemIcon" android:src="@drawable/ic_heart" app:tint="@color/primary_orange" />
                     <TextView style="@style/SettingsItemTitle" android:layout_toEndOf="@id/iconManageFavorite" android:text="@string/setting_manage_favorite" />
                     <ImageView style="@style/SettingsChevron" />
@@ -288,7 +317,9 @@
 
                 <View style="@style/SettingsDivider" />
 
-                <RelativeLayout style="@style/SettingsItemRowSmall">
+                <RelativeLayout
+                    android:id="@+id/rowHelpCenter"
+                    style="@style/SettingsItemRowSmall">
                     <ImageView android:id="@+id/iconHelp" style="@style/SettingsItemIconSmall" android:src="@drawable/ic_help_circle" />
                     <TextView style="@style/SettingsItemTitleSmall" android:layout_toEndOf="@id/iconHelp" android:text="@string/setting_help_center" />
                     <ImageView style="@style/SettingsChevronSmall" />
@@ -296,7 +327,9 @@
 
                 <View style="@style/SettingsDivider" />
 
-                <RelativeLayout style="@style/SettingsItemRowSmall">
+                <RelativeLayout
+                    android:id="@+id/rowPrivacyPolicy"
+                    style="@style/SettingsItemRowSmall">
                     <ImageView android:id="@+id/iconPrivacy" style="@style/SettingsItemIconSmall" android:src="@drawable/ic_shield" />
                     <TextView style="@style/SettingsItemTitleSmall" android:layout_toEndOf="@id/iconPrivacy" android:text="@string/setting_privacy_policy" />
                     <ImageView style="@style/SettingsChevronSmall" />
@@ -313,6 +346,7 @@
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSaveSettings"
                 android:layout_width="0dp"
                 android:layout_height="46dp"
                 android:layout_weight="1"
@@ -335,6 +369,7 @@
                 app:iconTint="@null" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnResetSettings"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="46dp"
