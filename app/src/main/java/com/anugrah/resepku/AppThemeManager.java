@@ -148,6 +148,10 @@ public final class AppThemeManager {
             view.setBackground(rounded(context, accent, 12, 0, Color.TRANSPARENT));
         }
 
+        if (viewId == R.id.savedPill) {
+            view.setBackground(rounded(context, withAlpha(accent, 28), 14, 0, Color.TRANSPARENT));
+        }
+
         if (view instanceof ViewGroup) {
             ViewGroup group = (ViewGroup) view;
             for (int i = 0; i < group.getChildCount(); i++) {
@@ -179,6 +183,7 @@ public final class AppThemeManager {
         if ("apa hari ini?".equals(value)
                 || "Favorit".equals(value)
                 || "Lihat semua".equals(value)
+                || "Disimpan".equals(value)
                 || "Reset".equals(value)) {
             textView.setTextColor(accent);
         }
@@ -191,10 +196,37 @@ public final class AppThemeManager {
             return;
         }
 
+        if (imageView.getParent() instanceof View && ((View) imageView.getParent()).getId() == R.id.savedPill) {
+            imageView.setColorFilter(accent);
+            return;
+        }
+
+        if (isLevelIcon(imageView)) {
+            imageView.setColorFilter(accent);
+            return;
+        }
+
         CharSequence description = imageView.getContentDescription();
         if (description != null && "Favorit".contentEquals(description)) {
             imageView.setColorFilter(accent);
         }
+    }
+
+    private static boolean isLevelIcon(ImageView imageView) {
+        if (!(imageView.getParent() instanceof ViewGroup)) {
+            return false;
+        }
+
+        ViewGroup parent = (ViewGroup) imageView.getParent();
+        int index = parent.indexOfChild(imageView);
+        for (int i = index + 1; i < parent.getChildCount(); i++) {
+            View sibling = parent.getChildAt(i);
+            if (sibling instanceof TextView) {
+                CharSequence text = ((TextView) sibling).getText();
+                return text != null && "Mudah".contentEquals(text);
+            }
+        }
+        return false;
     }
 
     private static ColorStateList switchThumbTint(Context context, int accent) {
