@@ -20,11 +20,6 @@ public class CookingReminderBootReceiver extends BroadcastReceiver {
             return;
         }
 
-        CookingReminderScheduler.schedule(
-                context,
-                preferences.getInt(CookingReminderScheduler.KEY_REMINDER_HOUR, 8),
-                preferences.getInt(CookingReminderScheduler.KEY_REMINDER_MINUTE, 0),
-                preferences.getString(CookingReminderScheduler.KEY_REMINDER_RECIPE, "resep pilihanmu")
-        );
+        CookingReminderScheduler.scheduleAll(context);
     }
 }

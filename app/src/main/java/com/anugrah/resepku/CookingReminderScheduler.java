@@ -21,13 +21,22 @@ public final class CookingReminderScheduler {
     }
 
     public static boolean schedule(Context context, int hour, int minute, String recipeName) {
+        return schedule(context, REQUEST_CODE, hour, minute, recipeName);
+    }
+
+    public static boolean schedule(Context context, CookingReminderStore.CookingReminder reminder) {
+        return schedule(context, reminder.id, reminder.hour, reminder.minute, reminder.recipeName);
+    }
+
+    public static boolean schedule(Context context, int reminderId, int hour, int minute, String recipeName) {
         Context appContext = context.getApplicationContext();
         Intent intent = new Intent(appContext, CookingReminderReceiver.class);
         intent.putExtra(CookingReminderReceiver.EXTRA_RECIPE_NAME, recipeName);
+        intent.putExtra(CookingReminderReceiver.EXTRA_REMINDER_ID, reminderId);
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 appContext,
-                REQUEST_CODE,
+                requestCode(reminderId),
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
@@ -57,39 +66,26 @@ public final class CookingReminderScheduler {
         }
     }
 
-    public static void scheduleRegular(Context context, int hour, int minute, String recipeName) {
-        Context appContext = context.getApplicationContext();
-        Intent intent = new Intent(appContext, CookingReminderReceiver.class);
-        intent.putExtra(CookingReminderReceiver.EXTRA_RECIPE_NAME, recipeName);
-
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                appContext,
-                REQUEST_CODE,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-        );
-
-        AlarmManager alarmManager = (AlarmManager) appContext.getSystemService(Context.ALARM_SERVICE);
-        if (alarmManager == null) {
-            return;
+    public static boolean scheduleAll(Context context) {
+        boolean allScheduled = true;
+        for (CookingReminderStore.CookingReminder reminder : CookingReminderStore.getReminders(context)) {
+            if (reminder.enabled) {
+                allScheduled = schedule(context, reminder) && allScheduled;
+            }
         }
-
-        long triggerAtMillis = nextTriggerAtMillis(hour, minute);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && alarmManager.canScheduleExactAlarms()) {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent);
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent);
-        } else {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent);
-        }
+        return allScheduled;
     }
 
     public static void cancel(Context context) {
+        cancel(context, REQUEST_CODE);
+    }
+
+    public static void cancel(Context context, int reminderId) {
         Context appContext = context.getApplicationContext();
         Intent intent = new Intent(appContext, CookingReminderReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 appContext,
-                REQUEST_CODE,
+                requestCode(reminderId),
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
@@ -99,6 +95,13 @@ public final class CookingReminderScheduler {
             alarmManager.cancel(pendingIntent);
         }
         pendingIntent.cancel();
+    }
+
+    public static void cancelAll(Context context) {
+        cancel(context);
+        for (CookingReminderStore.CookingReminder reminder : CookingReminderStore.getReminders(context)) {
+            cancel(context, reminder.id);
+        }
     }
 
     public static String formatTime(int hour, int minute) {
@@ -116,5 +119,9 @@ public final class CookingReminderScheduler {
             calendar.add(Calendar.DAY_OF_YEAR, 1);
         }
         return calendar.getTimeInMillis();
+    }
+
+    private static int requestCode(int reminderId) {
+        return REQUEST_CODE + Math.abs(reminderId % 100000);
     }
 }

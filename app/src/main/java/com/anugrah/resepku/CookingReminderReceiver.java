@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat;
 
 public class CookingReminderReceiver extends BroadcastReceiver {
     public static final String EXTRA_RECIPE_NAME = "extra_recipe_name";
+    public static final String EXTRA_REMINDER_ID = "extra_reminder_id";
 
     private static final String CHANNEL_ID = "cooking_reminder_channel_v2";
     private static final int NOTIFICATION_ID = 2241;
@@ -32,18 +33,29 @@ public class CookingReminderReceiver extends BroadcastReceiver {
             return;
         }
 
-        String recipeName = intent.getStringExtra(EXTRA_RECIPE_NAME);
+        int reminderId = intent.getIntExtra(EXTRA_REMINDER_ID, -1);
+        CookingReminderStore.CookingReminder reminder = reminderId == -1
+                ? null
+                : CookingReminderStore.getReminder(context, reminderId);
+        if (reminderId != -1 && (reminder == null || !reminder.enabled)) {
+            return;
+        }
+
+        String recipeName = reminder == null ? intent.getStringExtra(EXTRA_RECIPE_NAME) : reminder.recipeName;
         if (recipeName == null || recipeName.trim().isEmpty()) {
             recipeName = preferences.getString(CookingReminderScheduler.KEY_REMINDER_RECIPE, "resep pilihanmu");
         }
-
         showNotification(context, recipeName);
-        CookingReminderScheduler.schedule(
-                context,
-                preferences.getInt(CookingReminderScheduler.KEY_REMINDER_HOUR, 8),
-                preferences.getInt(CookingReminderScheduler.KEY_REMINDER_MINUTE, 0),
-                recipeName
-        );
+        if (reminder != null) {
+            CookingReminderScheduler.schedule(context, reminder);
+        } else {
+            CookingReminderScheduler.schedule(
+                    context,
+                    preferences.getInt(CookingReminderScheduler.KEY_REMINDER_HOUR, 8),
+                    preferences.getInt(CookingReminderScheduler.KEY_REMINDER_MINUTE, 0),
+                    recipeName
+            );
+        }
     }
 
     private void showNotification(Context context, String recipeName) {
@@ -77,7 +89,7 @@ public class CookingReminderReceiver extends BroadcastReceiver {
                 .setAutoCancel(true)
                 .setContentIntent(contentIntent);
 
-        NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, builder.build());
+        NotificationManagerCompat.from(context).notify(NOTIFICATION_ID + Math.max(0, recipeName.hashCode() % 1000), builder.build());
     }
 
     private void createChannel(Context context) {
