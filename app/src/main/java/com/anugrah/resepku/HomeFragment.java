@@ -172,16 +172,19 @@ public class HomeFragment extends Fragment {
             }
 
             int image = query.imageRes != 0 ? query.imageRes : localImageForIndex(apiRecipes.size());
+            List<String> ingredients = ingredientsFromMeal(meal);
+            List<String> steps = stepsFromInstructions(meal.instructions);
             apiRecipes.add(new Recipe(
                     title,
                     query.category,
-                    estimateTime(apiRecipes.size()),
-                    "Mudah",
+                    estimateTime(query.category, ingredients.size(), steps.size()),
+                    estimateDifficulty(ingredients.size(), steps.size()),
+                    estimateServing(query.category),
                     image,
                     meal.thumbnailUrl,
-                    descriptionFromInstructions(meal.instructions, title),
-                    ingredientsFromMeal(meal),
-                    stepsFromInstructions(meal.instructions)
+                    descriptionForRecipe(title, query.category, ingredients),
+                    ingredients,
+                    steps
             ));
             addedForQuery++;
 
@@ -264,21 +267,71 @@ public class HomeFragment extends Fragment {
         apiList.setVisibility(visible ? View.GONE : View.VISIBLE);
     }
 
-    private String estimateTime(int index) {
-        String[] times = {"20 menit", "30 menit", "15 menit", "25 menit"};
-        return times[index % times.length];
+    private String estimateTime(String category, int ingredientCount, int stepCount) {
+        int minutes;
+        if ("Dessert".equalsIgnoreCase(category)) {
+            minutes = 25 + stepCount * 3;
+        } else if ("Daging".equalsIgnoreCase(category)) {
+            minutes = 35 + stepCount * 4;
+        } else if ("Seafood".equalsIgnoreCase(category)) {
+            minutes = 20 + stepCount * 3;
+        } else if ("Sehat".equalsIgnoreCase(category)) {
+            minutes = 10 + stepCount * 2;
+        } else {
+            minutes = 15 + stepCount * 3;
+        }
+
+        if (ingredientCount > 8) {
+            minutes += 10;
+        }
+        return Math.min(minutes, 90) + " menit";
     }
 
-    private String descriptionFromInstructions(String instructions, String title) {
-        if (instructions == null || instructions.trim().isEmpty()) {
-            return title + " adalah resep pilihan dari API makanan yang bisa kamu coba di rumah.";
+    private String estimateDifficulty(int ingredientCount, int stepCount) {
+        int complexity = ingredientCount + stepCount;
+        if (complexity <= 9) {
+            return "Mudah";
+        }
+        if (complexity <= 15) {
+            return "Sedang";
+        }
+        return "Sulit";
+    }
+
+    private String estimateServing(String category) {
+        if ("Dessert".equalsIgnoreCase(category)) {
+            return "6 porsi";
+        }
+        if ("Sehat".equalsIgnoreCase(category) || "Sarapan".equalsIgnoreCase(category)) {
+            return "2 porsi";
+        }
+        if ("Seafood".equalsIgnoreCase(category)) {
+            return "3 porsi";
+        }
+        return "4 porsi";
+    }
+
+    private String descriptionForRecipe(String title, String category, List<String> ingredients) {
+        String ingredientText = ingredients == null || ingredients.isEmpty()
+                ? "bahan pilihan"
+                : ingredients.get(0).replaceAll("^[0-9/.,\\s]+", "").trim();
+        if (ingredientText.isEmpty()) {
+            ingredientText = "bahan pilihan";
         }
 
-        String firstSentence = instructions.trim().split("\\.")[0].trim();
-        if (firstSentence.length() > 130) {
-            firstSentence = firstSentence.substring(0, 127).trim() + "...";
+        if ("Dessert".equalsIgnoreCase(category)) {
+            return title + " adalah hidangan manis yang lembut dan cocok disajikan sebagai camilan keluarga.";
         }
-        return firstSentence + ".";
+        if ("Daging".equalsIgnoreCase(category)) {
+            return title + " adalah menu berbahan " + ingredientText + " dengan rasa gurih yang cocok untuk makan utama.";
+        }
+        if ("Seafood".equalsIgnoreCase(category)) {
+            return title + " adalah sajian laut yang segar, ringan, dan enak dinikmati saat masih hangat.";
+        }
+        if ("Sehat".equalsIgnoreCase(category)) {
+            return title + " adalah pilihan sehat dengan bahan segar yang cocok untuk menu harian.";
+        }
+        return title + " adalah resep " + category.toLowerCase(Locale.ROOT) + " praktis dengan rasa lezat untuk dicoba di rumah.";
     }
 
     private List<String> ingredientsFromMeal(Meal meal) {

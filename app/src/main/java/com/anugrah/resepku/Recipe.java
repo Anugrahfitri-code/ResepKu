@@ -8,6 +8,7 @@ public class Recipe {
     final String category;
     final String time;
     final String level;
+    final String serving;
     final int imageRes;
     final String imageUrl;
     final String description;
@@ -20,10 +21,16 @@ public class Recipe {
 
     Recipe(String title, String category, String time, String level, int imageRes, String imageUrl,
            String description, List<String> ingredients, List<String> steps) {
+        this(title, category, time, level, "4 porsi", imageRes, imageUrl, description, ingredients, steps);
+    }
+
+    Recipe(String title, String category, String time, String level, String serving, int imageRes,
+           String imageUrl, String description, List<String> ingredients, List<String> steps) {
         this.title = title;
         this.category = category;
         this.time = time;
         this.level = level;
+        this.serving = serving == null || serving.trim().isEmpty() ? "4 porsi" : serving;
         this.imageRes = imageRes;
         this.imageUrl = imageUrl == null ? "" : imageUrl;
         this.description = description == null ? "" : description;

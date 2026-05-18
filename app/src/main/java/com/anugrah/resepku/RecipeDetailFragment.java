@@ -76,6 +76,7 @@ public class RecipeDetailFragment extends Fragment {
         ImageLoader.load(currentRecipe.imageUrl,
                 view.findViewById(R.id.ivDetailRecipeImage),
                 currentRecipe.imageRes);
+        bindStats(view);
         bindCategory(view);
         bindIngredients(view);
         bindSteps(view);
@@ -86,6 +87,12 @@ public class RecipeDetailFragment extends Fragment {
             return currentRecipe.description;
         }
         return getString(R.string.detail_recipe_desc);
+    }
+
+    private void bindStats(View view) {
+        ((TextView) view.findViewById(R.id.tvDetailTimeValue)).setText(currentRecipe.time);
+        ((TextView) view.findViewById(R.id.tvDetailLevelValue)).setText(currentRecipe.level);
+        ((TextView) view.findViewById(R.id.tvDetailServingValue)).setText(currentRecipe.serving);
     }
 
     private void bindCategory(View view) {

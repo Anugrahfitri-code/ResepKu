@@ -7,7 +7,7 @@
     android:orientation="horizontal">
     <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_clock" />
     <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:orientation="vertical">
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:includeFontPadding="false" android:text="@string/recipe_time_30" android:textColor="@color/text_dark" android:textSize="16sp" />
+        <TextView android:id="@+id/tvDetailTimeValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:includeFontPadding="false" android:text="@string/recipe_time_30" android:textColor="@color/text_dark" android:textSize="16sp" />
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:includeFontPadding="false" android:text="@string/detail_time_label" android:textColor="@color/text_grey" android:textSize="12sp" />
     </LinearLayout>
 </LinearLayout>

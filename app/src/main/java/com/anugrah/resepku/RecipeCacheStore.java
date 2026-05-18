@@ -88,6 +88,7 @@ public final class RecipeCacheStore {
         json.put("category", recipe.category);
         json.put("time", recipe.time);
         json.put("level", recipe.level);
+        json.put("serving", recipe.serving);
         json.put("imageRes", recipe.imageRes);
         json.put("imageUrl", recipe.imageUrl);
         json.put("description", recipe.description);
@@ -102,6 +103,7 @@ public final class RecipeCacheStore {
                 json.optString("category", "Ayam"),
                 json.optString("time", "30 menit"),
                 json.optString("level", "Mudah"),
+                json.optString("serving", "4 porsi"),
                 json.optInt("imageRes", R.drawable.img_soup_chicken_ginger),
                 json.optString("imageUrl", ""),
                 json.optString("description", ""),
