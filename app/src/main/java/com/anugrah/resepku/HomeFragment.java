@@ -1,5 +1,6 @@
 package com.anugrah.resepku;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -195,21 +196,53 @@ public class HomeFragment extends Fragment {
 
         if (!apiRecipes.isEmpty()) {
             hasApiResult = true;
-            RecipeCacheStore.saveApiRecipes(requireContext(), apiRecipes);
-            for (Recipe recipe : apiRecipes) {
-                ImageLoader.prefetch(requireContext(), recipe.imageUrl);
-            }
+            saveApiRecipesInBackground(new ArrayList<>(apiRecipes));
         } else if (!hasApiResult) {
-            List<Recipe> cachedApiRecipes = RecipeCacheStore.getApiRecipes(requireContext());
-            if (!cachedApiRecipes.isEmpty()) {
-                apiRecipes.addAll(cachedApiRecipes);
-                hasApiResult = true;
-                Toast.makeText(requireContext(), "Gagal mengambil API, memakai cache resep", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(requireContext(), "Gagal mengambil API, memakai resep lokal", Toast.LENGTH_SHORT).show();
-            }
+            loadCachedApiRecipesInBackground();
+            return;
         }
 
+        applyApiRecipeFilter();
+    }
+
+    private void saveApiRecipesInBackground(List<Recipe> recipesToCache) {
+        if (!isAdded()) {
+            return;
+        }
+
+        Context appContext = requireContext().getApplicationContext();
+        BackgroundTaskRunner.runInBackground(() -> {
+            RecipeCacheStore.saveApiRecipes(appContext, recipesToCache);
+            for (Recipe recipe : recipesToCache) {
+                ImageLoader.prefetch(appContext, recipe.imageUrl);
+            }
+        });
+    }
+
+    private void loadCachedApiRecipesInBackground() {
+        if (!isAdded()) {
+            return;
+        }
+
+        Context appContext = requireContext().getApplicationContext();
+        BackgroundTaskRunner.runInBackground(() -> {
+            List<Recipe> cachedApiRecipes = RecipeCacheStore.getApiRecipes(appContext);
+            BackgroundTaskRunner.runOnMain(() -> showCachedApiRecipes(cachedApiRecipes));
+        });
+    }
+
+    private void showCachedApiRecipes(List<Recipe> cachedApiRecipes) {
+        if (!isAdded()) {
+            return;
+        }
+
+        if (!cachedApiRecipes.isEmpty()) {
+            apiRecipes.addAll(cachedApiRecipes);
+            hasApiResult = true;
+            Toast.makeText(requireContext(), "Gagal mengambil API, memakai cache resep", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(requireContext(), "Gagal mengambil API, memakai resep lokal", Toast.LENGTH_SHORT).show();
+        }
         applyApiRecipeFilter();
     }
 
