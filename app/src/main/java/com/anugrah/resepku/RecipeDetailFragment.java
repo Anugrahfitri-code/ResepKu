@@ -37,6 +37,7 @@ public class RecipeDetailFragment extends Fragment {
         view.findViewById(R.id.btnDetailFavorite).setOnClickListener(v -> saveCurrentRecipe());
         view.findViewById(R.id.btnSaveFavorite).setOnClickListener(v -> saveCurrentRecipe());
         view.findViewById(R.id.btnStartCooking).setOnClickListener(v -> openCookingMode());
+        view.findViewById(R.id.btnShare).setOnClickListener(v -> shareCurrentRecipe());
         bindRecipeDetail(view);
         AppThemeManager.applyToViewTree(view);
         return view;
@@ -63,6 +64,52 @@ public class RecipeDetailFragment extends Fragment {
         intent.putExtra(CookingModeActivity.EXTRA_RECIPE_TITLE,
                 currentRecipe == null ? DETAIL_RECIPE_TITLE : currentRecipe.title);
         startActivity(intent);
+    }
+
+    private void shareCurrentRecipe() {
+        if (currentRecipe == null) {
+            currentRecipe = defaultRecipe();
+        }
+
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, currentRecipe.title);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, buildShareText());
+        startActivity(Intent.createChooser(shareIntent, "Bagikan resep"));
+    }
+
+    private String buildShareText() {
+        List<String> ingredients = currentRecipe.ingredients.isEmpty()
+                ? defaultIngredients()
+                : currentRecipe.ingredients;
+        List<String> steps = currentRecipe.steps.isEmpty() ? defaultSteps() : currentRecipe.steps;
+
+        StringBuilder builder = new StringBuilder();
+        builder.append("ResepKu - ").append(currentRecipe.title).append("\n\n");
+        builder.append(detailDescription()).append("\n\n");
+        builder.append("Waktu: ").append(currentRecipe.time).append("\n");
+        builder.append("Tingkat kesulitan: ").append(currentRecipe.level).append("\n");
+        builder.append("Porsi: ").append(currentRecipe.serving).append("\n");
+        builder.append("Rating: ").append(currentRecipe.rating).append("\n\n");
+
+        appendShareList(builder, "Bahan-bahan", ingredients);
+        builder.append("\n");
+        appendShareList(builder, "Cara memasak", steps);
+
+        String tip = recipeTip();
+        if (!tip.trim().isEmpty()) {
+            builder.append("\nTips: ").append(tip).append("\n");
+        }
+
+        builder.append("\nDibagikan dari aplikasi ResepKu.");
+        return builder.toString();
+    }
+
+    private void appendShareList(StringBuilder builder, String title, List<String> values) {
+        builder.append(title).append(":\n");
+        for (int i = 0; i < values.size(); i++) {
+            builder.append(i + 1).append(". ").append(values.get(i)).append("\n");
+        }
     }
 
     private void bindRecipeDetail(View view) {
