@@ -1,6 +1,7 @@
 package com.anugrah.resepku;
 
 import android.Manifest;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -18,7 +19,7 @@ import androidx.core.content.ContextCompat;
 public class CookingReminderReceiver extends BroadcastReceiver {
     public static final String EXTRA_RECIPE_NAME = "extra_recipe_name";
 
-    private static final String CHANNEL_ID = "cooking_reminder_channel";
+    private static final String CHANNEL_ID = "cooking_reminder_channel_v2";
     private static final int NOTIFICATION_ID = 2241;
 
     @Override
@@ -70,6 +71,9 @@ public class CookingReminderReceiver extends BroadcastReceiver {
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText("Saatnya memasak " + recipeName + ". Buka ResepKu dan ikuti langkah memasaknya."))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_REMINDER)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setAutoCancel(true)
                 .setContentIntent(contentIntent);
 
@@ -87,6 +91,8 @@ public class CookingReminderReceiver extends BroadcastReceiver {
                 NotificationManager.IMPORTANCE_HIGH
         );
         channel.setDescription("Notifikasi pengingat memasak resep pilihan.");
+        channel.enableVibration(true);
+        channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
 
         NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
         if (notificationManager != null) {

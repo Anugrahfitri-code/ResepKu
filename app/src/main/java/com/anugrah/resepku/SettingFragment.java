@@ -196,12 +196,19 @@ public class SettingFragment extends Fragment {
                 .apply();
 
         if (selectedCookingReminder && !selectedReminderRecipe.trim().isEmpty()) {
-            CookingReminderScheduler.schedule(
+            boolean scheduled = CookingReminderScheduler.schedule(
                     requireContext(),
                     selectedReminderHour,
                     selectedReminderMinute,
                     selectedReminderRecipe
             );
+            if (!scheduled) {
+                selectedCookingReminder = false;
+                setSwitchesWithoutSaving(selectedDarkMode, selectedDailyNotification, false);
+                CookingReminderScheduler.cancel(requireContext());
+                showToast("Pengingat gagal dijadwalkan di perangkat ini");
+                return;
+            }
         } else {
             CookingReminderScheduler.cancel(requireContext());
         }
@@ -342,12 +349,21 @@ public class SettingFragment extends Fragment {
                 .putString(KEY_REMINDER_RECIPE, selectedReminderRecipe)
                 .apply();
 
-        CookingReminderScheduler.schedule(
+        boolean scheduled = CookingReminderScheduler.schedule(
                 requireContext(),
                 selectedReminderHour,
                 selectedReminderMinute,
                 selectedReminderRecipe
         );
+        if (!scheduled) {
+            selectedCookingReminder = false;
+            setSwitchesWithoutSaving(selectedDarkMode, selectedDailyNotification, false);
+            preferences.edit().putBoolean(KEY_COOKING_REMINDER, false).apply();
+            CookingReminderScheduler.cancel(requireContext());
+            updateCookingReminderSummary();
+            showToast("Pengingat gagal dijadwalkan di perangkat ini");
+            return;
+        }
         updateCookingReminderSummary();
         showToast("Pengingat " + selectedReminderRecipe + " disetel pukul "
                 + CookingReminderScheduler.formatTime(selectedReminderHour, selectedReminderMinute));

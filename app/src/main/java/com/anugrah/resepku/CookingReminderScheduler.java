@@ -20,7 +20,44 @@ public final class CookingReminderScheduler {
     private CookingReminderScheduler() {
     }
 
-    public static void schedule(Context context, int hour, int minute, String recipeName) {
+    public static boolean schedule(Context context, int hour, int minute, String recipeName) {
+        Context appContext = context.getApplicationContext();
+        Intent intent = new Intent(appContext, CookingReminderReceiver.class);
+        intent.putExtra(CookingReminderReceiver.EXTRA_RECIPE_NAME, recipeName);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                appContext,
+                REQUEST_CODE,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        AlarmManager alarmManager = (AlarmManager) appContext.getSystemService(Context.ALARM_SERVICE);
+        if (alarmManager == null) {
+            return false;
+        }
+
+        long triggerAtMillis = nextTriggerAtMillis(hour, minute);
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && alarmManager.canScheduleExactAlarms()) {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent);
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent);
+            } else {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent);
+            }
+            return true;
+        } catch (Exception ignored) {
+            try {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent);
+                return true;
+            } catch (Exception secondIgnored) {
+                return false;
+            }
+        }
+    }
+
+    public static void scheduleRegular(Context context, int hour, int minute, String recipeName) {
         Context appContext = context.getApplicationContext();
         Intent intent = new Intent(appContext, CookingReminderReceiver.class);
         intent.putExtra(CookingReminderReceiver.EXTRA_RECIPE_NAME, recipeName);
