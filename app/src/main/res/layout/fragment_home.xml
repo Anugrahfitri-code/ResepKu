@@ -485,6 +485,63 @@
             </LinearLayout>
         </RelativeLayout>
 
+        <LinearLayout
+            android:id="@+id/apiErrorState"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/bg_recipe_card"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingHorizontal="18dp"
+            android:paddingVertical="20dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_refresh"
+                app:tint="@color/primary_orange" />
+
+            <TextView
+                android:id="@+id/tvApiErrorTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:includeFontPadding="false"
+                android:text="@string/home_api_error_title"
+                android:textColor="@color/text_dark"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvApiErrorBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:lineSpacingExtra="2dp"
+                android:text="@string/home_api_error_body"
+                android:textColor="@color/text_grey"
+                android:textSize="13sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRefreshApiRecipes"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:layout_marginTop="14dp"
+                android:minWidth="132dp"
+                android:text="@string/home_api_refresh"
+                android:textAllCaps="false"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:cornerRadius="16dp"
+                app:icon="@drawable/ic_refresh"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp" />
+        </LinearLayout>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvApiRecipes"
             android:layout_width="match_parent"

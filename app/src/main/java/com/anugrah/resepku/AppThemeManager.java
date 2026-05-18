@@ -211,6 +211,10 @@ public final class AppThemeManager {
             button.setBackgroundTintList(ColorStateList.valueOf(accent));
             button.setTextColor(Color.WHITE);
             button.setIconTint(null);
+        } else if (id == R.id.btnRefreshApiRecipes) {
+            button.setBackgroundTintList(ColorStateList.valueOf(accent));
+            button.setTextColor(Color.WHITE);
+            button.setIconTint(ColorStateList.valueOf(Color.WHITE));
         } else if (id == R.id.btnSaveFavorite) {
             button.setBackgroundTintList(ColorStateList.valueOf(accent));
             button.setTextColor(Color.WHITE);

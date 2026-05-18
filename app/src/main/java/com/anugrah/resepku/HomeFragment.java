@@ -71,6 +71,7 @@ public class HomeFragment extends Fragment {
 
         view.findViewById(R.id.btnViewRecipe).setOnClickListener(v -> openCurrentRecommendationDetail(v));
         view.findViewById(R.id.btnViewAllRecipes).setOnClickListener(v -> showAllRecipes(view));
+        view.findViewById(R.id.btnRefreshApiRecipes).setOnClickListener(v -> loadRecipesFromApi());
         AppThemeManager.applyToViewTree(view);
         applyRecipeFilter();
         loadRecipesFromApi();
@@ -112,6 +113,8 @@ public class HomeFragment extends Fragment {
         apiRecipes.clear();
         apiRecipeTitles.clear();
         hasApiResult = false;
+        setApiErrorVisible(false);
+        applyApiRecipeFilter();
 
         ApiRecipeQuery[] queries = new ApiRecipeQuery[]{
                 new ApiRecipeQuery("chicken", "Ayam", R.drawable.img_ayam_teriyaki),
@@ -196,6 +199,7 @@ public class HomeFragment extends Fragment {
 
         if (!apiRecipes.isEmpty()) {
             hasApiResult = true;
+            setApiErrorVisible(false);
             saveApiRecipesInBackground(new ArrayList<>(apiRecipes));
         } else if (!hasApiResult) {
             loadCachedApiRecipesInBackground();
@@ -239,11 +243,25 @@ public class HomeFragment extends Fragment {
         if (!cachedApiRecipes.isEmpty()) {
             apiRecipes.addAll(cachedApiRecipes);
             hasApiResult = true;
+            setApiErrorVisible(false);
             Toast.makeText(requireContext(), "Gagal mengambil API, memakai cache resep", Toast.LENGTH_SHORT).show();
         } else {
+            setApiErrorVisible(true);
             Toast.makeText(requireContext(), "Gagal mengambil API, memakai resep lokal", Toast.LENGTH_SHORT).show();
         }
         applyApiRecipeFilter();
+    }
+
+    private void setApiErrorVisible(boolean visible) {
+        View root = getView();
+        if (root == null) {
+            return;
+        }
+
+        View errorState = root.findViewById(R.id.apiErrorState);
+        View apiList = root.findViewById(R.id.rvApiRecipes);
+        errorState.setVisibility(visible ? View.VISIBLE : View.GONE);
+        apiList.setVisibility(visible ? View.GONE : View.VISIBLE);
     }
 
     private String estimateTime(int index) {

@@ -40,6 +40,9 @@
     <string name="home_view_recipe">Lihat Resep</string>
     <string name="home_popular_title">Resep Populer</string>
     <string name="home_api_recipes_title">Resep dari API</string>
+    <string name="home_api_error_title">Resep API belum bisa dimuat</string>
+    <string name="home_api_error_body">Periksa koneksi internet kamu, lalu coba muat ulang resep dari API.</string>
+    <string name="home_api_refresh">Coba Lagi</string>
     <string name="home_view_all">Lihat semua</string>
     <string name="recipe_nasi_goreng">Nasi Goreng Spesial</string>
     <string name="recipe_ayam_teriyaki">Ayam Teriyaki</string>
