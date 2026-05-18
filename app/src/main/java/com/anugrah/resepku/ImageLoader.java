@@ -1,5 +1,6 @@
 package com.anugrah.resepku;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
@@ -7,9 +8,14 @@ import android.os.Looper;
 import android.text.TextUtils;
 import android.widget.ImageView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -29,6 +35,7 @@ public final class ImageLoader {
             return;
         }
 
+        Context context = imageView.getContext().getApplicationContext();
         imageView.setTag(imageUrl);
         Bitmap cachedBitmap = CACHE.get(imageUrl);
         if (cachedBitmap != null) {
@@ -36,8 +43,15 @@ public final class ImageLoader {
             return;
         }
 
+        Bitmap diskBitmap = loadFromDisk(context, imageUrl);
+        if (diskBitmap != null) {
+            CACHE.put(imageUrl, diskBitmap);
+            imageView.setImageBitmap(diskBitmap);
+            return;
+        }
+
         EXECUTOR.execute(() -> {
-            Bitmap bitmap = downloadBitmap(imageUrl);
+            Bitmap bitmap = downloadBitmap(context, imageUrl);
             if (bitmap == null) {
                 return;
             }
@@ -52,7 +66,25 @@ public final class ImageLoader {
         });
     }
 
-    private static Bitmap downloadBitmap(String imageUrl) {
+    public static void prefetch(Context context, String imageUrl) {
+        if (context == null || TextUtils.isEmpty(imageUrl) || CACHE.containsKey(imageUrl)) {
+            return;
+        }
+
+        Context appContext = context.getApplicationContext();
+        if (imageFile(appContext, imageUrl).exists()) {
+            return;
+        }
+
+        EXECUTOR.execute(() -> {
+            Bitmap bitmap = downloadBitmap(appContext, imageUrl);
+            if (bitmap != null) {
+                CACHE.put(imageUrl, bitmap);
+            }
+        });
+    }
+
+    private static Bitmap downloadBitmap(Context context, String imageUrl) {
         HttpURLConnection connection = null;
         try {
             URL url = new URL(imageUrl);
@@ -63,7 +95,12 @@ public final class ImageLoader {
             connection.connect();
 
             try (InputStream inputStream = connection.getInputStream()) {
-                return BitmapFactory.decodeStream(inputStream);
+                byte[] bytes = readAllBytes(inputStream);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                if (bitmap != null) {
+                    saveToDisk(context, imageUrl, bytes);
+                }
+                return bitmap;
             }
         } catch (Exception ignored) {
             return null;
@@ -71,6 +108,55 @@ public final class ImageLoader {
             if (connection != null) {
                 connection.disconnect();
             }
+        }
+    }
+
+    private static Bitmap loadFromDisk(Context context, String imageUrl) {
+        File file = imageFile(context, imageUrl);
+        if (!file.exists()) {
+            return null;
+        }
+        return BitmapFactory.decodeFile(file.getAbsolutePath());
+    }
+
+    private static void saveToDisk(Context context, String imageUrl, byte[] bytes) {
+        File file = imageFile(context, imageUrl);
+        File parent = file.getParentFile();
+        if (parent != null && !parent.exists() && !parent.mkdirs()) {
+            return;
+        }
+
+        try (FileOutputStream outputStream = new FileOutputStream(file)) {
+            outputStream.write(bytes);
+        } catch (Exception ignored) {
+        }
+    }
+
+    private static byte[] readAllBytes(InputStream inputStream) throws Exception {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[8192];
+        int read;
+        while ((read = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, read);
+        }
+        return outputStream.toByteArray();
+    }
+
+    private static File imageFile(Context context, String imageUrl) {
+        return new File(new File(context.getFilesDir(), "api_image_cache"), hash(imageUrl) + ".img");
+    }
+
+    private static String hash(String value) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] bytes = digest.digest(value.getBytes(StandardCharsets.UTF_8));
+            StringBuilder builder = new StringBuilder();
+            for (byte b : bytes) {
+                builder.append(String.format("%02x", b));
+            }
+            return builder.toString();
+        } catch (Exception ignored) {
+            return String.valueOf(value.hashCode());
         }
     }
 }

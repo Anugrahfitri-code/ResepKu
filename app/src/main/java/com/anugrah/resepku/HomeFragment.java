@@ -196,6 +196,9 @@ public class HomeFragment extends Fragment {
         if (!apiRecipes.isEmpty()) {
             hasApiResult = true;
             RecipeCacheStore.saveApiRecipes(requireContext(), apiRecipes);
+            for (Recipe recipe : apiRecipes) {
+                ImageLoader.prefetch(requireContext(), recipe.imageUrl);
+            }
         } else if (!hasApiResult) {
             List<Recipe> cachedApiRecipes = RecipeCacheStore.getApiRecipes(requireContext());
             if (!cachedApiRecipes.isEmpty()) {
