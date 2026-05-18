@@ -90,6 +90,7 @@ public final class RecipeCacheStore {
         json.put("level", recipe.level);
         json.put("serving", recipe.serving);
         json.put("rating", recipe.rating);
+        json.put("tip", recipe.tip);
         json.put("imageRes", recipe.imageRes);
         json.put("imageUrl", recipe.imageUrl);
         json.put("description", recipe.description);
@@ -106,6 +107,7 @@ public final class RecipeCacheStore {
                 json.optString("level", "Mudah"),
                 json.optString("serving", "4 porsi"),
                 json.optString("rating", fallbackRating(json.optString("title", fallbackTitle))),
+                json.optString("tip", ""),
                 json.optInt("imageRes", R.drawable.img_soup_chicken_ginger),
                 json.optString("imageUrl", ""),
                 json.optString("description", ""),

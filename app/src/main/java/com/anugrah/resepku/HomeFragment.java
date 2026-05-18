@@ -117,6 +117,7 @@ public class HomeFragment extends Fragment {
                     "Mudah",
                     "3 porsi",
                     "5,0 (1.240)",
+                    "Gunakan nasi yang sudah dingin agar teksturnya tidak lembek saat digoreng.",
                     R.drawable.img_nasi_goreng,
                     "",
                     "Nasi goreng rumahan yang gurih dengan telur, sayuran, dan aroma bawang yang menggugah selera.",
@@ -132,6 +133,7 @@ public class HomeFragment extends Fragment {
                     "Mudah",
                     "4 porsi",
                     "4,9 (1.086)",
+                    "Marinasi ayam minimal 15 menit supaya saus teriyaki lebih meresap.",
                     R.drawable.img_ayam_teriyaki,
                     "",
                     "Ayam teriyaki manis gurih dengan saus mengilap, cocok untuk lauk makan siang keluarga.",
@@ -147,6 +149,7 @@ public class HomeFragment extends Fragment {
                     "Mudah",
                     "6 porsi",
                     "4,9 (934)",
+                    "Masak pancake dengan api kecil agar bagian dalam matang tanpa membuat permukaannya gosong.",
                     R.drawable.img_pancake_pisang,
                     "",
                     "Pancake lembut dengan pisang manis dan sirup hangat untuk sarapan atau camilan.",
@@ -162,6 +165,7 @@ public class HomeFragment extends Fragment {
                     "Mudah",
                     "2 porsi",
                     "4,9 (812)",
+                    "Simpan sayuran di kulkas sebelum disajikan agar salad terasa lebih segar dan renyah.",
                     R.drawable.img_salad_segar,
                     "",
                     "Salad sayur segar dengan telur dan jagung, ringan namun tetap mengenyangkan.",
@@ -176,6 +180,7 @@ public class HomeFragment extends Fragment {
                 "Mudah",
                 "4 porsi",
                 "4,9 (1.158)",
+                "Geprek jahe sebelum direbus agar aroma hangatnya keluar maksimal.",
                 R.drawable.img_soup_chicken_ginger,
                 "",
                 "Hangat, gurih, dan menyehatkan badan. Cocok untuk keluarga.",
@@ -265,6 +270,7 @@ public class HomeFragment extends Fragment {
                     estimateDifficulty(ingredients.size(), steps.size()),
                     estimateServing(query.category),
                     estimateRating(title, ingredients.size(), steps.size()),
+                    tipForRecipe(title, query.category, ingredients),
                     image,
                     meal.thumbnailUrl,
                     descriptionForRecipe(title, query.category, ingredients),
@@ -429,6 +435,32 @@ public class HomeFragment extends Fragment {
             return title + " adalah pilihan sehat dengan bahan segar yang cocok untuk menu harian.";
         }
         return title + " adalah resep " + category.toLowerCase(Locale.ROOT) + " praktis dengan rasa lezat untuk dicoba di rumah.";
+    }
+
+    private String tipForRecipe(String title, String category, List<String> ingredients) {
+        String mainIngredient = ingredients == null || ingredients.isEmpty()
+                ? "bahan utama"
+                : ingredients.get(0).replaceAll("^[0-9/.,\\s]+", "").trim();
+        if (mainIngredient.isEmpty()) {
+            mainIngredient = "bahan utama";
+        }
+
+        if ("Dessert".equalsIgnoreCase(category)) {
+            return "Ayak bahan kering dan jangan terlalu lama mengaduk adonan agar teksturnya tetap lembut.";
+        }
+        if ("Daging".equalsIgnoreCase(category)) {
+            return "Masak " + mainIngredient + " dengan api sedang agar bumbu meresap dan teksturnya tetap juicy.";
+        }
+        if ("Seafood".equalsIgnoreCase(category)) {
+            return "Lumuri bahan laut dengan sedikit jeruk nipis sebelum dimasak agar aromanya lebih segar.";
+        }
+        if ("Sehat".equalsIgnoreCase(category)) {
+            return "Tambahkan saus atau dressing terakhir supaya bahan segar tidak cepat layu.";
+        }
+        if ("Ayam".equalsIgnoreCase(category)) {
+            return "Marinasi ayam lebih dulu agar rasa bumbu masuk sampai ke bagian dalam.";
+        }
+        return "Siapkan semua bahan sebelum memasak agar proses membuat " + title + " lebih lancar.";
     }
 
     private List<String> ingredientsFromMeal(Meal meal) {

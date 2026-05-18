@@ -77,6 +77,7 @@ public class RecipeDetailFragment extends Fragment {
                 view.findViewById(R.id.ivDetailRecipeImage),
                 currentRecipe.imageRes);
         bindStats(view);
+        bindTip(view);
         bindCategory(view);
         bindIngredients(view);
         bindSteps(view);
@@ -94,6 +95,34 @@ public class RecipeDetailFragment extends Fragment {
         ((TextView) view.findViewById(R.id.tvDetailTimeValue)).setText(currentRecipe.time);
         ((TextView) view.findViewById(R.id.tvDetailLevelValue)).setText(currentRecipe.level);
         ((TextView) view.findViewById(R.id.tvDetailServingValue)).setText(currentRecipe.serving);
+    }
+
+    private void bindTip(View view) {
+        ((TextView) view.findViewById(R.id.tvDetailTipBody)).setText(recipeTip());
+    }
+
+    private String recipeTip() {
+        if (currentRecipe.tip != null && !currentRecipe.tip.trim().isEmpty()) {
+            return currentRecipe.tip;
+        }
+
+        String category = currentRecipe.category == null ? "" : currentRecipe.category;
+        if ("Dessert".equalsIgnoreCase(category)) {
+            return "Gunakan bahan bersuhu ruang agar adonan lebih halus dan hasilnya lembut.";
+        }
+        if ("Daging".equalsIgnoreCase(category) || "Ayam".equalsIgnoreCase(category)) {
+            return "Diamkan bumbu beberapa menit agar rasa lebih meresap ke bahan utama.";
+        }
+        if ("Seafood".equalsIgnoreCase(category)) {
+            return "Jangan masak terlalu lama agar tekstur tetap lembut dan tidak amis.";
+        }
+        if ("Sehat".equalsIgnoreCase(category)) {
+            return "Tambahkan dressing menjelang disajikan agar sayuran tetap segar.";
+        }
+        if ("Sarapan".equalsIgnoreCase(category)) {
+            return "Gunakan api sedang supaya bumbu matang merata tanpa membuat bahan cepat kering.";
+        }
+        return getString(R.string.detail_tip_body);
     }
 
     private void bindCategory(View view) {
