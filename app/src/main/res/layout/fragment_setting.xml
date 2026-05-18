@@ -80,6 +80,7 @@
             </LinearLayout>
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/btnSettingNotification"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_alignParentEnd="true"
@@ -239,7 +240,26 @@
                     android:id="@+id/rowCookingReminder"
                     style="@style/SettingsItemRow">
                     <ImageView android:id="@+id/iconCookingReminder" style="@style/SettingsItemIcon" android:src="@drawable/ic_clock" />
-                    <TextView style="@style/SettingsItemTitle" android:layout_toEndOf="@id/iconCookingReminder" android:text="@string/setting_cooking_reminder" />
+                    <TextView
+                        android:id="@+id/tvCookingReminderTitle"
+                        style="@style/SettingsItemTitle"
+                        android:layout_toEndOf="@id/iconCookingReminder"
+                        android:layout_toStartOf="@id/switchCookingReminder"
+                        android:text="@string/setting_cooking_reminder" />
+                    <TextView
+                        android:id="@+id/tvCookingReminderSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/tvCookingReminderTitle"
+                        android:layout_marginTop="4dp"
+                        android:layout_toEndOf="@id/iconCookingReminder"
+                        android:layout_toStartOf="@id/switchCookingReminder"
+                        android:ellipsize="end"
+                        android:includeFontPadding="false"
+                        android:singleLine="true"
+                        android:text="@string/setting_cooking_reminder_empty"
+                        android:textColor="@color/text_grey"
+                        android:textSize="12sp" />
                     <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/switchCookingReminder"
                         style="@style/SettingsSwitch" />

@@ -14,6 +14,7 @@
     <string name="setting_section_notification">Notifikasi</string>
     <string name="setting_daily_notification">Notifikasi Resep Harian</string>
     <string name="setting_cooking_reminder">Pengingat Memasak</string>
+    <string name="setting_cooking_reminder_empty">Atur jam dan resep pengingat</string>
     <string name="setting_section_data">Data &amp; Penyimpanan</string>
     <string name="setting_clear_cache">Hapus Cache</string>
     <string name="setting_manage_favorite">Kelola Resep Favorit</string>

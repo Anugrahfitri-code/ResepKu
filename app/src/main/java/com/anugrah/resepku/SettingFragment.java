@@ -1,16 +1,25 @@
 package com.anugrah.resepku;
 
+import android.Manifest;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
@@ -23,7 +32,10 @@ public class SettingFragment extends Fragment {
     private static final String KEY_THEME = "theme";
     private static final String KEY_TEXT_SIZE = "text_size";
     private static final String KEY_DAILY_NOTIFICATION = "daily_notification";
-    private static final String KEY_COOKING_REMINDER = "cooking_reminder";
+    private static final String KEY_COOKING_REMINDER = CookingReminderScheduler.KEY_COOKING_REMINDER;
+    private static final String KEY_REMINDER_HOUR = CookingReminderScheduler.KEY_REMINDER_HOUR;
+    private static final String KEY_REMINDER_MINUTE = CookingReminderScheduler.KEY_REMINDER_MINUTE;
+    private static final String KEY_REMINDER_RECIPE = CookingReminderScheduler.KEY_REMINDER_RECIPE;
 
     private static final String DEFAULT_THEME = "Orange";
     private static final String DEFAULT_TEXT_SIZE = "Sedang";
@@ -34,8 +46,13 @@ public class SettingFragment extends Fragment {
     private SwitchMaterial switchCookingReminder;
     private TextView tvThemeValue;
     private TextView tvTextSizeValue;
+    private TextView tvCookingReminderSummary;
+    private ActivityResultLauncher<String> notificationPermissionLauncher;
     private String selectedTheme = DEFAULT_THEME;
     private String selectedTextSize = DEFAULT_TEXT_SIZE;
+    private String selectedReminderRecipe = "";
+    private int selectedReminderHour = 8;
+    private int selectedReminderMinute = 0;
     private boolean initialDarkMode;
     private boolean selectedDarkMode;
     private boolean selectedDailyNotification;
@@ -43,6 +60,19 @@ public class SettingFragment extends Fragment {
     private boolean changingDarkMode;
 
     public SettingFragment() {
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        notificationPermissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                granted -> {
+                    if (!granted) {
+                        showToast("Izin notifikasi belum diberikan");
+                    }
+                }
+        );
     }
 
     @Override
@@ -74,6 +104,7 @@ public class SettingFragment extends Fragment {
         switchCookingReminder = view.findViewById(R.id.switchCookingReminder);
         tvThemeValue = view.findViewById(R.id.tvThemeValue);
         tvTextSizeValue = view.findViewById(R.id.tvTextSizeValue);
+        tvCookingReminderSummary = view.findViewById(R.id.tvCookingReminderSummary);
     }
 
     private void loadSettings() {
@@ -83,6 +114,9 @@ public class SettingFragment extends Fragment {
 
         selectedTheme = AppThemeManager.getTheme(requireContext());
         selectedTextSize = AppThemeManager.getTextSize(requireContext());
+        selectedReminderHour = preferences.getInt(KEY_REMINDER_HOUR, 8);
+        selectedReminderMinute = preferences.getInt(KEY_REMINDER_MINUTE, 0);
+        selectedReminderRecipe = preferences.getString(KEY_REMINDER_RECIPE, "");
         selectedDarkMode = darkMode;
         selectedDailyNotification = dailyNotification;
         selectedCookingReminder = cookingReminder;
@@ -90,6 +124,7 @@ public class SettingFragment extends Fragment {
         setSwitchesWithoutSaving(darkMode, dailyNotification, cookingReminder);
         tvThemeValue.setText(selectedTheme);
         tvTextSizeValue.setText(selectedTextSize);
+        updateCookingReminderSummary();
         initialDarkMode = darkMode;
     }
 
@@ -106,11 +141,17 @@ public class SettingFragment extends Fragment {
         switchDailyNotification.setOnCheckedChangeListener((buttonView, isChecked) ->
                 selectedDailyNotification = isChecked);
 
-        view.findViewById(R.id.rowCookingReminder).setOnClickListener(v ->
-                switchCookingReminder.setChecked(!switchCookingReminder.isChecked()));
+        view.findViewById(R.id.rowCookingReminder).setOnClickListener(v -> showCookingReminderDialog());
 
         switchCookingReminder.setOnCheckedChangeListener((buttonView, isChecked) ->
-                selectedCookingReminder = isChecked);
+                handleCookingReminderSwitch(isChecked));
+
+        view.findViewById(R.id.btnSettingNotification).setOnClickListener(v -> {
+            switchDailyNotification.setChecked(!switchDailyNotification.isChecked());
+            showToast(switchDailyNotification.isChecked()
+                    ? "Notifikasi resep harian siap diaktifkan"
+                    : "Notifikasi resep harian siap dimatikan");
+        });
 
         view.findViewById(R.id.rowTheme).setOnClickListener(v ->
                 showOptionMenu(v, new String[]{"Orange", "Green"}, value -> {
@@ -149,7 +190,21 @@ public class SettingFragment extends Fragment {
                 .putString(KEY_TEXT_SIZE, selectedTextSize)
                 .putBoolean(KEY_DAILY_NOTIFICATION, selectedDailyNotification)
                 .putBoolean(KEY_COOKING_REMINDER, selectedCookingReminder)
+                .putInt(KEY_REMINDER_HOUR, selectedReminderHour)
+                .putInt(KEY_REMINDER_MINUTE, selectedReminderMinute)
+                .putString(KEY_REMINDER_RECIPE, selectedReminderRecipe)
                 .apply();
+
+        if (selectedCookingReminder && !selectedReminderRecipe.trim().isEmpty()) {
+            CookingReminderScheduler.schedule(
+                    requireContext(),
+                    selectedReminderHour,
+                    selectedReminderMinute,
+                    selectedReminderRecipe
+            );
+        } else {
+            CookingReminderScheduler.cancel(requireContext());
+        }
 
         showToast("Pengaturan berhasil disimpan");
         applyDarkModeIfChanged(selectedDarkMode);
@@ -163,10 +218,15 @@ public class SettingFragment extends Fragment {
         selectedDarkMode = false;
         selectedDailyNotification = true;
         selectedCookingReminder = false;
+        selectedReminderHour = 8;
+        selectedReminderMinute = 0;
+        selectedReminderRecipe = "";
 
         setSwitchesWithoutSaving(false, true, false);
         tvThemeValue.setText(selectedTheme);
         tvTextSizeValue.setText(selectedTextSize);
+        updateCookingReminderSummary();
+        CookingReminderScheduler.cancel(requireContext());
 
         preferences.edit()
                 .putBoolean(KEY_DARK_MODE, false)
@@ -174,6 +234,9 @@ public class SettingFragment extends Fragment {
                 .putString(KEY_TEXT_SIZE, DEFAULT_TEXT_SIZE)
                 .putBoolean(KEY_DAILY_NOTIFICATION, true)
                 .putBoolean(KEY_COOKING_REMINDER, false)
+                .putInt(KEY_REMINDER_HOUR, selectedReminderHour)
+                .putInt(KEY_REMINDER_MINUTE, selectedReminderMinute)
+                .putString(KEY_REMINDER_RECIPE, selectedReminderRecipe)
                 .apply();
 
         showToast("Pengaturan berhasil direset");
@@ -195,8 +258,129 @@ public class SettingFragment extends Fragment {
                 selectedDarkMode = isChecked);
         switchDailyNotification.setOnCheckedChangeListener((buttonView, isChecked) ->
                 selectedDailyNotification = isChecked);
-        switchCookingReminder.setOnCheckedChangeListener((buttonView, isChecked) ->
-                selectedCookingReminder = isChecked);
+        switchCookingReminder.setOnCheckedChangeListener((buttonView, isChecked) -> handleCookingReminderSwitch(isChecked));
+    }
+
+    private void handleCookingReminderSwitch(boolean isChecked) {
+        selectedCookingReminder = isChecked;
+        if (isChecked) {
+            if (selectedReminderRecipe.trim().isEmpty()) {
+                showCookingReminderDialog();
+            } else {
+                saveAndScheduleCookingReminder();
+            }
+        } else {
+            CookingReminderScheduler.cancel(requireContext());
+            preferences.edit().putBoolean(KEY_COOKING_REMINDER, false).apply();
+            updateCookingReminderSummary();
+            showToast("Pengingat memasak dimatikan");
+        }
+    }
+
+    private void showCookingReminderDialog() {
+        int hour = selectedReminderHour;
+        int minute = selectedReminderMinute;
+        TimePickerDialog timePickerDialog = new TimePickerDialog(
+                requireContext(),
+                (view, selectedHour, selectedMinute) -> showRecipeNameDialog(selectedHour, selectedMinute),
+                hour,
+                minute,
+                true
+        );
+        timePickerDialog.setTitle("Pilih jam pengingat");
+        timePickerDialog.setOnCancelListener(dialog -> resetReminderIfIncomplete());
+        timePickerDialog.show();
+    }
+
+    private void showRecipeNameDialog(int hour, int minute) {
+        EditText input = new EditText(requireContext());
+        input.setSingleLine(true);
+        input.setHint("Contoh: Ayam Teriyaki");
+        input.setText(selectedReminderRecipe);
+        input.setSelectAllOnFocus(true);
+        input.setPadding(dp(18), dp(8), dp(18), dp(8));
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Resep yang ingin dimasak")
+                .setMessage("Masukkan nama resep untuk notifikasi pengingat.")
+                .setView(input)
+                .setNegativeButton("Batal", (dialog, which) -> resetReminderIfIncomplete())
+                .setPositiveButton("Simpan", (dialog, which) -> {
+                    String recipeName = input.getText().toString().trim();
+                    if (recipeName.isEmpty()) {
+                        showToast("Nama resep tidak boleh kosong");
+                        return;
+                    }
+
+                    selectedReminderHour = hour;
+                    selectedReminderMinute = minute;
+                    selectedReminderRecipe = recipeName;
+                    selectedCookingReminder = true;
+                    setSwitchesWithoutSaving(selectedDarkMode, selectedDailyNotification, true);
+                    saveAndScheduleCookingReminder();
+                })
+                .setOnCancelListener(dialog -> resetReminderIfIncomplete())
+                .show();
+    }
+
+    private void resetReminderIfIncomplete() {
+        if (!selectedReminderRecipe.trim().isEmpty()) {
+            return;
+        }
+
+        selectedCookingReminder = false;
+        setSwitchesWithoutSaving(selectedDarkMode, selectedDailyNotification, false);
+        updateCookingReminderSummary();
+    }
+
+    private void saveAndScheduleCookingReminder() {
+        requestNotificationPermissionIfNeeded();
+        preferences.edit()
+                .putBoolean(KEY_COOKING_REMINDER, true)
+                .putInt(KEY_REMINDER_HOUR, selectedReminderHour)
+                .putInt(KEY_REMINDER_MINUTE, selectedReminderMinute)
+                .putString(KEY_REMINDER_RECIPE, selectedReminderRecipe)
+                .apply();
+
+        CookingReminderScheduler.schedule(
+                requireContext(),
+                selectedReminderHour,
+                selectedReminderMinute,
+                selectedReminderRecipe
+        );
+        updateCookingReminderSummary();
+        showToast("Pengingat " + selectedReminderRecipe + " disetel pukul "
+                + CookingReminderScheduler.formatTime(selectedReminderHour, selectedReminderMinute));
+    }
+
+    private void updateCookingReminderSummary() {
+        if (tvCookingReminderSummary == null) {
+            return;
+        }
+
+        if (selectedCookingReminder && !selectedReminderRecipe.trim().isEmpty()) {
+            tvCookingReminderSummary.setText(
+                    CookingReminderScheduler.formatTime(selectedReminderHour, selectedReminderMinute)
+                            + " - " + selectedReminderRecipe
+            );
+        } else {
+            tvCookingReminderSummary.setText(R.string.setting_cooking_reminder_empty);
+        }
+    }
+
+    private void requestNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            return;
+        }
+
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+        }
+    }
+
+    private int dp(int value) {
+        return Math.round(value * getResources().getDisplayMetrics().density);
     }
 
     private void applyDarkModeIfChanged(boolean enabled) {

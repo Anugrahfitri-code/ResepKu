@@ -1,6 +1,7 @@
 package com.anugrah.resepku;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -36,6 +37,8 @@ public class HomeFragment extends Fragment {
     private final List<Call<MealResponse>> recipeApiCalls = new ArrayList<>();
     private final List<Recipe> apiRecipes = new ArrayList<>();
     private final Set<String> apiRecipeTitles = new HashSet<>();
+    private static final String SETTINGS_PREF_NAME = "resepku_settings";
+    private static final String KEY_DAILY_NOTIFICATION = "daily_notification";
     private RecipeAdapter recipeAdapter;
     private RecipeAdapter apiRecipeAdapter;
     private int pendingApiCalls = 0;
@@ -72,6 +75,7 @@ public class HomeFragment extends Fragment {
         view.findViewById(R.id.btnViewRecipe).setOnClickListener(v -> openCurrentRecommendationDetail(v));
         view.findViewById(R.id.btnViewAllRecipes).setOnClickListener(v -> showAllRecipes(view));
         view.findViewById(R.id.btnRefreshApiRecipes).setOnClickListener(v -> loadRecipesFromApi());
+        view.findViewById(R.id.btnHomeNotification).setOnClickListener(v -> toggleDailyNotification());
         AppThemeManager.applyToViewTree(view);
         applyRecipeFilter();
         loadRecipesFromApi();
@@ -700,6 +704,18 @@ public class HomeFragment extends Fragment {
         NestedScrollView homeScroll = root.findViewById(R.id.homeScroll);
         recipeList.post(() -> homeScroll.smoothScrollTo(0, recipeList.getTop()));
         Toast.makeText(requireContext(), "Menampilkan semua resep", Toast.LENGTH_SHORT).show();
+    }
+
+    private void toggleDailyNotification() {
+        SharedPreferences preferences = requireContext()
+                .getSharedPreferences(SETTINGS_PREF_NAME, Context.MODE_PRIVATE);
+        boolean enabled = !preferences.getBoolean(KEY_DAILY_NOTIFICATION, true);
+        preferences.edit().putBoolean(KEY_DAILY_NOTIFICATION, enabled).apply();
+        Toast.makeText(
+                requireContext(),
+                enabled ? "Notifikasi resep harian diaktifkan" : "Notifikasi resep harian dimatikan",
+                Toast.LENGTH_SHORT
+        ).show();
     }
 
     private void showRecommendation(int index) {

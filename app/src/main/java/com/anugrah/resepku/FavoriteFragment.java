@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +28,7 @@ public class FavoriteFragment extends Fragment {
     private RecipeAdapter favoriteAdapter;
     private String selectedCategory = "";
     private String searchQuery = "";
+    private final String[] quickFilterCategories = {"", "Sarapan", "Ayam", "Dessert", "Sehat"};
 
     public FavoriteFragment() {
     }
@@ -122,13 +124,53 @@ public class FavoriteFragment extends Fragment {
         bindCategory(view.findViewById(R.id.categoryFavoriteHealthy), "Sehat");
 
         view.findViewById(R.id.btnFavoriteFilter).setOnClickListener(v -> {
-            selectedCategory = "";
+            selectedCategory = nextQuickFilter();
             EditText favoriteSearch = requireView().findViewById(R.id.etFavoriteSearch);
             favoriteSearch.setText("");
-            Toast.makeText(requireContext(), "Filter favorit direset", Toast.LENGTH_SHORT).show();
             applyCategoryState();
             applyFavoriteFilter();
+            scrollToSelectedCategory();
+            Toast.makeText(
+                    requireContext(),
+                    selectedCategory.isEmpty()
+                            ? "Menampilkan semua favorit"
+                            : "Filter favorit: " + selectedCategory,
+                    Toast.LENGTH_SHORT
+            ).show();
         });
+    }
+
+    private String nextQuickFilter() {
+        int currentIndex = 0;
+        for (int i = 0; i < quickFilterCategories.length; i++) {
+            if (quickFilterCategories[i].equals(selectedCategory)) {
+                currentIndex = i;
+                break;
+            }
+        }
+        return quickFilterCategories[(currentIndex + 1) % quickFilterCategories.length];
+    }
+
+    private void scrollToSelectedCategory() {
+        View root = getView();
+        if (root == null) {
+            return;
+        }
+
+        HorizontalScrollView scrollView = root.findViewById(R.id.favoriteCategoryScroll);
+        View target;
+        if ("Sarapan".equals(selectedCategory)) {
+            target = root.findViewById(R.id.categoryFavoriteBreakfast);
+        } else if ("Ayam".equals(selectedCategory)) {
+            target = root.findViewById(R.id.categoryFavoriteChicken);
+        } else if ("Dessert".equals(selectedCategory)) {
+            target = root.findViewById(R.id.categoryFavoriteDessert);
+        } else if ("Sehat".equals(selectedCategory)) {
+            target = root.findViewById(R.id.categoryFavoriteHealthy);
+        } else {
+            target = root.findViewById(R.id.categoryAllFavorites);
+        }
+        scrollView.post(() -> scrollView.smoothScrollTo(target.getLeft(), 0));
     }
 
     private void bindCategory(View categoryView, String category) {
