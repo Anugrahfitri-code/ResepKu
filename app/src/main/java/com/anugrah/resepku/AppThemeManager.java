@@ -239,7 +239,7 @@ public final class AppThemeManager {
                 || "Disimpan".equals(value)
                 || "Reset".equals(value)) {
             textView.setTextColor(accent);
-        } else if (value.matches("^[0-9],[0-9] \\([0-9]+\\)$")) {
+        } else if (value.matches("^[0-9],[0-9] \\([0-9.]+\\)$")) {
             textView.setTextColor(ContextCompat.getColor(textView.getContext(), R.color.text_dark));
         } else if ("resep tersimpan".equals(value)) {
             textView.setTextColor(ContextCompat.getColor(textView.getContext(), R.color.text_dark));

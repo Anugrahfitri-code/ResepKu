@@ -102,10 +102,14 @@ public class HomeFragment extends Fragment {
 
     private void setupRecipes() {
         recipes.clear();
-        recipes.add(new Recipe("Nasi Goreng Spesial", "Sarapan", "20 menit", "Mudah", R.drawable.img_nasi_goreng));
-        recipes.add(new Recipe("Ayam Teriyaki", "Ayam", "30 menit", "Mudah", R.drawable.img_ayam_teriyaki));
-        recipes.add(new Recipe("Pancake Pisang", "Dessert", "15 menit", "Mudah", R.drawable.img_pancake_pisang));
-        recipes.add(new Recipe("Salad Segar", "Sehat", "10 menit", "Mudah", R.drawable.img_salad_segar));
+        recipes.add(new Recipe("Nasi Goreng Spesial", "Sarapan", "20 menit", "Mudah", "3 porsi",
+                "5,0 (1.240)", R.drawable.img_nasi_goreng, "", "", new ArrayList<>(), new ArrayList<>()));
+        recipes.add(new Recipe("Ayam Teriyaki", "Ayam", "30 menit", "Mudah", "4 porsi",
+                "4,9 (1.086)", R.drawable.img_ayam_teriyaki, "", "", new ArrayList<>(), new ArrayList<>()));
+        recipes.add(new Recipe("Pancake Pisang", "Dessert", "15 menit", "Mudah", "6 porsi",
+                "4,9 (934)", R.drawable.img_pancake_pisang, "", "", new ArrayList<>(), new ArrayList<>()));
+        recipes.add(new Recipe("Salad Segar", "Sehat", "10 menit", "Mudah", "2 porsi",
+                "4,9 (812)", R.drawable.img_salad_segar, "", "", new ArrayList<>(), new ArrayList<>()));
     }
 
     private void loadRecipesFromApi() {
