@@ -36,17 +36,22 @@ public class HomeFragment extends Fragment {
     private final List<RecommendationItem> recommendations = new ArrayList<>();
     private final List<Call<MealResponse>> recipeApiCalls = new ArrayList<>();
     private final List<Recipe> apiRecipes = new ArrayList<>();
+    private final List<Recipe> cachedApiRecipeSnapshot = new ArrayList<>();
     private final Set<String> apiRecipeTitles = new HashSet<>();
     private final Set<String> apiRecipeIds = new HashSet<>();
     private static final String SETTINGS_PREF_NAME = "resepku_settings";
     private static final String KEY_DAILY_NOTIFICATION = "daily_notification";
     private static final int MAX_API_RECIPES = 100;
     private static final int MAX_RECIPES_PER_API_CATEGORY = 8;
+    private static final int API_CACHE_PROGRESS_INTERVAL = 10;
     private RecipeAdapter recipeAdapter;
     private RecipeAdapter apiRecipeAdapter;
     private int pendingApiCalls = 0;
     private int scheduledApiRecipeLookups = 0;
+    private int lastCachedApiRecipeCount = 0;
     private boolean hasApiResult = false;
+    private boolean hasFreshApiResult = false;
+    private boolean showingCachedApiRecipes = false;
     private String selectedCategory = "";
     private String searchQuery = "";
     private int currentRecommendationIndex = 0;
@@ -211,12 +216,17 @@ public class HomeFragment extends Fragment {
         }
         recipeApiCalls.clear();
         apiRecipes.clear();
+        cachedApiRecipeSnapshot.clear();
         apiRecipeTitles.clear();
         apiRecipeIds.clear();
         scheduledApiRecipeLookups = 0;
+        lastCachedApiRecipeCount = 0;
         hasApiResult = false;
+        hasFreshApiResult = false;
+        showingCachedApiRecipes = false;
         setApiErrorVisible(false);
         applyApiRecipeFilter();
+        showCachedApiRecipesForWarmStart();
 
         ApiRecipeQuery[] queries = new ApiRecipeQuery[]{
                 new ApiRecipeQuery("Beef", "Daging", R.drawable.img_nasi_goreng),
@@ -325,6 +335,15 @@ public class HomeFragment extends Fragment {
             return;
         }
 
+        if (!hasFreshApiResult) {
+            if (showingCachedApiRecipes) {
+                apiRecipes.clear();
+                apiRecipeTitles.clear();
+                showingCachedApiRecipes = false;
+            }
+            hasFreshApiResult = true;
+        }
+
         String title = meal.name.trim();
         if (!apiRecipeTitles.add(title.toLowerCase(Locale.ROOT))) {
             return;
@@ -334,7 +353,7 @@ public class HomeFragment extends Fragment {
         int image = query.imageRes != 0 ? query.imageRes : localImageForIndex(apiRecipes.size());
         List<String> ingredients = ingredientsFromMeal(meal);
         List<String> steps = stepsFromInstructions(meal.instructions);
-        apiRecipes.add(new Recipe(
+        Recipe recipe = new Recipe(
                 title,
                 category,
                 estimateTime(category, ingredients.size(), steps.size()),
@@ -347,7 +366,10 @@ public class HomeFragment extends Fragment {
                 descriptionForRecipe(title, category, ingredients),
                 ingredients,
                 steps
-        ));
+        );
+        apiRecipes.add(recipe);
+        prefetchApiRecipeImage(recipe);
+        cacheApiRecipesIfReady(false);
     }
 
     private String categoryForMeal(Meal meal, ApiRecipeQuery fallbackQuery) {
@@ -391,33 +413,81 @@ public class HomeFragment extends Fragment {
             return;
         }
 
-        if (!apiRecipes.isEmpty()) {
+        if (hasFreshApiResult && !apiRecipes.isEmpty()) {
+            if (!cachedApiRecipeSnapshot.isEmpty()
+                    && apiRecipes.size() < cachedApiRecipeSnapshot.size()) {
+                showCachedApiRecipes(new ArrayList<>(cachedApiRecipeSnapshot), false, false);
+                return;
+            }
+            hasApiResult = true;
+            showingCachedApiRecipes = false;
+            setApiErrorVisible(false);
+            cacheApiRecipesIfReady(true);
+        } else if (!apiRecipes.isEmpty()) {
             hasApiResult = true;
             setApiErrorVisible(false);
-            saveApiRecipesInBackground(new ArrayList<>(apiRecipes));
         } else if (!hasApiResult) {
-            loadCachedApiRecipesInBackground();
+            loadCachedApiRecipesInBackground(true, false);
             return;
         }
 
         applyApiRecipeFilter();
     }
 
-    private void saveApiRecipesInBackground(List<Recipe> recipesToCache) {
+    private void cacheApiRecipesIfReady(boolean force) {
+        if (!isAdded() || !hasFreshApiResult || apiRecipes.isEmpty()) {
+            return;
+        }
+
+        int recipeCount = apiRecipes.size();
+        if (!force
+                && recipeCount < MAX_API_RECIPES
+                && recipeCount % API_CACHE_PROGRESS_INTERVAL != 0) {
+            return;
+        }
+
+        if (!force && recipeCount == lastCachedApiRecipeCount) {
+            return;
+        }
+
+        lastCachedApiRecipeCount = recipeCount;
+        saveApiRecipesInBackground(new ArrayList<>(apiRecipes), force);
+    }
+
+    private void saveApiRecipesInBackground(List<Recipe> recipesToCache, boolean cacheImages) {
         if (!isAdded()) {
             return;
         }
 
         Context appContext = requireContext().getApplicationContext();
         BackgroundTaskRunner.runInBackground(() -> {
-            RecipeCacheStore.saveApiRecipes(appContext, recipesToCache);
-            for (Recipe recipe : recipesToCache) {
-                ImageLoader.prefetch(appContext, recipe.imageUrl);
+            RecipeCacheStore.saveApiRecipesIfBetter(appContext, recipesToCache);
+            if (cacheImages) {
+                for (Recipe recipe : recipesToCache) {
+                    ImageLoader.prefetchNow(appContext, recipe.imageUrl);
+                }
             }
         });
     }
 
-    private void loadCachedApiRecipesInBackground() {
+    private void prefetchApiRecipeImage(Recipe recipe) {
+        if (!isAdded() || recipe == null || recipe.imageUrl == null || recipe.imageUrl.trim().isEmpty()) {
+            return;
+        }
+
+        ImageLoader.prefetch(requireContext().getApplicationContext(), recipe.imageUrl);
+    }
+
+    private void showCachedApiRecipesForWarmStart() {
+        if (!isAdded()) {
+            return;
+        }
+
+        List<Recipe> cachedApiRecipes = RecipeCacheStore.getApiRecipes(requireContext().getApplicationContext());
+        showCachedApiRecipes(cachedApiRecipes, false, true);
+    }
+
+    private void loadCachedApiRecipesInBackground(boolean showToast, boolean onlyWhenEmpty) {
         if (!isAdded()) {
             return;
         }
@@ -425,21 +495,41 @@ public class HomeFragment extends Fragment {
         Context appContext = requireContext().getApplicationContext();
         BackgroundTaskRunner.runInBackground(() -> {
             List<Recipe> cachedApiRecipes = RecipeCacheStore.getApiRecipes(appContext);
-            BackgroundTaskRunner.runOnMain(() -> showCachedApiRecipes(cachedApiRecipes));
+            BackgroundTaskRunner.runOnMain(() -> showCachedApiRecipes(cachedApiRecipes, showToast, onlyWhenEmpty));
         });
     }
 
-    private void showCachedApiRecipes(List<Recipe> cachedApiRecipes) {
+    private void showCachedApiRecipes(List<Recipe> cachedApiRecipes, boolean showToast, boolean onlyWhenEmpty) {
         if (!isAdded()) {
             return;
         }
 
+        if (onlyWhenEmpty && (hasFreshApiResult || !apiRecipes.isEmpty())) {
+            return;
+        }
+
         if (!cachedApiRecipes.isEmpty()) {
+            apiRecipes.clear();
+            cachedApiRecipeSnapshot.clear();
+            apiRecipeTitles.clear();
             apiRecipes.addAll(cachedApiRecipes);
+            cachedApiRecipeSnapshot.addAll(cachedApiRecipes);
+            for (Recipe recipe : cachedApiRecipes) {
+                if (recipe.title != null && !recipe.title.trim().isEmpty()) {
+                    apiRecipeTitles.add(recipe.title.toLowerCase(Locale.ROOT));
+                }
+            }
             hasApiResult = true;
+            hasFreshApiResult = false;
+            showingCachedApiRecipes = true;
             setApiErrorVisible(false);
-            Toast.makeText(requireContext(), "Gagal mengambil API, memakai cache resep", Toast.LENGTH_SHORT).show();
+            if (showToast) {
+                Toast.makeText(requireContext(), "Gagal mengambil API, memakai cache resep", Toast.LENGTH_SHORT).show();
+            }
         } else {
+            if (onlyWhenEmpty) {
+                return;
+            }
             setApiErrorVisible(true);
             Toast.makeText(requireContext(), "Gagal mengambil API, memakai resep lokal", Toast.LENGTH_SHORT).show();
         }

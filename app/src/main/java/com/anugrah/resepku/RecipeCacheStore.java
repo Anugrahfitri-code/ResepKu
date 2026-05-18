@@ -62,6 +62,26 @@ public final class RecipeCacheStore {
         }
     }
 
+    public static boolean saveApiRecipesIfBetter(Context context, List<Recipe> recipes) {
+        if (recipes == null || recipes.isEmpty()) {
+            return false;
+        }
+
+        int validCount = 0;
+        for (Recipe recipe : recipes) {
+            if (recipe != null && recipe.title != null && !recipe.title.trim().isEmpty()) {
+                validCount++;
+            }
+        }
+
+        if (validCount == 0 || validCount < getApiRecipeCount(context)) {
+            return false;
+        }
+
+        saveApiRecipes(context, recipes);
+        return true;
+    }
+
     public static List<Recipe> getApiRecipes(Context context) {
         List<Recipe> recipes = new ArrayList<>();
         String rawJson = prefs(context).getString(KEY_API_RECIPES, "");
@@ -80,6 +100,19 @@ public final class RecipeCacheStore {
         } catch (JSONException ignored) {
         }
         return recipes;
+    }
+
+    public static int getApiRecipeCount(Context context) {
+        String rawJson = prefs(context).getString(KEY_API_RECIPES, "");
+        if (rawJson == null || rawJson.isEmpty()) {
+            return 0;
+        }
+
+        try {
+            return new JSONArray(rawJson).length();
+        } catch (JSONException ignored) {
+            return 0;
+        }
     }
 
     private static JSONObject toJsonObject(Recipe recipe) throws JSONException {

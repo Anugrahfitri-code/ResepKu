@@ -84,6 +84,22 @@ public final class ImageLoader {
         });
     }
 
+    public static void prefetchNow(Context context, String imageUrl) {
+        if (context == null || TextUtils.isEmpty(imageUrl)) {
+            return;
+        }
+
+        Context appContext = context.getApplicationContext();
+        if (imageFile(appContext, imageUrl).exists()) {
+            return;
+        }
+
+        Bitmap bitmap = downloadBitmap(appContext, imageUrl);
+        if (bitmap != null) {
+            CACHE.put(imageUrl, bitmap);
+        }
+    }
+
     private static Bitmap downloadBitmap(Context context, String imageUrl) {
         HttpURLConnection connection = null;
         try {
