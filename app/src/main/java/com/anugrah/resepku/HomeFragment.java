@@ -102,14 +102,94 @@ public class HomeFragment extends Fragment {
 
     private void setupRecipes() {
         recipes.clear();
-        recipes.add(new Recipe("Nasi Goreng Spesial", "Sarapan", "20 menit", "Mudah", "3 porsi",
-                "5,0 (1.240)", R.drawable.img_nasi_goreng, "", "", new ArrayList<>(), new ArrayList<>()));
-        recipes.add(new Recipe("Ayam Teriyaki", "Ayam", "30 menit", "Mudah", "4 porsi",
-                "4,9 (1.086)", R.drawable.img_ayam_teriyaki, "", "", new ArrayList<>(), new ArrayList<>()));
-        recipes.add(new Recipe("Pancake Pisang", "Dessert", "15 menit", "Mudah", "6 porsi",
-                "4,9 (934)", R.drawable.img_pancake_pisang, "", "", new ArrayList<>(), new ArrayList<>()));
-        recipes.add(new Recipe("Salad Segar", "Sehat", "10 menit", "Mudah", "2 porsi",
-                "4,9 (812)", R.drawable.img_salad_segar, "", "", new ArrayList<>(), new ArrayList<>()));
+        recipes.add(localRecipe("Nasi Goreng Spesial"));
+        recipes.add(localRecipe("Ayam Teriyaki"));
+        recipes.add(localRecipe("Pancake Pisang"));
+        recipes.add(localRecipe("Salad Segar"));
+    }
+
+    private Recipe localRecipe(String title) {
+        if ("Nasi Goreng Spesial".equals(title)) {
+            return new Recipe(
+                    title,
+                    "Sarapan",
+                    "20 menit",
+                    "Mudah",
+                    "3 porsi",
+                    "5,0 (1.240)",
+                    R.drawable.img_nasi_goreng,
+                    "",
+                    "Nasi goreng rumahan yang gurih dengan telur, sayuran, dan aroma bawang yang menggugah selera.",
+                    listOf("3 piring nasi putih", "2 butir telur", "3 siung bawang putih cincang", "4 siung bawang merah iris", "2 sdm kecap manis", "1 sdm saus tiram", "Secukupnya garam dan lada", "Mentimun dan jeruk limau"),
+                    listOf("Tumis bawang putih dan bawang merah hingga harum.", "Masukkan telur, orak-arik sampai matang.", "Tambahkan nasi putih, kecap manis, saus tiram, garam, dan lada.", "Aduk dengan api besar sampai bumbu merata dan nasi sedikit kering.", "Sajikan dengan mentimun, jeruk limau, dan telur mata sapi.")
+            );
+        }
+        if ("Ayam Teriyaki".equals(title)) {
+            return new Recipe(
+                    title,
+                    "Ayam",
+                    "30 menit",
+                    "Mudah",
+                    "4 porsi",
+                    "4,9 (1.086)",
+                    R.drawable.img_ayam_teriyaki,
+                    "",
+                    "Ayam teriyaki manis gurih dengan saus mengilap, cocok untuk lauk makan siang keluarga.",
+                    listOf("500 g paha ayam fillet", "3 sdm kecap asin", "2 sdm madu", "1 sdm gula palem", "2 siung bawang putih parut", "1 ruas jahe parut", "1 sdm minyak wijen", "Irisan daun bawang dan wijen"),
+                    listOf("Campur kecap asin, madu, gula palem, bawang putih, jahe, dan minyak wijen.", "Marinasi ayam dengan saus selama 15 menit.", "Panaskan wajan, masak ayam hingga kedua sisi kecokelatan.", "Tuang sisa saus dan masak sampai mengental serta ayam matang.", "Taburi daun bawang dan wijen sebelum disajikan.")
+            );
+        }
+        if ("Pancake Pisang".equals(title)) {
+            return new Recipe(
+                    title,
+                    "Dessert",
+                    "15 menit",
+                    "Mudah",
+                    "6 porsi",
+                    "4,9 (934)",
+                    R.drawable.img_pancake_pisang,
+                    "",
+                    "Pancake lembut dengan pisang manis dan sirup hangat untuk sarapan atau camilan.",
+                    listOf("2 buah pisang matang", "150 g tepung terigu", "1 butir telur", "180 ml susu cair", "1 sdm gula", "1 sdt baking powder", "1 sdm margarin leleh", "Madu atau sirup secukupnya"),
+                    listOf("Haluskan pisang, lalu campur dengan telur, susu, dan margarin leleh.", "Masukkan tepung, gula, dan baking powder, aduk sampai adonan rata.", "Panaskan teflon anti lengket dengan api kecil.", "Tuang adonan secukupnya dan masak sampai muncul gelembung.", "Balik pancake, masak sebentar, lalu sajikan dengan madu atau sirup.")
+            );
+        }
+        if ("Salad Segar".equals(title)) {
+            return new Recipe(
+                    title,
+                    "Sehat",
+                    "10 menit",
+                    "Mudah",
+                    "2 porsi",
+                    "4,9 (812)",
+                    R.drawable.img_salad_segar,
+                    "",
+                    "Salad sayur segar dengan telur dan jagung, ringan namun tetap mengenyangkan.",
+                    listOf("1 mangkuk selada", "1 buah mentimun iris", "8 tomat ceri", "1/2 buah bawang bombai iris", "1 butir telur rebus", "3 sdm jagung manis", "2 sdm minyak zaitun", "1 sdm air lemon"),
+                    listOf("Cuci bersih semua sayuran, lalu tiriskan.", "Iris selada, mentimun, tomat ceri, bawang bombai, dan telur rebus.", "Campur minyak zaitun, air lemon, garam, dan lada sebagai dressing.", "Masukkan sayuran, telur, dan jagung ke mangkuk.", "Tuang dressing, aduk perlahan, lalu sajikan segera.")
+            );
+        }
+        return new Recipe(
+                "Sup Ayam Jahe Hangat",
+                "Ayam",
+                "30 menit",
+                "Mudah",
+                "4 porsi",
+                "4,9 (1.158)",
+                R.drawable.img_soup_chicken_ginger,
+                "",
+                "Hangat, gurih, dan menyehatkan badan. Cocok untuk keluarga.",
+                listOf("300 g ayam suwir", "1 buah kentang potong dadu", "2 cm jahe memarkan", "1 sdt garam", "1 buah wortel iris tipis", "1/2 sdt lada bubuk", "2 batang daun bawang iris", "750 ml air kaldu ayam", "2 siung bawang putih cincang", "Secukupnya daun seledri"),
+                listOf("Rebus air kaldu, masukkan jahe memarkan dan bawang putih, masak hingga harum.", "Masukkan ayam suwir, wortel, dan kentang, lalu masak hingga sayuran empuk.", "Bumbui dengan garam dan lada bubuk, aduk rata dan koreksi rasa.", "Tambahkan daun bawang dan seledri, masak sebentar hingga matang.", "Sajikan selagi hangat.")
+        );
+    }
+
+    private List<String> listOf(String... values) {
+        List<String> list = new ArrayList<>();
+        for (String value : values) {
+            list.add(value);
+        }
+        return list;
     }
 
     private void loadRecipesFromApi() {
@@ -638,17 +718,7 @@ public class HomeFragment extends Fragment {
         }
 
         RecommendationItem item = recommendations.get(currentRecommendationIndex);
-        SelectedRecipeStore.setSelectedRecipe(new Recipe(
-                item.favoriteTitle,
-                "Ayam",
-                "30 menit",
-                "Mudah",
-                item.imageRes,
-                "",
-                item.description,
-                new ArrayList<>(),
-                new ArrayList<>()
-        ));
+        SelectedRecipeStore.setSelectedRecipe(localRecipe(item.favoriteTitle));
         boolean newFavoriteState = !FavoriteStore.isFavorite(requireContext(), item.favoriteTitle);
         FavoriteStore.setFavorite(requireContext(), item.favoriteTitle, newFavoriteState);
         if (newFavoriteState) {
@@ -696,17 +766,7 @@ public class HomeFragment extends Fragment {
     private void openCurrentRecommendationDetail(View view) {
         if (!recommendations.isEmpty()) {
             RecommendationItem item = recommendations.get(currentRecommendationIndex);
-            SelectedRecipeStore.setSelectedRecipe(new Recipe(
-                    item.favoriteTitle,
-                    "Ayam",
-                    "30 menit",
-                    "Mudah",
-                    item.imageRes,
-                    "",
-                    item.description,
-                    new ArrayList<>(),
-                    new ArrayList<>()
-            ));
+            SelectedRecipeStore.setSelectedRecipe(localRecipe(item.favoriteTitle));
         }
         openRecipeDetail(view);
     }
