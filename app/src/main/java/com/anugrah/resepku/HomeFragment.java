@@ -37,11 +37,15 @@ public class HomeFragment extends Fragment {
     private final List<Call<MealResponse>> recipeApiCalls = new ArrayList<>();
     private final List<Recipe> apiRecipes = new ArrayList<>();
     private final Set<String> apiRecipeTitles = new HashSet<>();
+    private final Set<String> apiRecipeIds = new HashSet<>();
     private static final String SETTINGS_PREF_NAME = "resepku_settings";
     private static final String KEY_DAILY_NOTIFICATION = "daily_notification";
+    private static final int MAX_API_RECIPES = 100;
+    private static final int MAX_RECIPES_PER_API_CATEGORY = 8;
     private RecipeAdapter recipeAdapter;
     private RecipeAdapter apiRecipeAdapter;
     private int pendingApiCalls = 0;
+    private int scheduledApiRecipeLookups = 0;
     private boolean hasApiResult = false;
     private String selectedCategory = "";
     private String searchQuery = "";
@@ -202,30 +206,43 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadRecipesFromApi() {
+        for (Call<MealResponse> call : recipeApiCalls) {
+            call.cancel();
+        }
         recipeApiCalls.clear();
         apiRecipes.clear();
         apiRecipeTitles.clear();
+        apiRecipeIds.clear();
+        scheduledApiRecipeLookups = 0;
         hasApiResult = false;
         setApiErrorVisible(false);
         applyApiRecipeFilter();
 
         ApiRecipeQuery[] queries = new ApiRecipeQuery[]{
-                new ApiRecipeQuery("chicken", "Ayam", R.drawable.img_ayam_teriyaki),
-                new ApiRecipeQuery("beef", "Daging", R.drawable.img_nasi_goreng),
-                new ApiRecipeQuery("pasta", "Sarapan", R.drawable.img_nasi_goreng),
-                new ApiRecipeQuery("cake", "Dessert", R.drawable.img_pancake_pisang),
-                new ApiRecipeQuery("salad", "Sehat", R.drawable.img_salad_segar),
-                new ApiRecipeQuery("fish", "Seafood", R.drawable.img_soup_chicken_ginger)
+                new ApiRecipeQuery("Beef", "Daging", R.drawable.img_nasi_goreng),
+                new ApiRecipeQuery("Chicken", "Ayam", R.drawable.img_ayam_teriyaki),
+                new ApiRecipeQuery("Dessert", "Dessert", R.drawable.img_pancake_pisang),
+                new ApiRecipeQuery("Lamb", "Daging", R.drawable.img_nasi_goreng),
+                new ApiRecipeQuery("Miscellaneous", "Sarapan", R.drawable.img_nasi_goreng),
+                new ApiRecipeQuery("Pasta", "Sarapan", R.drawable.img_nasi_goreng),
+                new ApiRecipeQuery("Pork", "Daging", R.drawable.img_nasi_goreng),
+                new ApiRecipeQuery("Seafood", "Seafood", R.drawable.img_soup_chicken_ginger),
+                new ApiRecipeQuery("Side", "Sehat", R.drawable.img_salad_segar),
+                new ApiRecipeQuery("Starter", "Sehat", R.drawable.img_salad_segar),
+                new ApiRecipeQuery("Vegan", "Sehat", R.drawable.img_salad_segar),
+                new ApiRecipeQuery("Vegetarian", "Sehat", R.drawable.img_salad_segar),
+                new ApiRecipeQuery("Breakfast", "Sarapan", R.drawable.img_nasi_goreng),
+                new ApiRecipeQuery("Goat", "Daging", R.drawable.img_nasi_goreng)
         };
 
         pendingApiCalls = queries.length;
         for (ApiRecipeQuery query : queries) {
-            enqueueApiRecipeQuery(query);
+            enqueueApiCategoryQuery(query);
         }
     }
 
-    private void enqueueApiRecipeQuery(ApiRecipeQuery query) {
-        Call<MealResponse> call = RecipeApiClient.getService().searchMeals(query.keyword);
+    private void enqueueApiCategoryQuery(ApiRecipeQuery query) {
+        Call<MealResponse> call = RecipeApiClient.getService().filterMealsByCategory(query.keyword);
         recipeApiCalls.add(call);
         call.enqueue(new Callback<MealResponse>() {
             @Override
@@ -236,7 +253,7 @@ public class HomeFragment extends Fragment {
 
                 MealResponse body = response.body();
                 if (response.isSuccessful() && body != null && body.meals != null) {
-                    addApiRecipes(body.meals, query);
+                    enqueueApiRecipeDetails(body.meals, query);
                 }
                 finishApiCall();
             }
@@ -252,41 +269,120 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void addApiRecipes(List<Meal> meals, ApiRecipeQuery query) {
+    private void enqueueApiRecipeDetails(List<Meal> meals, ApiRecipeQuery query) {
         int addedForQuery = 0;
         for (Meal meal : meals) {
-            if (meal.name == null || meal.name.trim().isEmpty()) {
-                continue;
-            }
-
-            String title = meal.name.trim();
-            if (!apiRecipeTitles.add(title.toLowerCase(Locale.ROOT))) {
-                continue;
-            }
-
-            int image = query.imageRes != 0 ? query.imageRes : localImageForIndex(apiRecipes.size());
-            List<String> ingredients = ingredientsFromMeal(meal);
-            List<String> steps = stepsFromInstructions(meal.instructions);
-            apiRecipes.add(new Recipe(
-                    title,
-                    query.category,
-                    estimateTime(query.category, ingredients.size(), steps.size()),
-                    estimateDifficulty(ingredients.size(), steps.size()),
-                    estimateServing(query.category),
-                    estimateRating(title, ingredients.size(), steps.size()),
-                    tipForRecipe(title, query.category, ingredients),
-                    image,
-                    meal.thumbnailUrl,
-                    descriptionForRecipe(title, query.category, ingredients),
-                    ingredients,
-                    steps
-            ));
-            addedForQuery++;
-
-            if (addedForQuery >= 3 || apiRecipes.size() >= 14) {
+            if (scheduledApiRecipeLookups >= MAX_API_RECIPES
+                    || addedForQuery >= MAX_RECIPES_PER_API_CATEGORY) {
                 break;
             }
+            if (meal.id == null || meal.id.trim().isEmpty()
+                    || meal.name == null || meal.name.trim().isEmpty()) {
+                continue;
+            }
+
+            if (!apiRecipeIds.add(meal.id.trim())) {
+                continue;
+            }
+
+            scheduledApiRecipeLookups++;
+            addedForQuery++;
+            pendingApiCalls++;
+            enqueueApiRecipeDetail(meal.id.trim(), query);
         }
+    }
+
+    private void enqueueApiRecipeDetail(String mealId, ApiRecipeQuery query) {
+        Call<MealResponse> call = RecipeApiClient.getService().lookupMeal(mealId);
+        recipeApiCalls.add(call);
+        call.enqueue(new Callback<MealResponse>() {
+            @Override
+            public void onResponse(Call<MealResponse> call, Response<MealResponse> response) {
+                if (!isAdded() || call.isCanceled()) {
+                    return;
+                }
+
+                MealResponse body = response.body();
+                if (response.isSuccessful() && body != null && body.meals != null && !body.meals.isEmpty()) {
+                    addApiRecipe(body.meals.get(0), query);
+                }
+                finishApiCall();
+            }
+
+            @Override
+            public void onFailure(Call<MealResponse> call, Throwable throwable) {
+                if (!isAdded() || call.isCanceled()) {
+                    return;
+                }
+
+                finishApiCall();
+            }
+        });
+    }
+
+    private void addApiRecipe(Meal meal, ApiRecipeQuery query) {
+        if (meal.name == null || meal.name.trim().isEmpty() || apiRecipes.size() >= MAX_API_RECIPES) {
+            return;
+        }
+
+        String title = meal.name.trim();
+        if (!apiRecipeTitles.add(title.toLowerCase(Locale.ROOT))) {
+            return;
+        }
+
+        String category = categoryForMeal(meal, query);
+        int image = query.imageRes != 0 ? query.imageRes : localImageForIndex(apiRecipes.size());
+        List<String> ingredients = ingredientsFromMeal(meal);
+        List<String> steps = stepsFromInstructions(meal.instructions);
+        apiRecipes.add(new Recipe(
+                title,
+                category,
+                estimateTime(category, ingredients.size(), steps.size()),
+                estimateDifficulty(ingredients.size(), steps.size()),
+                estimateServing(category),
+                estimateRating(title, ingredients.size(), steps.size()),
+                tipForRecipe(title, category, ingredients),
+                image,
+                meal.thumbnailUrl,
+                descriptionForRecipe(title, category, ingredients),
+                ingredients,
+                steps
+        ));
+    }
+
+    private String categoryForMeal(Meal meal, ApiRecipeQuery fallbackQuery) {
+        String apiCategory = meal.category == null ? "" : meal.category.trim();
+        if (apiCategory.isEmpty()) {
+            return fallbackQuery.category;
+        }
+
+        if ("Chicken".equalsIgnoreCase(apiCategory)) {
+            return "Ayam";
+        }
+        if ("Dessert".equalsIgnoreCase(apiCategory)) {
+            return "Dessert";
+        }
+        if ("Seafood".equalsIgnoreCase(apiCategory)) {
+            return "Seafood";
+        }
+        if ("Vegetarian".equalsIgnoreCase(apiCategory)
+                || "Vegan".equalsIgnoreCase(apiCategory)
+                || "Side".equalsIgnoreCase(apiCategory)
+                || "Starter".equalsIgnoreCase(apiCategory)) {
+            return "Sehat";
+        }
+        if ("Breakfast".equalsIgnoreCase(apiCategory)
+                || "Pasta".equalsIgnoreCase(apiCategory)
+                || "Miscellaneous".equalsIgnoreCase(apiCategory)) {
+            return "Sarapan";
+        }
+        if ("Beef".equalsIgnoreCase(apiCategory)
+                || "Lamb".equalsIgnoreCase(apiCategory)
+                || "Pork".equalsIgnoreCase(apiCategory)
+                || "Goat".equalsIgnoreCase(apiCategory)) {
+            return "Daging";
+        }
+        return fallbackQuery.category;
     }
 
     private void finishApiCall() {
@@ -479,6 +575,16 @@ public class HomeFragment extends Fragment {
         addIngredient(ingredients, meal.measure8, meal.ingredient8);
         addIngredient(ingredients, meal.measure9, meal.ingredient9);
         addIngredient(ingredients, meal.measure10, meal.ingredient10);
+        addIngredient(ingredients, meal.measure11, meal.ingredient11);
+        addIngredient(ingredients, meal.measure12, meal.ingredient12);
+        addIngredient(ingredients, meal.measure13, meal.ingredient13);
+        addIngredient(ingredients, meal.measure14, meal.ingredient14);
+        addIngredient(ingredients, meal.measure15, meal.ingredient15);
+        addIngredient(ingredients, meal.measure16, meal.ingredient16);
+        addIngredient(ingredients, meal.measure17, meal.ingredient17);
+        addIngredient(ingredients, meal.measure18, meal.ingredient18);
+        addIngredient(ingredients, meal.measure19, meal.ingredient19);
+        addIngredient(ingredients, meal.measure20, meal.ingredient20);
         return ingredients;
     }
 
