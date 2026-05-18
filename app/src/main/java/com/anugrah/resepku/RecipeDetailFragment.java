@@ -90,6 +90,7 @@ public class RecipeDetailFragment extends Fragment {
     }
 
     private void bindStats(View view) {
+        ((TextView) view.findViewById(R.id.tvDetailRating)).setText(currentRecipe.rating);
         ((TextView) view.findViewById(R.id.tvDetailTimeValue)).setText(currentRecipe.time);
         ((TextView) view.findViewById(R.id.tvDetailLevelValue)).setText(currentRecipe.level);
         ((TextView) view.findViewById(R.id.tvDetailServingValue)).setText(currentRecipe.serving);

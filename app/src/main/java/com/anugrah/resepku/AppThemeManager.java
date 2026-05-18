@@ -239,7 +239,7 @@ public final class AppThemeManager {
                 || "Disimpan".equals(value)
                 || "Reset".equals(value)) {
             textView.setTextColor(accent);
-        } else if ("4,8 (128)".equals(value)) {
+        } else if (value.matches("^[0-9],[0-9] \\([0-9]+\\)$")) {
             textView.setTextColor(ContextCompat.getColor(textView.getContext(), R.color.text_dark));
         } else if ("resep tersimpan".equals(value)) {
             textView.setTextColor(ContextCompat.getColor(textView.getContext(), R.color.text_dark));
@@ -323,7 +323,9 @@ public final class AppThemeManager {
             View sibling = parent.getChildAt(i);
             if (sibling instanceof TextView) {
                 CharSequence text = ((TextView) sibling).getText();
-                return text != null && "Mudah".contentEquals(text);
+                return text != null && ("Mudah".contentEquals(text)
+                        || "Sedang".contentEquals(text)
+                        || "Sulit".contentEquals(text));
             }
         }
         return false;

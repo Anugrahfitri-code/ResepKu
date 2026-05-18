@@ -180,6 +180,7 @@ public class HomeFragment extends Fragment {
                     estimateTime(query.category, ingredients.size(), steps.size()),
                     estimateDifficulty(ingredients.size(), steps.size()),
                     estimateServing(query.category),
+                    estimateRating(title, ingredients.size(), steps.size()),
                     image,
                     meal.thumbnailUrl,
                     descriptionForRecipe(title, query.category, ingredients),
@@ -309,6 +310,18 @@ public class HomeFragment extends Fragment {
             return "3 porsi";
         }
         return "4 porsi";
+    }
+
+    private String estimateRating(String title, int ingredientCount, int stepCount) {
+        int seed = Math.abs(title.hashCode());
+        int ratingTenths = 43 + (seed % 7);
+        if (ingredientCount >= 6 && stepCount >= 4) {
+            ratingTenths += 1;
+        }
+        ratingTenths = Math.min(ratingTenths, 49);
+
+        int reviewers = 45 + (seed % 184);
+        return (ratingTenths / 10) + "," + (ratingTenths % 10) + " (" + reviewers + ")";
     }
 
     private String descriptionForRecipe(String title, String category, List<String> ingredients) {

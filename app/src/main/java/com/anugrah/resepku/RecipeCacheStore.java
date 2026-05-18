@@ -89,6 +89,7 @@ public final class RecipeCacheStore {
         json.put("time", recipe.time);
         json.put("level", recipe.level);
         json.put("serving", recipe.serving);
+        json.put("rating", recipe.rating);
         json.put("imageRes", recipe.imageRes);
         json.put("imageUrl", recipe.imageUrl);
         json.put("description", recipe.description);
@@ -104,12 +105,24 @@ public final class RecipeCacheStore {
                 json.optString("time", "30 menit"),
                 json.optString("level", "Mudah"),
                 json.optString("serving", "4 porsi"),
+                json.optString("rating", fallbackRating(json.optString("title", fallbackTitle))),
                 json.optInt("imageRes", R.drawable.img_soup_chicken_ginger),
                 json.optString("imageUrl", ""),
                 json.optString("description", ""),
                 toStringList(json.optJSONArray("ingredients")),
                 toStringList(json.optJSONArray("steps"))
         );
+    }
+
+    private static String fallbackRating(String title) {
+        if (title == null || title.trim().isEmpty()) {
+            return "4,8 (128)";
+        }
+
+        int seed = Math.abs(title.hashCode());
+        int ratingTenths = 43 + (seed % 7);
+        int reviewers = 45 + (seed % 184);
+        return (ratingTenths / 10) + "," + (ratingTenths % 10) + " (" + reviewers + ")";
     }
 
     private static JSONArray toJsonArray(List<String> values) {
