@@ -195,8 +195,16 @@ public class HomeFragment extends Fragment {
 
         if (!apiRecipes.isEmpty()) {
             hasApiResult = true;
+            RecipeCacheStore.saveApiRecipes(requireContext(), apiRecipes);
         } else if (!hasApiResult) {
-            Toast.makeText(requireContext(), "Gagal mengambil API, memakai resep lokal", Toast.LENGTH_SHORT).show();
+            List<Recipe> cachedApiRecipes = RecipeCacheStore.getApiRecipes(requireContext());
+            if (!cachedApiRecipes.isEmpty()) {
+                apiRecipes.addAll(cachedApiRecipes);
+                hasApiResult = true;
+                Toast.makeText(requireContext(), "Gagal mengambil API, memakai cache resep", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(requireContext(), "Gagal mengambil API, memakai resep lokal", Toast.LENGTH_SHORT).show();
+            }
         }
 
         applyApiRecipeFilter();
