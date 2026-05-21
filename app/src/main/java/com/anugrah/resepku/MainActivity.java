@@ -7,6 +7,7 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -34,12 +35,21 @@ public class MainActivity extends AppCompatActivity {
             NavigationUI.setupWithNavController(navView, navController);
             navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
                 AppThemeManager.applyToActivity(this);
-                if (destination.getId() == R.id.navigation_recipe_detail) {
+                if (destination.getId() == R.id.navigation_login
+                        || destination.getId() == R.id.navigation_register
+                        || destination.getId() == R.id.navigation_recipe_detail) {
                     navView.setVisibility(View.GONE);
                 } else {
                     navView.setVisibility(View.VISIBLE);
                 }
             });
+
+            if (savedInstanceState == null && AuthSessionStore.isSignedIn(this)) {
+                NavOptions navOptions = new NavOptions.Builder()
+                        .setPopUpTo(R.id.navigation_login, true)
+                        .build();
+                navController.navigate(R.id.navigation_home, null, navOptions);
+            }
         }
     }
 

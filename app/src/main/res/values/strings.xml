@@ -1,5 +1,26 @@
 <resources>
     <string name="app_name">ResepKu</string>
+    <string name="auth_tagline">Masak Lezat, Hidup Sehat</string>
+    <string name="auth_kitchen">DAPUR HARI INI</string>
+    <string name="auth_new_member">MULAI DARI SINI</string>
+    <string name="auth_name_hint">Nama lengkap</string>
+    <string name="auth_email_hint">Email</string>
+    <string name="auth_password_hint">Kata sandi</string>
+    <string name="auth_confirm_password_hint">Konfirmasi kata sandi</string>
+    <string name="login_hero_title">Masuk dan lanjutkan rencana masakmu</string>
+    <string name="login_hero_body">Simpan resep favorit, atur pengingat, dan temukan inspirasi makan harian.</string>
+    <string name="login_hero_pill">Resep keluarga siap dicoba</string>
+    <string name="login_title">Selamat Datang</string>
+    <string name="login_subtitle">Masuk ke akun ResepKu untuk membuka dapur personalmu.</string>
+    <string name="login_forgot_password">Lupa kata sandi?</string>
+    <string name="login_button">Masuk</string>
+    <string name="login_create_account">Daftar Akun Baru</string>
+    <string name="register_hero_title">Buat akun untuk dapurmu</string>
+    <string name="register_hero_body">Kumpulkan resep pilihan dan bangun kebiasaan masak yang lebih rapi.</string>
+    <string name="register_title">Buat Akun</string>
+    <string name="register_subtitle">Isi data singkat supaya ResepKu bisa terasa lebih personal.</string>
+    <string name="register_button">Daftar Sekarang</string>
+    <string name="register_login">Sudah Punya Akun</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="setting_notification">Notifikasi</string>

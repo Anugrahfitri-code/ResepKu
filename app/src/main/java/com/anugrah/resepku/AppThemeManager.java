@@ -207,10 +207,15 @@ public final class AppThemeManager {
 
     private static void applyButtonTheme(MaterialButton button, int accent) {
         int id = button.getId();
-        if (id == R.id.btnSaveSettings) {
+        if (id == R.id.btnSaveSettings
+                || id == R.id.btnRegisterSubmit) {
             button.setBackgroundTintList(ColorStateList.valueOf(accent));
             button.setTextColor(Color.WHITE);
             button.setIconTint(null);
+        } else if (id == R.id.btnLoginSubmit) {
+            button.setBackgroundTintList(ColorStateList.valueOf(accent));
+            button.setTextColor(Color.WHITE);
+            button.setIconTint(ColorStateList.valueOf(Color.WHITE));
         } else if (id == R.id.btnRefreshApiRecipes) {
             button.setBackgroundTintList(ColorStateList.valueOf(accent));
             button.setTextColor(Color.WHITE);
@@ -219,7 +224,9 @@ public final class AppThemeManager {
             button.setBackgroundTintList(ColorStateList.valueOf(accent));
             button.setTextColor(Color.WHITE);
             button.setIconTint(ColorStateList.valueOf(Color.WHITE));
-        } else if (id == R.id.btnResetSettings) {
+        } else if (id == R.id.btnResetSettings
+                || id == R.id.btnLoginCreateAccount
+                || id == R.id.btnRegisterLogin) {
             button.setTextColor(accent);
             button.setIconTint(ColorStateList.valueOf(accent));
             button.setStrokeColor(ColorStateList.valueOf(accent));
@@ -233,7 +240,9 @@ public final class AppThemeManager {
         }
 
         String value = text.toString();
-        if ("apa hari ini?".equals(value)
+        if (textView.getId() == R.id.tvForgotPassword) {
+            textView.setTextColor(accent);
+        } else if ("apa hari ini?".equals(value)
                 || "Favorit".equals(value)
                 || "Lihat semua".equals(value)
                 || "Disimpan".equals(value)
