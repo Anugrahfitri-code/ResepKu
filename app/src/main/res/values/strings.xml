@@ -26,6 +26,11 @@
     <string name="setting_notification">Notifikasi</string>
     <string name="setting_title">Pengaturan</string>
     <string name="setting_subtitle">Atur preferensi aplikasi kamu</string>
+    <string name="setting_section_account">Akun Saya</string>
+    <string name="setting_account_email_empty">Email belum diatur</string>
+    <string name="setting_edit_profile">Ubah Profil</string>
+    <string name="setting_change_password">Ubah Kata Sandi</string>
+    <string name="setting_logout">Keluar Akun</string>
     <string name="setting_section_display">Tampilan</string>
     <string name="setting_dark_mode">Mode Gelap</string>
     <string name="setting_theme">Tema Aplikasi</string>
@@ -50,6 +55,8 @@
     <string name="setting_reset">Reset</string>
     <string name="home_greeting_prefix">Mau masak </string>
     <string name="home_greeting_accent">apa hari ini?</string>
+    <string name="home_welcome_default">Hai, Teman ResepKu</string>
+    <string name="home_welcome_name">Hai, %1$s</string>
     <string name="home_search_hint">Cari resep favoritmu...</string>
     <string name="home_category_breakfast">Sarapan</string>
     <string name="home_category_chicken">Ayam</string>

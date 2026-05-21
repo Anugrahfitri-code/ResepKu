@@ -15,7 +15,7 @@ public final class AuthSessionStore {
     }
 
     public static boolean isSignedIn(Context context) {
-        return prefs(context).getBoolean(KEY_SIGNED_IN, false);
+        return prefs(context).getBoolean(KEY_SIGNED_IN, false) && hasRegisteredAccount(context);
     }
 
     public static boolean hasRegisteredAccount(Context context) {
@@ -46,9 +46,38 @@ public final class AuthSessionStore {
                 .apply();
     }
 
+    public static void signOut(Context context) {
+        prefs(context).edit()
+                .putBoolean(KEY_SIGNED_IN, false)
+                .apply();
+    }
+
+    public static void updateProfile(Context context, String name, String email) {
+        prefs(context).edit()
+                .putString(KEY_NAME, name)
+                .putString(KEY_EMAIL, normalizeEmail(email))
+                .apply();
+    }
+
+    public static void updatePassword(Context context, String password) {
+        prefs(context).edit()
+                .putString(KEY_PASSWORD, password)
+                .apply();
+    }
+
     public static String getDisplayName(Context context) {
         String name = prefs(context).getString(KEY_NAME, "");
         return TextUtils.isEmpty(name) ? "Teman ResepKu" : name;
+    }
+
+    public static String getFirstName(Context context) {
+        String displayName = getDisplayName(context).trim();
+        int spaceIndex = displayName.indexOf(' ');
+        return spaceIndex > 0 ? displayName.substring(0, spaceIndex) : displayName;
+    }
+
+    public static String getEmail(Context context) {
+        return prefs(context).getString(KEY_EMAIL, "");
     }
 
     private static String normalizeEmail(String email) {

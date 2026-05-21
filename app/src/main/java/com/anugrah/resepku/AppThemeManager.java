@@ -240,7 +240,8 @@ public final class AppThemeManager {
         }
 
         String value = text.toString();
-        if (textView.getId() == R.id.tvForgotPassword) {
+        if (textView.getId() == R.id.tvForgotPassword
+                || textView.getId() == R.id.tvHomeWelcome) {
             textView.setTextColor(accent);
         } else if ("apa hari ini?".equals(value)
                 || "Favorit".equals(value)
@@ -280,7 +281,8 @@ public final class AppThemeManager {
     private static void applyImageTheme(ImageView imageView, int accent) {
         int id = imageView.getId();
         if (id == R.id.ivFavorite || id == R.id.ivRecommendationFavorite
-                || id == R.id.iconClearCache || id == R.id.iconManageFavorite) {
+                || id == R.id.iconClearCache || id == R.id.iconManageFavorite
+                || id == R.id.iconAccountProfile || id == R.id.iconLogout) {
             imageView.setColorFilter(getAccentStrongColor(imageView.getContext()));
             return;
         }
@@ -392,7 +394,8 @@ public final class AppThemeManager {
         }
 
         CharSequence text = ((TextView) parent.getChildAt(1)).getText();
-        return text != null && ("Tampilan".contentEquals(text)
+        return text != null && ("Akun Saya".contentEquals(text)
+                || "Tampilan".contentEquals(text)
                 || "Notifikasi".contentEquals(text)
                 || "Data & Penyimpanan".contentEquals(text)
                 || "Tentang Aplikasi".contentEquals(text));

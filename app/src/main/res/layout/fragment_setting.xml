@@ -160,6 +160,97 @@
 
             <LinearLayout style="@style/SettingsSectionContainer">
 
+                <LinearLayout style="@style/SettingsHeaderRow">
+                    <ImageView style="@style/SettingsHeaderIcon" android:src="@drawable/ic_users" />
+                    <TextView style="@style/SettingsHeaderTitle" android:text="@string/setting_section_account" />
+                </LinearLayout>
+
+                <View style="@style/SettingsDivider" />
+
+                <RelativeLayout
+                    android:id="@+id/rowAccountProfile"
+                    android:layout_width="match_parent"
+                    android:layout_height="72dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp">
+
+                    <ImageView
+                        android:id="@+id/iconAccountProfile"
+                        style="@style/SettingsItemIcon"
+                        android:src="@drawable/ic_person"
+                        app:tint="@color/primary_orange" />
+
+                    <TextView
+                        android:id="@+id/tvAccountName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="14dp"
+                        android:layout_toEndOf="@id/iconAccountProfile"
+                        android:ellipsize="end"
+                        android:includeFontPadding="false"
+                        android:maxLines="1"
+                        android:textColor="@color/text_dark"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        tools:text="Teman ResepKu" />
+
+                    <TextView
+                        android:id="@+id/tvAccountEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_below="@id/tvAccountName"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="6dp"
+                        android:layout_toEndOf="@id/iconAccountProfile"
+                        android:ellipsize="end"
+                        android:includeFontPadding="false"
+                        android:maxLines="1"
+                        android:text="@string/setting_account_email_empty"
+                        android:textColor="@color/text_grey"
+                        android:textSize="13sp" />
+                </RelativeLayout>
+
+                <View style="@style/SettingsDivider" />
+
+                <RelativeLayout
+                    android:id="@+id/rowEditProfile"
+                    style="@style/SettingsItemRow">
+                    <ImageView android:id="@+id/iconEditProfile" style="@style/SettingsItemIcon" android:src="@drawable/ic_person" />
+                    <TextView style="@style/SettingsItemTitle" android:layout_toEndOf="@id/iconEditProfile" android:text="@string/setting_edit_profile" />
+                    <ImageView style="@style/SettingsChevron" />
+                </RelativeLayout>
+
+                <View style="@style/SettingsDivider" />
+
+                <RelativeLayout
+                    android:id="@+id/rowChangePassword"
+                    style="@style/SettingsItemRow">
+                    <ImageView android:id="@+id/iconChangePassword" style="@style/SettingsItemIcon" android:src="@drawable/ic_lock" />
+                    <TextView style="@style/SettingsItemTitle" android:layout_toEndOf="@id/iconChangePassword" android:text="@string/setting_change_password" />
+                    <ImageView style="@style/SettingsChevron" />
+                </RelativeLayout>
+
+                <View style="@style/SettingsDivider" />
+
+                <RelativeLayout
+                    android:id="@+id/rowLogout"
+                    style="@style/SettingsItemRow">
+                    <ImageView android:id="@+id/iconLogout" style="@style/SettingsItemIcon" android:src="@drawable/ic_logout" app:tint="@color/primary_orange" />
+                    <TextView style="@style/SettingsItemTitle" android:layout_toEndOf="@id/iconLogout" android:text="@string/setting_logout" />
+                    <ImageView style="@style/SettingsChevron" />
+                </RelativeLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.ResepKu.SettingsCard"
+            android:layout_marginTop="16dp">
+
+            <LinearLayout style="@style/SettingsSectionContainer">
+
                 <LinearLayout
                     style="@style/SettingsHeaderRow">
                     <ImageView style="@style/SettingsHeaderIcon" android:src="@drawable/ic_palette" />

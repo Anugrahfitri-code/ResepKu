@@ -7,7 +7,7 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.navigation.NavController;
-import androidx.navigation.NavOptions;
+import androidx.navigation.NavGraph;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -31,6 +31,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (navHostFragment != null) {
             NavController navController = navHostFragment.getNavController();
+            NavGraph navGraph = navController.getNavInflater().inflate(R.navigation.nav_graph);
+            navGraph.setStartDestination(AuthSessionStore.isSignedIn(this)
+                    ? R.id.navigation_home
+                    : R.id.navigation_login);
+            navController.setGraph(navGraph);
 
             NavigationUI.setupWithNavController(navView, navController);
             navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
@@ -43,13 +48,6 @@ public class MainActivity extends AppCompatActivity {
                     navView.setVisibility(View.VISIBLE);
                 }
             });
-
-            if (savedInstanceState == null && AuthSessionStore.isSignedIn(this)) {
-                NavOptions navOptions = new NavOptions.Builder()
-                        .setPopUpTo(R.id.navigation_login, true)
-                        .build();
-                navController.navigate(R.id.navigation_home, null, navOptions);
-            }
         }
     }
 

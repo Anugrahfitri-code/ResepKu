@@ -80,6 +80,7 @@ public class HomeFragment extends Fragment {
         setupRecommendations(view);
         setupSearch(view);
         setupCategories(view);
+        updateGreeting(view);
 
         view.findViewById(R.id.btnViewRecipe).setOnClickListener(v -> openCurrentRecommendationDetail(v));
         view.findViewById(R.id.btnViewAllRecipes).setOnClickListener(v -> showAllRecipes(view));
@@ -98,6 +99,7 @@ public class HomeFragment extends Fragment {
         if (getActivity() != null) {
             AppThemeManager.applyToActivity(requireActivity());
         }
+        updateGreeting(getView());
         AppThemeManager.applyToViewTree(getView());
         applyCategoryState();
         refreshFavoriteIcons();
@@ -111,6 +113,16 @@ public class HomeFragment extends Fragment {
         }
         recipeApiCalls.clear();
         super.onDestroyView();
+    }
+
+    private void updateGreeting(View view) {
+        if (view == null || !isAdded()) {
+            return;
+        }
+
+        TextView welcomeText = view.findViewById(R.id.tvHomeWelcome);
+        welcomeText.setText(getString(R.string.home_welcome_name,
+                AuthSessionStore.getFirstName(requireContext())));
     }
 
     private void setupRecipes() {

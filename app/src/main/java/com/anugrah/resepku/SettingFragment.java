@@ -7,10 +7,14 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.InputType;
+import android.text.TextUtils;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +25,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -50,6 +56,8 @@ public class SettingFragment extends Fragment {
     private TextView tvThemeValue;
     private TextView tvTextSizeValue;
     private TextView tvCookingReminderSummary;
+    private TextView tvAccountName;
+    private TextView tvAccountEmail;
     private ActivityResultLauncher<String> notificationPermissionLauncher;
     private List<CookingReminderStore.CookingReminder> reminders = new ArrayList<>();
     private String selectedTheme = DEFAULT_THEME;
@@ -99,6 +107,7 @@ public class SettingFragment extends Fragment {
         if (getActivity() != null) {
             AppThemeManager.applyToActivity(requireActivity());
         }
+        updateAccountSummary();
         AppThemeManager.applyToViewTree(getView());
     }
 
@@ -109,6 +118,8 @@ public class SettingFragment extends Fragment {
         tvThemeValue = view.findViewById(R.id.tvThemeValue);
         tvTextSizeValue = view.findViewById(R.id.tvTextSizeValue);
         tvCookingReminderSummary = view.findViewById(R.id.tvCookingReminderSummary);
+        tvAccountName = view.findViewById(R.id.tvAccountName);
+        tvAccountEmail = view.findViewById(R.id.tvAccountEmail);
     }
 
     private void loadSettings() {
@@ -129,11 +140,16 @@ public class SettingFragment extends Fragment {
         setSwitchesWithoutSaving(darkMode, dailyNotification, selectedCookingReminder);
         tvThemeValue.setText(selectedTheme);
         tvTextSizeValue.setText(selectedTextSize);
+        updateAccountSummary();
         updateCookingReminderSummary();
         initialDarkMode = darkMode;
     }
 
     private void setupListeners(View view) {
+        view.findViewById(R.id.rowEditProfile).setOnClickListener(v -> showEditProfileDialog());
+        view.findViewById(R.id.rowChangePassword).setOnClickListener(v -> showChangePasswordDialog());
+        view.findViewById(R.id.rowLogout).setOnClickListener(this::showLogoutDialog);
+
         view.findViewById(R.id.rowDarkMode).setOnClickListener(v ->
                 switchDarkMode.setChecked(!switchDarkMode.isChecked()));
 
@@ -186,6 +202,155 @@ public class SettingFragment extends Fragment {
 
         view.findViewById(R.id.btnSaveSettings).setOnClickListener(v -> saveSettings());
         view.findViewById(R.id.btnResetSettings).setOnClickListener(v -> resetSettings());
+    }
+
+    private void updateAccountSummary() {
+        if (tvAccountName == null || tvAccountEmail == null || !isAdded()) {
+            return;
+        }
+
+        tvAccountName.setText(AuthSessionStore.getDisplayName(requireContext()));
+        String email = AuthSessionStore.getEmail(requireContext());
+        tvAccountEmail.setText(TextUtils.isEmpty(email)
+                ? getString(R.string.setting_account_email_empty)
+                : email);
+    }
+
+    private void showEditProfileDialog() {
+        EditText nameInput = createDialogInput("Nama lengkap",
+                InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+        EditText emailInput = createDialogInput("Email",
+                InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        nameInput.setText(AuthSessionStore.getDisplayName(requireContext()));
+        emailInput.setText(AuthSessionStore.getEmail(requireContext()));
+
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                .setTitle("Ubah Profil")
+                .setView(dialogInputContainer(nameInput, emailInput))
+                .setNegativeButton("Batal", null)
+                .setPositiveButton("Simpan", null)
+                .create();
+
+        dialog.setOnShowListener(dialogInterface ->
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+                    String name = nameInput.getText().toString().trim();
+                    String email = emailInput.getText().toString().trim();
+
+                    if (name.length() < 3) {
+                        nameInput.setError("Nama minimal 3 karakter");
+                        nameInput.requestFocus();
+                        return;
+                    }
+
+                    if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                        emailInput.setError("Masukkan email yang valid");
+                        emailInput.requestFocus();
+                        return;
+                    }
+
+                    AuthSessionStore.updateProfile(requireContext(), name, email);
+                    updateAccountSummary();
+                    AppThemeManager.applyToViewTree(getView());
+                    showToast("Profil akun diperbarui");
+                    dialog.dismiss();
+                }));
+        dialog.show();
+    }
+
+    private void showChangePasswordDialog() {
+        String email = AuthSessionStore.getEmail(requireContext());
+        if (TextUtils.isEmpty(email)) {
+            showToast("Lengkapi profil akun terlebih dahulu");
+            return;
+        }
+
+        EditText currentPasswordInput = createDialogInput("Kata sandi saat ini",
+                InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        EditText newPasswordInput = createDialogInput("Kata sandi baru",
+                InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        EditText confirmPasswordInput = createDialogInput("Konfirmasi kata sandi baru",
+                InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                .setTitle("Ubah Kata Sandi")
+                .setView(dialogInputContainer(currentPasswordInput, newPasswordInput, confirmPasswordInput))
+                .setNegativeButton("Batal", null)
+                .setPositiveButton("Simpan", null)
+                .create();
+
+        dialog.setOnShowListener(dialogInterface ->
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+                    String currentPassword = currentPasswordInput.getText().toString();
+                    String newPassword = newPasswordInput.getText().toString();
+                    String confirmPassword = confirmPasswordInput.getText().toString();
+
+                    if (!AuthSessionStore.canSignIn(requireContext(), email, currentPassword)) {
+                        currentPasswordInput.setError("Kata sandi saat ini belum cocok");
+                        currentPasswordInput.requestFocus();
+                        return;
+                    }
+
+                    if (newPassword.length() < 6) {
+                        newPasswordInput.setError("Kata sandi minimal 6 karakter");
+                        newPasswordInput.requestFocus();
+                        return;
+                    }
+
+                    if (!newPassword.equals(confirmPassword)) {
+                        confirmPasswordInput.setError("Konfirmasi kata sandi belum sama");
+                        confirmPasswordInput.requestFocus();
+                        return;
+                    }
+
+                    AuthSessionStore.updatePassword(requireContext(), newPassword);
+                    showToast("Kata sandi berhasil diperbarui");
+                    dialog.dismiss();
+                }));
+        dialog.show();
+    }
+
+    private void showLogoutDialog(View sourceView) {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Keluar akun?")
+                .setMessage("Kamu bisa masuk kembali dengan email dan kata sandi yang sudah terdaftar.")
+                .setNegativeButton("Batal", null)
+                .setPositiveButton("Keluar", (dialog, which) -> {
+                    AuthSessionStore.signOut(requireContext());
+                    NavController navController = Navigation.findNavController(sourceView);
+                    NavOptions navOptions = new NavOptions.Builder()
+                            .setPopUpTo(navController.getGraph().getStartDestinationId(), true)
+                            .build();
+                    navController.navigate(R.id.navigation_login, null, navOptions);
+                })
+                .show();
+    }
+
+    private EditText createDialogInput(String hint, int inputType) {
+        EditText input = new EditText(requireContext());
+        input.setSingleLine(true);
+        input.setHint(hint);
+        input.setInputType(inputType);
+        input.setSelectAllOnFocus(true);
+        input.setPadding(dp(18), dp(6), dp(18), dp(6));
+        return input;
+    }
+
+    private LinearLayout dialogInputContainer(EditText... inputs) {
+        LinearLayout container = new LinearLayout(requireContext());
+        container.setOrientation(LinearLayout.VERTICAL);
+        container.setPadding(dp(18), dp(6), dp(18), 0);
+
+        for (int i = 0; i < inputs.length; i++) {
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+            if (i > 0) {
+                params.topMargin = dp(10);
+            }
+            container.addView(inputs[i], params);
+        }
+        return container;
     }
 
     private void saveSettings() {
