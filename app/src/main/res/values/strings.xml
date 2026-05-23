@@ -129,7 +129,7 @@
     <string name="detail_rate_title">Beri Rating</string>
     <string name="detail_rate_body">Seberapa cocok resep ini untukmu?</string>
     <string name="detail_rate_empty">Belum diberi rating</string>
-    <string name="detail_rate_value">Rating kamu: %1$d/5</string>
+    <string name="detail_rate_value">Rating kamu: %1$d/5. Total sekarang %2$s</string>
     <string name="detail_tip_body">Tambahkan perasan jeruk nipis agar rasa lebih segar.</string>
     <string name="detail_save_favorite">Simpan ke Favorit</string>
     <string name="detail_start_cooking">Mulai Memasak</string>

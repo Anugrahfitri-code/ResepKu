@@ -182,7 +182,7 @@ public class RecipeDetailFragment extends Fragment {
 
         TextView status = view.findViewById(R.id.tvUserRatingStatus);
         status.setText(userRating > 0
-                ? getString(R.string.detail_rate_value, userRating)
+                ? getString(R.string.detail_rate_value, userRating, currentRatingText())
                 : getString(R.string.detail_rate_empty));
         status.setTextColor(userRating > 0
                 ? AppThemeManager.getAccentColor(requireContext())
