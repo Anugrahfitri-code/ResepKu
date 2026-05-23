@@ -379,15 +379,6 @@
                     <ImageView style="@style/SettingsChevron" />
                 </RelativeLayout>
 
-                <View style="@style/SettingsDivider" />
-
-                <RelativeLayout
-                    android:id="@+id/rowManageFavorite"
-                    style="@style/SettingsItemRow">
-                    <ImageView android:id="@+id/iconManageFavorite" style="@style/SettingsItemIcon" android:src="@drawable/ic_heart" app:tint="@color/primary_orange" />
-                    <TextView style="@style/SettingsItemTitle" android:layout_toEndOf="@id/iconManageFavorite" android:text="@string/setting_manage_favorite" />
-                    <ImageView style="@style/SettingsChevron" />
-                </RelativeLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

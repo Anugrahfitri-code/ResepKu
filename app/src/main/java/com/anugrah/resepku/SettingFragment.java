@@ -191,9 +191,6 @@ public class SettingFragment extends Fragment {
         view.findViewById(R.id.rowClearCache).setOnClickListener(v ->
                 showToast("Cache berhasil dihapus"));
 
-        view.findViewById(R.id.rowManageFavorite).setOnClickListener(v ->
-                Navigation.findNavController(v).navigate(R.id.navigation_favorite));
-
         view.findViewById(R.id.rowHelpCenter).setOnClickListener(v ->
                 showToast("Pusat bantuan belum tersedia"));
 
