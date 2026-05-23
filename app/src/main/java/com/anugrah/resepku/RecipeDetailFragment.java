@@ -62,6 +62,12 @@ public class RecipeDetailFragment extends Fragment {
     }
 
     private void openCookingMode() {
+        View root = getView();
+        if (root != null && !areIngredientsComplete(root)) {
+            showIngredientIncompleteMessage(root);
+            return;
+        }
+
         Intent intent = new Intent(requireContext(), CookingModeActivity.class);
         intent.putExtra(CookingModeActivity.EXTRA_RECIPE_TITLE,
                 currentRecipe == null ? DETAIL_RECIPE_TITLE : currentRecipe.title);
@@ -264,7 +270,43 @@ public class RecipeDetailFragment extends Fragment {
             checkBox.setTextColor(requireContext().getColor(R.color.text_dark));
             checkBox.setTextSize(14);
             checkBox.setButtonTintList(ColorStateList.valueOf(AppThemeManager.getAccentColor(requireContext())));
+            checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> updateIngredientWarning(view));
             ingredientGrid.addView(checkBox);
+        }
+        updateIngredientWarning(view);
+    }
+
+    private boolean areIngredientsComplete(View view) {
+        GridLayout ingredientGrid = view.findViewById(R.id.detailIngredientGrid);
+        if (ingredientGrid == null || ingredientGrid.getChildCount() == 0) {
+            return true;
+        }
+
+        for (int i = 0; i < ingredientGrid.getChildCount(); i++) {
+            View child = ingredientGrid.getChildAt(i);
+            if (child instanceof CheckBox && !((CheckBox) child).isChecked()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void showIngredientIncompleteMessage(View view) {
+        TextView warning = view.findViewById(R.id.tvIngredientIncomplete);
+        warning.setVisibility(View.VISIBLE);
+        warning.setTextColor(AppThemeManager.getAccentColor(requireContext()));
+        Toast.makeText(requireContext(), R.string.detail_ingredients_incomplete, Toast.LENGTH_SHORT).show();
+
+        View ingredientGrid = view.findViewById(R.id.detailIngredientGrid);
+        if (ingredientGrid != null) {
+            ingredientGrid.requestFocus();
+        }
+    }
+
+    private void updateIngredientWarning(View view) {
+        TextView warning = view.findViewById(R.id.tvIngredientIncomplete);
+        if (warning != null && areIngredientsComplete(view)) {
+            warning.setVisibility(View.GONE);
         }
     }
 

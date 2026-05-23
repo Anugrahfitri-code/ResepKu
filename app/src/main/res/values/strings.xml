@@ -125,6 +125,7 @@
     <string name="detail_serving">4 porsi</string>
     <string name="detail_serving_label">Porsi</string>
     <string name="detail_ingredients_title">Bahan-bahan</string>
+    <string name="detail_ingredients_incomplete">Bahan kurang lengkap, mohon dilengkapi dulu.</string>
     <string name="detail_steps_title">Cara Memasak</string>
     <string name="detail_rate_title">Beri Rating</string>
     <string name="detail_rate_body">Seberapa cocok resep ini untukmu?</string>

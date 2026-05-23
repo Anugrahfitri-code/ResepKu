@@ -394,6 +394,23 @@
                 </GridLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <TextView
+                android:id="@+id/tvIngredientIncomplete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_recipe_tag_orange"
+                android:includeFontPadding="false"
+                android:paddingStart="14dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="14dp"
+                android:paddingBottom="10dp"
+                android:text="@string/detail_ingredients_incomplete"
+                android:textColor="@color/primary_orange"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
             <LinearLayout style="@style/DetailSectionHeader">
                 <ImageView style="@style/DetailSectionIcon" android:src="@drawable/ic_pot" />
                 <TextView style="@style/DetailSectionTitle" android:text="@string/detail_steps_title" />
