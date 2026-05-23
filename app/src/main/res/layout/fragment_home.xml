@@ -247,6 +247,34 @@
             </LinearLayout>
         </HorizontalScrollView>
 
+        <LinearLayout
+            android:id="@+id/searchLoadingState"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_auth_field"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp"
+            android:visibility="gone">
+
+            <ProgressBar
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:indeterminate="true"
+                android:indeterminateTint="@color/primary_orange" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:includeFontPadding="false"
+                android:text="@string/home_search_loading"
+                android:textColor="@color/text_grey"
+                android:textSize="14sp" />
+        </LinearLayout>
+
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/recommendationCard"
             android:layout_width="match_parent"
@@ -498,6 +526,54 @@
                     android:textStyle="bold" />
             </LinearLayout>
         </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/apiLoadingState"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/bg_recipe_card"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="18dp"
+            android:paddingTop="18dp"
+            android:paddingEnd="18dp"
+            android:paddingBottom="18dp"
+            android:visibility="gone">
+
+            <ProgressBar
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:indeterminate="true"
+                android:indeterminateTint="@color/primary_orange" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:includeFontPadding="false"
+                    android:text="@string/home_api_loading_title"
+                    android:textColor="@color/text_dark"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:lineSpacingExtra="2dp"
+                    android:text="@string/home_api_loading_body"
+                    android:textColor="@color/text_grey"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/apiErrorState"

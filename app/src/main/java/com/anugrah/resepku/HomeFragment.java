@@ -3,6 +3,8 @@ package com.anugrah.resepku;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -39,11 +41,13 @@ public class HomeFragment extends Fragment {
     private final List<Recipe> cachedApiRecipeSnapshot = new ArrayList<>();
     private final Set<String> apiRecipeTitles = new HashSet<>();
     private final Set<String> apiRecipeIds = new HashSet<>();
+    private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private static final String SETTINGS_PREF_NAME = "resepku_settings";
     private static final String KEY_DAILY_NOTIFICATION = "daily_notification";
     private static final int MAX_API_RECIPES = 100;
     private static final int MAX_RECIPES_PER_API_CATEGORY = 8;
     private static final int API_CACHE_PROGRESS_INTERVAL = 10;
+    private static final long SEARCH_LOADING_DELAY_MS = 320;
     private RecipeAdapter recipeAdapter;
     private RecipeAdapter apiRecipeAdapter;
     private int pendingApiCalls = 0;
@@ -52,8 +56,10 @@ public class HomeFragment extends Fragment {
     private boolean hasApiResult = false;
     private boolean hasFreshApiResult = false;
     private boolean showingCachedApiRecipes = false;
+    private boolean loadingApiRecipes = false;
     private String selectedCategory = "";
     private String searchQuery = "";
+    private Runnable pendingSearchRunnable;
     private int currentRecommendationIndex = 0;
     private float recommendationTouchStartX = 0f;
 
@@ -113,6 +119,7 @@ public class HomeFragment extends Fragment {
             call.cancel();
         }
         recipeApiCalls.clear();
+        searchHandler.removeCallbacksAndMessages(null);
         super.onDestroyView();
     }
 
@@ -237,6 +244,8 @@ public class HomeFragment extends Fragment {
         hasApiResult = false;
         hasFreshApiResult = false;
         showingCachedApiRecipes = false;
+        loadingApiRecipes = true;
+        setApiLoadingVisible(true);
         setApiErrorVisible(false);
         applyApiRecipeFilter();
         showCachedApiRecipesForWarmStart();
@@ -426,6 +435,8 @@ public class HomeFragment extends Fragment {
             return;
         }
 
+        loadingApiRecipes = false;
+        setApiLoadingVisible(false);
         if (hasFreshApiResult && !apiRecipes.isEmpty()) {
             if (!cachedApiRecipeSnapshot.isEmpty()
                     && apiRecipes.size() < cachedApiRecipeSnapshot.size()) {
@@ -543,10 +554,22 @@ public class HomeFragment extends Fragment {
             if (onlyWhenEmpty) {
                 return;
             }
+            loadingApiRecipes = false;
+            setApiLoadingVisible(false);
             setApiErrorVisible(false);
             Toast.makeText(requireContext(), "Gagal mengambil API, menampilkan resep yang tersedia", Toast.LENGTH_SHORT).show();
         }
         applyApiRecipeFilter();
+    }
+
+    private void setApiLoadingVisible(boolean visible) {
+        View root = getView();
+        if (root == null) {
+            return;
+        }
+
+        View loadingState = root.findViewById(R.id.apiLoadingState);
+        loadingState.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
     private void setApiErrorVisible(boolean visible) {
@@ -873,8 +896,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 searchQuery = s.toString();
-                applyRecipeFilter();
-                applyApiRecipeFilter();
+                scheduleSearchFilter();
             }
 
             @Override
@@ -895,8 +917,7 @@ public class HomeFragment extends Fragment {
         categoryView.setOnClickListener(v -> {
             selectedCategory = selectedCategory.equals(category) ? "" : category;
             applyCategoryState();
-            applyRecipeFilter();
-            applyApiRecipeFilter();
+            scheduleSearchFilter();
         });
     }
 
@@ -907,8 +928,7 @@ public class HomeFragment extends Fragment {
         searchRecipe.setText("");
         ((TextView) root.findViewById(R.id.tvPopularTitle)).setText(R.string.home_popular_title);
         applyCategoryState();
-        applyRecipeFilter();
-        applyApiRecipeFilter();
+        applyFiltersNow();
         View recipeList = root.findViewById(R.id.rvPopularRecipes);
         NestedScrollView homeScroll = root.findViewById(R.id.homeScroll);
         recipeList.post(() -> homeScroll.smoothScrollTo(0, recipeList.getTop()));
@@ -1043,6 +1063,38 @@ public class HomeFragment extends Fragment {
 
     private void setCategorySelected(View view, boolean selected) {
         AppThemeManager.applyCategoryBackground(view, selected);
+    }
+
+    private void scheduleSearchFilter() {
+        if (pendingSearchRunnable != null) {
+            searchHandler.removeCallbacks(pendingSearchRunnable);
+        }
+
+        setSearchLoadingVisible(true);
+        pendingSearchRunnable = () -> {
+            applyFiltersNow();
+            setSearchLoadingVisible(false);
+        };
+        searchHandler.postDelayed(pendingSearchRunnable, SEARCH_LOADING_DELAY_MS);
+    }
+
+    private void applyFiltersNow() {
+        if (pendingSearchRunnable != null) {
+            searchHandler.removeCallbacks(pendingSearchRunnable);
+            pendingSearchRunnable = null;
+        }
+        applyRecipeFilter();
+        applyApiRecipeFilter();
+        setSearchLoadingVisible(false);
+    }
+
+    private void setSearchLoadingVisible(boolean visible) {
+        View root = getView();
+        if (root == null) {
+            return;
+        }
+
+        root.findViewById(R.id.searchLoadingState).setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
     private void applyRecipeFilter() {

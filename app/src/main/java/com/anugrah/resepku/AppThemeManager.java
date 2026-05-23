@@ -11,6 +11,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
@@ -163,6 +164,10 @@ public final class AppThemeManager {
 
         if (view instanceof MaterialButton) {
             applyButtonTheme((MaterialButton) view, accent);
+        }
+
+        if (view instanceof ProgressBar) {
+            ((ProgressBar) view).setIndeterminateTintList(ColorStateList.valueOf(accent));
         }
 
         if (view instanceof MaterialCardView && viewId == R.id.recommendationCard) {

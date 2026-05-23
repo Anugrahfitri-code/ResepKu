@@ -58,6 +58,7 @@
     <string name="home_welcome_default">Hai, Teman ResepKu</string>
     <string name="home_welcome_name">Hai, %1$s</string>
     <string name="home_search_hint">Cari resep favoritmu...</string>
+    <string name="home_search_loading">Mencari resep...</string>
     <string name="home_category_breakfast">Sarapan</string>
     <string name="home_category_chicken">Ayam</string>
     <string name="home_category_dessert">Dessert</string>
@@ -71,6 +72,8 @@
     <string name="home_api_recipes_title">Semua Resep</string>
     <string name="home_api_error_title">Resep online belum bisa dimuat</string>
     <string name="home_api_error_body">Resep buatanmu tetap tampil. Periksa koneksi internet kamu untuk memuat resep online.</string>
+    <string name="home_api_loading_title">Memproses resep baru...</string>
+    <string name="home_api_loading_body">Kami sedang mengambil inspirasi resep online. Resep yang sudah tersedia tetap bisa kamu lihat.</string>
     <string name="home_api_refresh">Coba Lagi</string>
     <string name="home_view_all">Lihat semua</string>
     <string name="my_recipe_nav_title">Resep Saya</string>
