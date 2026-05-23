@@ -102,6 +102,7 @@ public class HomeFragment extends Fragment {
         updateGreeting(getView());
         AppThemeManager.applyToViewTree(getView());
         applyCategoryState();
+        applyApiRecipeFilter();
         refreshFavoriteIcons();
         showRecommendation(currentRecommendationIndex);
     }
@@ -542,8 +543,8 @@ public class HomeFragment extends Fragment {
             if (onlyWhenEmpty) {
                 return;
             }
-            setApiErrorVisible(true);
-            Toast.makeText(requireContext(), "Gagal mengambil API, memakai resep lokal", Toast.LENGTH_SHORT).show();
+            setApiErrorVisible(false);
+            Toast.makeText(requireContext(), "Gagal mengambil API, menampilkan resep yang tersedia", Toast.LENGTH_SHORT).show();
         }
         applyApiRecipeFilter();
     }
@@ -1069,7 +1070,7 @@ public class HomeFragment extends Fragment {
         String normalizedQuery = searchQuery.toLowerCase(Locale.ROOT).trim();
 
         List<Recipe> filteredRecipes = new ArrayList<>();
-        for (Recipe recipe : apiRecipes) {
+        for (Recipe recipe : allAvailableRecipes()) {
             boolean matchesCategory = selectedCategory.isEmpty()
                     || recipe.category.equalsIgnoreCase(selectedCategory);
             boolean matchesQuery = normalizedQuery.isEmpty()
@@ -1083,6 +1084,37 @@ public class HomeFragment extends Fragment {
 
         if (apiRecipeAdapter != null) {
             apiRecipeAdapter.submitList(filteredRecipes);
+        }
+    }
+
+    private List<Recipe> allAvailableRecipes() {
+        List<Recipe> allRecipes = new ArrayList<>();
+        Set<String> titles = new HashSet<>();
+
+        if (isAdded()) {
+            for (UserRecipe userRecipe : UserRecipeStore.getRecipes(requireContext())) {
+                addRecipeIfUnique(allRecipes, titles, userRecipe.toRecipe());
+            }
+        }
+
+        for (Recipe recipe : recipes) {
+            addRecipeIfUnique(allRecipes, titles, recipe);
+        }
+
+        for (Recipe recipe : apiRecipes) {
+            addRecipeIfUnique(allRecipes, titles, recipe);
+        }
+        return allRecipes;
+    }
+
+    private void addRecipeIfUnique(List<Recipe> target, Set<String> titles, Recipe recipe) {
+        if (recipe == null || recipe.title == null || recipe.title.trim().isEmpty()) {
+            return;
+        }
+
+        String key = recipe.title.trim().toLowerCase(Locale.ROOT);
+        if (titles.add(key)) {
+            target.add(recipe);
         }
     }
 
