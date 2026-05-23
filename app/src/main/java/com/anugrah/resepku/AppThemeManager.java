@@ -18,6 +18,7 @@ import androidx.core.widget.NestedScrollView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 public final class AppThemeManager {
@@ -164,6 +165,10 @@ public final class AppThemeManager {
             applyButtonTheme((MaterialButton) view, accent);
         }
 
+        if (view instanceof MaterialCardView && viewId == R.id.recommendationCard) {
+            ((MaterialCardView) view).setCardBackgroundColor(recommendationCardColor(context));
+        }
+
         if (view instanceof TextView) {
             TextView textView = (TextView) view;
             applyTextTheme(textView, accent);
@@ -176,6 +181,10 @@ public final class AppThemeManager {
 
         if (viewId == R.id.recommendationBadge || viewId == R.id.btnViewRecipe) {
             view.setBackground(rounded(context, accent, 12, 0, Color.TRANSPARENT));
+        }
+
+        if (viewId == R.id.recommendationContent) {
+            view.setBackground(recommendationBackground(context));
         }
 
         if (viewId == R.id.savedPill) {
@@ -360,14 +369,39 @@ public final class AppThemeManager {
         return prefs(context).getBoolean(KEY_DARK_MODE, false);
     }
 
+    private static int recommendationCardColor(Context context) {
+        if (isDarkMode(context)) {
+            return isGreenTheme(context) ? Color.rgb(24, 38, 22) : Color.rgb(42, 29, 19);
+        }
+        return isGreenTheme(context) ? Color.rgb(242, 250, 232) : Color.rgb(255, 248, 233);
+    }
+
+    private static GradientDrawable recommendationBackground(Context context) {
+        if (isGreenTheme(context)) {
+            return gradient(
+                    context,
+                    isDarkMode(context) ? Color.rgb(29, 45, 26) : Color.rgb(242, 250, 232),
+                    isDarkMode(context) ? Color.rgb(40, 62, 33) : Color.rgb(220, 242, 203),
+                    20
+            );
+        }
+
+        return gradient(
+                context,
+                isDarkMode(context) ? Color.rgb(50, 32, 20) : Color.rgb(255, 243, 224),
+                isDarkMode(context) ? Color.rgb(70, 45, 26) : Color.rgb(255, 224, 178),
+                20
+        );
+    }
+
     private static void applyCategoryTextColors(View categoryView, boolean selected, boolean darkMode) {
         if (!(categoryView instanceof ViewGroup)) {
             return;
         }
 
-        int textColor = selected || !darkMode
-                ? ContextCompat.getColor(categoryView.getContext(), R.color.text_on_light_surface)
-                : ContextCompat.getColor(categoryView.getContext(), R.color.text_dark);
+        int textColor = darkMode
+                ? ContextCompat.getColor(categoryView.getContext(), R.color.text_dark)
+                : ContextCompat.getColor(categoryView.getContext(), R.color.text_on_light_surface);
         applyTextColorRecursive((ViewGroup) categoryView, textColor);
     }
 
@@ -434,6 +468,15 @@ public final class AppThemeManager {
         if (strokeDp > 0) {
             drawable.setStroke(dp(context, strokeDp), strokeColor);
         }
+        return drawable;
+    }
+
+    private static GradientDrawable gradient(Context context, int startColor, int endColor, int radiusDp) {
+        GradientDrawable drawable = new GradientDrawable(
+                GradientDrawable.Orientation.LEFT_RIGHT,
+                new int[]{startColor, endColor}
+        );
+        drawable.setCornerRadius(dp(context, radiusDp));
         return drawable;
     }
 
