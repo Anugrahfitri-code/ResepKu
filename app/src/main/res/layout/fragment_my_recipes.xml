@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/myRecipesScroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_cream"
+    android:clipToPadding="false"
+    android:fillViewport="true"
+    tools:context=".MyRecipesFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="20dp"
+        android:paddingTop="14dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="108dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="88dp">
+
+            <LinearLayout
+                android:layout_width="230dp"
+                android:layout_height="78dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="58dp"
+                    android:layout_height="58dp"
+                    android:contentDescription="@string/app_name"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/logo_mark" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:includeFontPadding="false"
+                            android:text="Resep"
+                            android:textColor="#F26B00"
+                            android:textSize="28sp"
+                            android:textStyle="bold|italic" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:includeFontPadding="false"
+                            android:text="Ku"
+                            android:textColor="@color/primary_green"
+                            android:textSize="28sp"
+                            android:textStyle="bold|italic" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:includeFontPadding="false"
+                        android:text="@string/auth_tagline"
+                        android:textColor="@color/primary_green"
+                        android:textSize="9sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:text="@string/my_recipe_title_prefix"
+                android:textColor="@color/text_dark"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvMyRecipeTitleAccent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:text="@string/my_recipe_title_accent"
+                android:textColor="@color/primary_green"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="-14dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_spark"
+                app:tint="@color/primary_orange" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:lineSpacingExtra="2dp"
+            android:text="@string/my_recipe_subtitle"
+            android:textColor="@color/text_grey"
+            android:textSize="16sp" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/myRecipeFormCard"
+            style="@style/Widget.ResepKu.SettingsCard"
+            android:layout_marginTop="22dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="16dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="18dp">
+
+                <TextView
+                    android:id="@+id/tvMyRecipeFormTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:includeFontPadding="false"
+                    android:text="@string/my_recipe_form_add"
+                    android:textColor="@color/text_dark"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/ivUserRecipePreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="154dp"
+                    android:layout_marginTop="16dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/img_soup_chicken_ginger"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.App.MediumComponent" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPickRecipeImage"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:layout_marginTop="12dp"
+                    android:backgroundTint="@color/white"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:text="@string/my_recipe_pick_image"
+                    android:textAllCaps="false"
+                    android:textColor="@color/primary_green"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="12dp"
+                    app:icon="@drawable/ic_image"
+                    app:iconGravity="textStart"
+                    app:iconPadding="8dp"
+                    app:iconTint="@color/primary_green"
+                    app:strokeColor="@color/primary_green"
+                    app:strokeWidth="1dp" />
+
+                <EditText
+                    android:id="@+id/etUserRecipeTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/bg_auth_field"
+                    android:hint="@string/my_recipe_name_hint"
+                    android:inputType="textCapWords"
+                    android:maxLines="1"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:singleLine="true"
+                    android:textColor="@color/text_dark"
+                    android:textColorHint="#9A918C"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/etUserRecipeDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="86dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_auth_field"
+                    android:gravity="top"
+                    android:hint="@string/my_recipe_description_hint"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:paddingStart="16dp"
+                    android:paddingTop="12dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="12dp"
+                    android:textColor="@color/text_dark"
+                    android:textColorHint="#9A918C"
+                    android:textSize="15sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvUserRecipeCategory"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="6dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_auth_field"
+                        android:gravity="center_vertical"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:text="@string/home_category_chicken"
+                        android:textColor="@color/text_dark"
+                        android:textSize="15sp" />
+
+                    <EditText
+                        android:id="@+id/etUserRecipeTime"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_auth_field"
+                        android:hint="@string/my_recipe_time_hint"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:singleLine="true"
+                        android:textColor="@color/text_dark"
+                        android:textColorHint="#9A918C"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvUserRecipeLevel"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="6dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_auth_field"
+                        android:gravity="center_vertical"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:text="@string/recipe_level_easy"
+                        android:textColor="@color/text_dark"
+                        android:textSize="15sp" />
+
+                    <EditText
+                        android:id="@+id/etUserRecipeServing"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_auth_field"
+                        android:hint="@string/my_recipe_serving_hint"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:singleLine="true"
+                        android:textColor="@color/text_dark"
+                        android:textColorHint="#9A918C"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/etUserRecipeIngredients"
+                    android:layout_width="match_parent"
+                    android:layout_height="116dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_auth_field"
+                    android:gravity="top"
+                    android:hint="@string/my_recipe_ingredients_hint"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:paddingStart="16dp"
+                    android:paddingTop="12dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="12dp"
+                    android:textColor="@color/text_dark"
+                    android:textColorHint="#9A918C"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/etUserRecipeSteps"
+                    android:layout_width="match_parent"
+                    android:layout_height="116dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_auth_field"
+                    android:gravity="top"
+                    android:hint="@string/my_recipe_steps_hint"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:paddingStart="16dp"
+                    android:paddingTop="12dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="12dp"
+                    android:textColor="@color/text_dark"
+                    android:textColorHint="#9A918C"
+                    android:textSize="15sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSaveUserRecipe"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:backgroundTint="@color/primary_orange"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:text="@string/my_recipe_save"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="12dp"
+                        app:icon="@drawable/ic_check_circle"
+                        app:iconGravity="textStart"
+                        app:iconPadding="8dp"
+                        app:iconTint="@null" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnClearUserRecipe"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:backgroundTint="@color/white"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:text="@string/my_recipe_clear"
+                        android:textAllCaps="false"
+                        android:textColor="@color/primary_orange"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="12dp"
+                        app:icon="@drawable/ic_refresh"
+                        app:iconGravity="textStart"
+                        app:iconPadding="8dp"
+                        app:iconTint="@color/primary_orange"
+                        app:strokeColor="@color/primary_orange"
+                        app:strokeWidth="1dp" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:includeFontPadding="false"
+                android:text="@string/my_recipe_list_title"
+                android:textColor="@color/text_dark"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvUserRecipeCount"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:gravity="center_vertical"
+                android:includeFontPadding="false"
+                android:textColor="@color/primary_green"
+                android:textSize="14sp"
+                tools:text="2 resep" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/emptyUserRecipes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_recipe_card"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingStart="18dp"
+            android:paddingTop="22dp"
+            android:paddingEnd="18dp"
+            android:paddingBottom="22dp">
+
+            <ImageView
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:src="@drawable/ic_chef_outline"
+                app:tint="@color/primary_orange" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:includeFontPadding="false"
+                android:text="@string/my_recipe_empty_title"
+                android:textColor="@color/text_dark"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:lineSpacingExtra="2dp"
+                android:text="@string/my_recipe_empty_body"
+                android:textColor="@color/text_grey"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvUserRecipes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:nestedScrollingEnabled="false"
+            android:overScrollMode="never"
+            tools:itemCount="2"
+            tools:listitem="@layout/item_user_recipe" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

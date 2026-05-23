@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="128dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/search_bar_stroke"
+    app:strokeWidth="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivUserRecipe"
+            android:layout_width="118dp"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.App.MediumComponent"
+            tools:src="@drawable/img_soup_chicken_ginger" />
+
+        <TextView
+            android:id="@+id/tvUserRecipeName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="12dp"
+            android:ellipsize="end"
+            android:includeFontPadding="false"
+            android:maxLines="2"
+            android:textColor="@color/text_dark"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/btnEditUserRecipe"
+            app:layout_constraintStart_toEndOf="@id/ivUserRecipe"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Soto Ayam Rumahan" />
+
+        <TextView
+            android:id="@+id/tvUserRecipeCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_recipe_tag_green"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:textColor="@color/primary_green"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@id/ivUserRecipe"
+            app:layout_constraintTop_toBottomOf="@id/tvUserRecipeName"
+            tools:text="Ayam" />
+
+        <LinearLayout
+            android:id="@+id/userRecipeMetaRow"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="14dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnDeleteUserRecipe"
+            app:layout_constraintStart_toEndOf="@id/ivUserRecipe">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_clock"
+                app:tint="@color/text_grey" />
+
+            <TextView
+                android:id="@+id/tvUserRecipeTime"
+                style="@style/RecipeMetaText"
+                tools:text="30 menit" />
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginStart="16dp"
+                android:src="@drawable/ic_level" />
+
+            <TextView
+                android:id="@+id/tvUserRecipeLevel"
+                style="@style/RecipeMetaText"
+                tools:text="Mudah" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnEditUserRecipe"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/bg_icon_button"
+            android:contentDescription="@string/my_recipe_edit"
+            android:padding="10dp"
+            android:src="@drawable/ic_edit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/primary_green" />
+
+        <ImageButton
+            android:id="@+id/btnDeleteUserRecipe"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/bg_icon_button"
+            android:contentDescription="@string/my_recipe_delete"
+            android:padding="10dp"
+            android:src="@drawable/ic_trash"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:tint="@color/primary_orange" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

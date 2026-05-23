@@ -3,6 +3,7 @@ package com.anugrah.resepku;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
@@ -36,6 +37,14 @@ public final class ImageLoader {
         }
 
         Context context = imageView.getContext().getApplicationContext();
+        if (isLocalImage(imageUrl)) {
+            Bitmap bitmap = loadLocalBitmap(context, imageUrl);
+            if (bitmap != null) {
+                imageView.setImageBitmap(bitmap);
+            }
+            return;
+        }
+
         imageView.setTag(imageUrl);
         Bitmap cachedBitmap = CACHE.get(imageUrl);
         if (cachedBitmap != null) {
@@ -64,6 +73,29 @@ public final class ImageLoader {
                 }
             });
         });
+    }
+
+    private static boolean isLocalImage(String imageUrl) {
+        return imageUrl.startsWith("/")
+                || imageUrl.startsWith("file://")
+                || imageUrl.startsWith("content://");
+    }
+
+    private static Bitmap loadLocalBitmap(Context context, String imageUrl) {
+        try {
+            if (imageUrl.startsWith("content://")) {
+                try (InputStream inputStream = context.getContentResolver().openInputStream(Uri.parse(imageUrl))) {
+                    return BitmapFactory.decodeStream(inputStream);
+                }
+            }
+
+            String path = imageUrl.startsWith("file://")
+                    ? Uri.parse(imageUrl).getPath()
+                    : imageUrl;
+            return TextUtils.isEmpty(path) ? null : BitmapFactory.decodeFile(path);
+        } catch (Exception ignored) {
+            return null;
+        }
     }
 
     public static void prefetch(Context context, String imageUrl) {

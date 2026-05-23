@@ -9,6 +9,10 @@
         android:icon="@drawable/ic_favorite"
         android:title="Favorit" />
     <item
+        android:id="@+id/navigation_my_recipes"
+        android:icon="@drawable/ic_pot"
+        android:title="@string/my_recipe_nav_title" />
+    <item
         android:id="@+id/navigation_setting"
         android:icon="@drawable/ic_setting"
         android:title="Pengaturan" />

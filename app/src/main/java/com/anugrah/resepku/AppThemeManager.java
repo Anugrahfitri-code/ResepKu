@@ -217,7 +217,8 @@ public final class AppThemeManager {
     private static void applyButtonTheme(MaterialButton button, int accent) {
         int id = button.getId();
         if (id == R.id.btnSaveSettings
-                || id == R.id.btnRegisterSubmit) {
+                || id == R.id.btnRegisterSubmit
+                || id == R.id.btnSaveUserRecipe) {
             button.setBackgroundTintList(ColorStateList.valueOf(accent));
             button.setTextColor(Color.WHITE);
             button.setIconTint(null);
@@ -235,7 +236,9 @@ public final class AppThemeManager {
             button.setIconTint(ColorStateList.valueOf(Color.WHITE));
         } else if (id == R.id.btnResetSettings
                 || id == R.id.btnLoginCreateAccount
-                || id == R.id.btnRegisterLogin) {
+                || id == R.id.btnRegisterLogin
+                || id == R.id.btnPickRecipeImage
+                || id == R.id.btnClearUserRecipe) {
             button.setTextColor(accent);
             button.setIconTint(ColorStateList.valueOf(accent));
             button.setStrokeColor(ColorStateList.valueOf(accent));
@@ -250,7 +253,9 @@ public final class AppThemeManager {
 
         String value = text.toString();
         if (textView.getId() == R.id.tvForgotPassword
-                || textView.getId() == R.id.tvHomeWelcome) {
+                || textView.getId() == R.id.tvHomeWelcome
+                || textView.getId() == R.id.tvMyRecipeTitleAccent
+                || textView.getId() == R.id.tvUserRecipeCount) {
             textView.setTextColor(accent);
         } else if ("apa hari ini?".equals(value)
                 || "Favorit".equals(value)
