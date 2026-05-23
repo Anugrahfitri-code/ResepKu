@@ -22,6 +22,7 @@ import java.util.List;
 public class RecipeDetailFragment extends Fragment {
     private static final String DETAIL_RECIPE_TITLE = "Sup Ayam Jahe Hangat";
     private Recipe currentRecipe;
+    private int userRating = 0;
 
     public RecipeDetailFragment() {
         // Required empty public constructor
@@ -38,6 +39,7 @@ public class RecipeDetailFragment extends Fragment {
         view.findViewById(R.id.btnSaveFavorite).setOnClickListener(v -> saveCurrentRecipe());
         view.findViewById(R.id.btnStartCooking).setOnClickListener(v -> openCookingMode());
         view.findViewById(R.id.btnShare).setOnClickListener(v -> shareCurrentRecipe());
+        setupRatingListeners(view);
         bindRecipeDetail(view);
         AppThemeManager.applyToViewTree(view);
         return view;
@@ -90,7 +92,7 @@ public class RecipeDetailFragment extends Fragment {
         builder.append("Waktu: ").append(currentRecipe.time).append("\n");
         builder.append("Tingkat kesulitan: ").append(currentRecipe.level).append("\n");
         builder.append("Porsi: ").append(currentRecipe.serving).append("\n");
-        builder.append("Rating: ").append(currentRecipe.rating).append("\n\n");
+        builder.append("Rating: ").append(currentRatingText()).append("\n\n");
 
         appendShareList(builder, "Bahan-bahan", ingredients);
         builder.append("\n");
@@ -124,6 +126,7 @@ public class RecipeDetailFragment extends Fragment {
                 view.findViewById(R.id.ivDetailRecipeImage),
                 currentRecipe.imageRes);
         bindStats(view);
+        bindUserRating(view);
         bindTip(view);
         bindCategory(view);
         bindIngredients(view);
@@ -138,10 +141,64 @@ public class RecipeDetailFragment extends Fragment {
     }
 
     private void bindStats(View view) {
-        ((TextView) view.findViewById(R.id.tvDetailRating)).setText(currentRecipe.rating);
+        ((TextView) view.findViewById(R.id.tvDetailRating)).setText(currentRatingText());
         ((TextView) view.findViewById(R.id.tvDetailTimeValue)).setText(currentRecipe.time);
         ((TextView) view.findViewById(R.id.tvDetailLevelValue)).setText(currentRecipe.level);
         ((TextView) view.findViewById(R.id.tvDetailServingValue)).setText(currentRecipe.serving);
+    }
+
+    private void setupRatingListeners(View view) {
+        bindStarClick(view, R.id.starRate1, 1);
+        bindStarClick(view, R.id.starRate2, 2);
+        bindStarClick(view, R.id.starRate3, 3);
+        bindStarClick(view, R.id.starRate4, 4);
+        bindStarClick(view, R.id.starRate5, 5);
+    }
+
+    private void bindStarClick(View root, int starId, int rating) {
+        root.findViewById(starId).setOnClickListener(v -> saveUserRating(root, rating));
+    }
+
+    private void saveUserRating(View root, int rating) {
+        if (currentRecipe == null) {
+            currentRecipe = defaultRecipe();
+        }
+
+        userRating = rating;
+        RecipeRatingStore.saveRating(requireContext(), currentRecipe.title, rating);
+        bindStats(root);
+        bindUserRating(root);
+        AppThemeManager.applyToViewTree(root);
+        Toast.makeText(requireContext(), "Rating " + rating + "/5 disimpan", Toast.LENGTH_SHORT).show();
+    }
+
+    private void bindUserRating(View view) {
+        userRating = RecipeRatingStore.getRating(requireContext(), currentRecipe.title);
+        updateStar(view.findViewById(R.id.starRate1), userRating >= 1);
+        updateStar(view.findViewById(R.id.starRate2), userRating >= 2);
+        updateStar(view.findViewById(R.id.starRate3), userRating >= 3);
+        updateStar(view.findViewById(R.id.starRate4), userRating >= 4);
+        updateStar(view.findViewById(R.id.starRate5), userRating >= 5);
+
+        TextView status = view.findViewById(R.id.tvUserRatingStatus);
+        status.setText(userRating > 0
+                ? getString(R.string.detail_rate_value, userRating)
+                : getString(R.string.detail_rate_empty));
+        status.setTextColor(userRating > 0
+                ? AppThemeManager.getAccentColor(requireContext())
+                : requireContext().getColor(R.color.text_grey));
+    }
+
+    private void updateStar(ImageView star, boolean filled) {
+        star.setImageResource(filled ? R.drawable.ic_star_orange : R.drawable.ic_star_outline);
+        star.setAlpha(filled ? 1f : 0.65f);
+    }
+
+    private String currentRatingText() {
+        int rating = currentRecipe == null
+                ? 0
+                : RecipeRatingStore.getRating(requireContext(), currentRecipe.title);
+        return RecipeRatingStore.displayRating(currentRecipe, rating);
     }
 
     private void bindTip(View view) {
